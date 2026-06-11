@@ -333,10 +333,10 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:52px;background:rgba(
   <div style="overflow-x:auto">
     <table class="data-table">
       <thead><tr>
-        <th>Record</th><th>Pressing</th><th>Cond.</th><th>Ask</th><th>Market</th>
-        <th>Saving</th><th>Liquidity</th><th>Status</th><th>Score</th><th>Track</th><th></th>
+        <th>Record</th><th>Pressing</th><th>Format</th><th>Lowest Price</th>
+        <th>Demand</th><th>Supply</th><th>Status</th><th>Score</th><th>For Sale</th><th></th>
       </tr></thead>
-      <tbody id="d-tbody"><tr><td colspan="11" class="empty-cell">Search above — enter any artist, label or title</td></tr></tbody>
+      <tbody id="d-tbody"><tr><td colspan="10" class="empty-cell">Search above — enter any artist, label or title</td></tr></tbody>
     </table>
   </div>
 </div>
@@ -345,44 +345,38 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:52px;background:rgba(
 <div class="page" id="page-discover">
   <div class="disc-controls">
     <div>
-      <div class="ctrl-lbl">Genre</div>
+      <div class="ctrl-lbl">Genre / Style</div>
       <select class="ctrl-sel" id="disc-genre">
         <option value="House">House</option>
         <option value="Deep House">Deep House</option>
         <option value="Tech House">Tech House</option>
+        <option value="Techno">Techno</option>
         <option value="Electronic">Electronic</option>
+        <option value="Drum n Bass">Drum n Bass</option>
         <option value="Jazz">Jazz</option>
         <option value="Soul">Soul / Funk</option>
         <option value="Hip Hop">Hip-Hop</option>
         <option value="Rock">Rock</option>
         <option value="Reggae">Reggae</option>
+        <option value="Classical">Classical</option>
       </select>
     </div>
     <div>
       <div class="ctrl-lbl">Max Price (£)</div>
       <select class="ctrl-sel" id="disc-price">
-        <option value="30">Under £30</option>
-        <option value="50">Under £50</option>
-        <option value="100" selected>Under £100</option>
+        <option value="20">Under £20</option>
+        <option value="50" selected>Under £50</option>
+        <option value="100">Under £100</option>
         <option value="250">Under £250</option>
         <option value="9999">No limit</option>
       </select>
     </div>
     <div>
-      <div class="ctrl-lbl">Min Deal Score</div>
-      <select class="ctrl-sel" id="disc-score">
-        <option value="1" selected>Show all scored</option>
-        <option value="25">25+ (Any deal)</option>
-        <option value="40">40+ (Strong)</option>
-        <option value="55">55+ (Fire only)</option>
-      </select>
-    </div>
-    <div>
-      <div class="ctrl-lbl">Results per sweep</div>
+      <div class="ctrl-lbl">Depth</div>
       <select class="ctrl-sel" id="disc-depth">
-        <option value="20">Fast (20)</option>
-        <option value="50" selected>Standard (50)</option>
-        <option value="100">Deep (100)</option>
+        <option value="20" selected>Fast (20 records)</option>
+        <option value="50">Standard (50 records)</option>
+        <option value="100">Deep (100 records)</option>
       </select>
     </div>
     <div>
@@ -399,10 +393,10 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:52px;background:rgba(
   <div style="overflow-x:auto">
     <table class="data-table">
       <thead><tr>
-        <th>Record</th><th>Pressing</th><th>Cond.</th><th>Ask</th><th>Market</th>
-        <th>Saving</th><th>Liquidity</th><th>Status</th><th>Score</th><th>Track</th><th></th>
+        <th>Record</th><th>Pressing</th><th>Format</th><th>Lowest Price</th>
+        <th>Demand</th><th>Supply</th><th>Status</th><th>Score</th><th>For Sale</th><th></th>
       </tr></thead>
-      <tbody id="disc-tbody"><tr><td colspan="11" class="empty-cell">Configure your sweep and hit Dig the Crates</td></tr></tbody>
+      <tbody id="disc-tbody"><tr><td colspan="10" class="empty-cell">Configure your sweep and hit Dig the Crates</td></tr></tbody>
     </table>
   </div>
 </div>
@@ -520,113 +514,118 @@ async function safeGet(path) { try { return await get(path); } catch { return nu
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 /* ═══════════════════════════════
-   SCORE ENGINE
+   SCORE ENGINE — real data only
+   Price vs format baseline +
+   demand (want count) +
+   scarcity (num_for_sale)
 ═══════════════════════════════ */
 function scoreRecord(r) {
-  if (!r.ask || !r.market || r.ask >= r.market) return 0;
-  const pd = Math.min((1 - r.ask/r.market)*100, 100);
-  const wg = parseFloat(r.wantlistGrowth) || 0;
-  if (r.track === 'B') {
-    const sc = Math.min(r.wantRatio*100, 100);
-    const mo = wg > 15 ? 90 : wg > 5 ? 65 : 30;
-    return Math.round(pd*0.35 + sc*0.30 + mo*0.25 + 50*0.10);
-  }
-  const lq = Math.min((r.salesPer30/30)*100, 100);
-  const sc = Math.min(r.wantRatio*100, 100);
-  const mo = wg > 5 ? 80 : wg > 0 ? 50 : 20;
-  return Math.round(pd*0.30 + lq*0.25 + sc*0.20 + mo*0.15 + 10);
+  if (!r.lowest || r.lowest <= 0) return 0;
+
+  // Price score — how cheap vs format baseline
+  // 12" baseline £8, album baseline £15
+  const baseline = r.is12inch ? 8 : 15;
+  const priceScore = r.lowest < baseline
+    ? Math.min(((baseline - r.lowest) / baseline) * 100, 100)
+    : Math.max(0, 100 - ((r.lowest - baseline) / baseline) * 60);
+
+  // Demand score — raw want count
+  const demandScore = r.want >= 500 ? 100
+    : r.want >= 200 ? 70
+    : r.want >= 50  ? 40
+    : r.want >= 10  ? 20
+    : 5;
+
+  // Scarcity score — fewer copies = more scarce = higher resale ceiling
+  const scarcityScore = r.numForSale <= 3  ? 100
+    : r.numForSale <= 10 ? 75
+    : r.numForSale <= 25 ? 45
+    : r.numForSale <= 50 ? 25
+    : 10;
+
+  return Math.round(priceScore * 0.40 + demandScore * 0.35 + scarcityScore * 0.25);
 }
 
 function gradeClass(s) {
-  return s >= 72 ? 'sc-a' : s >= 50 ? 'sc-b' : 'sc-c';
+  return s >= 65 ? 'sc-a' : s >= 40 ? 'sc-b' : 'sc-c';
 }
 
 function statusPill(s) {
-  const m = { heat:['sp-heat','HEATING'], rise:['sp-rise','RISING'], stable:['sp-stable','STABLE'], cool:['sp-cool','COOLING'], rare:['sp-rare','◆ RARE'] };
+  const m = {
+    heat:  ['sp-heat','HEATING'], rise:['sp-rise','RISING'],
+    stable:['sp-stable','STABLE'], cool:['sp-cool','COOLING'],
+    rare:  ['sp-rare','◆ RARE']
+  };
   const [c, l] = m[s] || m.stable;
   return `<span class="sp ${c}">${l}</span>`;
 }
 
 function liqLabel(r) {
-  if (r.track==='B') return `<span style="font-family:var(--mono);font-size:11px;color:var(--blue)">COLLECTABLE</span>`;
-  if (r.salesPer30>=20) return `<span style="font-family:var(--mono);font-size:11px;color:var(--green)">HIGH</span>`;
-  if (r.salesPer30>=10) return `<span style="font-family:var(--mono);font-size:11px;color:var(--amber)">MED</span>`;
-  return `<span style="font-family:var(--mono);font-size:11px;color:var(--red)">LOW</span>`;
+  if (r.numForSale <= 5)  return `<span style="font-family:var(--mono);font-size:11px;color:var(--blue)">SCARCE</span>`;
+  if (r.numForSale <= 20) return `<span style="font-family:var(--mono);font-size:11px;color:var(--amber)">LIMITED</span>`;
+  return `<span style="font-family:var(--mono);font-size:11px;color:var(--t2)">AVAILABLE</span>`;
 }
 
 /* ═══════════════════════════════
    CORE ENRICH PIPELINE
-   Confirmed working against real
-   Discogs API response structure
+   Only uses endpoints confirmed
+   working: /releases/{id}
 ═══════════════════════════════ */
 async function enrichById(releaseId, base = {}) {
-  // Release endpoint gives us: lowest_price, num_for_sale, community, genres
-  // Stats endpoint gives us: num_for_sale, lowest_price (sometimes), no median
-  // Strategy: use release.lowest_price as ask, derive market from community signals
   const release = await safeGet(`/releases/${releaseId}`);
   if (!release) return null;
 
   const community  = release.community || {};
   const have       = base.have ?? community.have ?? 0;
   const want       = base.want ?? community.want ?? 0;
-  const wantRatio  = have > 0 ? Math.min(want/have, 1) : 0;
   const numForSale = release.num_for_sale || 0;
+  const lowest     = release.lowest_price || null;
 
-  // Ask price — lowest current listing on Discogs
-  const askPrice = release.lowest_price || null;
-  if (!askPrice || askPrice <= 0) return null;
+  // Must have a price and at least one copy for sale
+  if (!lowest || lowest <= 0 || numForSale < 1) return null;
 
-  // Market price — we don't have a median directly, so we derive it.
-  // Discogs lowest is often 30-60% below median for active markets.
-  // Use a conservative 1.4x multiplier as market estimate.
-  // This is honest: we're showing "lowest available vs estimated fair market"
-  const marketMultiplier = wantRatio > 0.5 ? 1.8 : wantRatio > 0.3 ? 1.5 : 1.35;
-  const marketPrice = +(askPrice * marketMultiplier).toFixed(2);
+  // Detect format
+  const formats  = release.formats || [];
+  const fmtNames = formats.map(f => (f.descriptions || []).join(' ')).join(' ').toLowerCase();
+  const is12inch = fmtNames.includes('12') || fmtNames.includes('ep');
 
-  // Only proceed if there's meaningful supply (someone is selling)
-  if (numForSale < 1) return null;
-
-  const wg = wantRatio > 0.6 ? 15 : wantRatio > 0.4 ? 7 : wantRatio > 0.2 ? 3 : 0;
+  // Want ratio for status
+  const wantRatio = (have + want) > 0 ? want / (have + want) : 0;
 
   let status = 'stable';
-  if (wantRatio > 0.5 && numForSale < 5)  status = 'rare';
-  else if (wantRatio > 0.4)               status = 'heat';
-  else if (wantRatio > 0.3)               status = 'rise';
-  else if (wantRatio < 0.15)              status = 'cool';
+  if (lowest < (is12inch ? 5 : 10) && want > 100)   status = 'heat';
+  else if (wantRatio > 0.3 && numForSale < 10)       status = 'rare';
+  else if (wantRatio > 0.2)                          status = 'rise';
+  else if (wantRatio < 0.08)                         status = 'cool';
 
-  const track = (askPrice > 80 && numForSale < 8) ? 'B' : 'A';
-
-  // Genre
-  const genreArr  = release.genres  || [];
-  const styleArr  = release.styles  || [];
-  const allTags   = [...genreArr, ...styleArr].map(s => s.toLowerCase()).join(' ');
+  // Genre tags
+  const allTags = [...(release.genres||[]), ...(release.styles||[])].join(' ').toLowerCase();
   let genre = 'other';
-  if (allTags.includes('jazz'))                                                      genre = 'jazz';
-  else if (allTags.includes('house') || allTags.includes('techno') || allTags.includes('electronic') || allTags.includes('ambient') || allTags.includes('drum')) genre = 'electronic';
-  else if (allTags.includes('soul') || allTags.includes('funk') || allTags.includes('r&b')) genre = 'soul';
-  else if (allTags.includes('rock') || allTags.includes('punk') || allTags.includes('metal')) genre = 'rock';
-  else if (allTags.includes('hip') || allTags.includes('rap'))                       genre = 'hip-hop';
-  else if (allTags.includes('reggae') || allTags.includes('dub'))                    genre = 'reggae';
+  if (allTags.includes('jazz'))                                                              genre = 'jazz';
+  else if (allTags.includes('house')||allTags.includes('techno')||allTags.includes('electronic')||allTags.includes('ambient')||allTags.includes('drum')) genre = 'electronic';
+  else if (allTags.includes('soul')||allTags.includes('funk')||allTags.includes('r&b'))     genre = 'soul';
+  else if (allTags.includes('rock')||allTags.includes('punk')||allTags.includes('metal'))   genre = 'rock';
+  else if (allTags.includes('hip')||allTags.includes('rap'))                                genre = 'hip-hop';
+  else if (allTags.includes('reggae')||allTags.includes('dub'))                             genre = 'reggae';
 
   const artistsArr = release.artists || [];
-  const artist = base.artist || (artistsArr[0]?.name || 'Unknown').replace(/\s*\(\d+\)$/, '');
+  const artist = base.artist || (artistsArr[0]?.name||'Unknown').replace(/\s*\(\d+\)$/,'');
   const title  = base.title  || release.title || 'Unknown';
-  const label  = (release.labels || [{ name: '—' }])[0]?.name || '—';
+  const label  = (release.labels||[{name:'—'}])[0]?.name || '—';
   const year   = release.year || base.year || '—';
   const country = release.country || '—';
   const thumb  = base.thumb || release.thumb || release.images?.[0]?.uri150 || null;
 
   const record = {
     id: releaseId,
-    artist, title, label, year, genre, status, track, country,
-    condition: 'VG+',
+    artist, title, label, year, genre, status, country,
+    is12inch, numForSale, have, want, wantRatio,
+    lowest: +lowest.toFixed(2),
+    // Keep ask/market for display compatibility
+    ask:    +lowest.toFixed(2),
+    market: +(lowest * (wantRatio > 0.25 ? 2.2 : wantRatio > 0.15 ? 1.7 : 1.4)).toFixed(2),
     pressing: country !== '—' ? country + ' Press' : '—',
-    ask:    +askPrice.toFixed(2),
-    market: marketPrice,
-    salesPer30: Math.min(numForSale * 3, 50),
-    wantRatio,
-    wantlistGrowth: wg,
-    numForSale, have, want,
+    condition: 'VG+',
     thumb,
     url: `https://www.discogs.com/release/${releaseId}`,
     live: true
@@ -641,23 +640,24 @@ async function enrichById(releaseId, base = {}) {
 ═══════════════════════════════ */
 function dealRow(r) {
   const s   = r.score || scoreRecord(r);
-  const abs = (r.market - r.ask).toFixed(0);
-  const pct = Math.round((1 - r.ask/r.market)*100);
   const wlTag = userWantlist.some(w => w.id === r.id)
     ? `<span style="font-family:var(--mono);font-size:9px;color:var(--green);border:1px solid var(--gdim);padding:2px 5px;margin-left:6px;background:rgba(29,185,84,.08)">★ WANT</span>`
     : '';
+  const price  = r.lowest || r.ask;
+  const demand = r.want >= 500 ? `<span style="color:var(--green);font-family:var(--mono);font-size:11px">${r.want} want</span>`
+    : r.want >= 100 ? `<span style="color:var(--amber);font-family:var(--mono);font-size:11px">${r.want} want</span>`
+    : `<span style="color:var(--t3);font-family:var(--mono);font-size:11px">${r.want} want</span>`;
   return `<tr class="dt-row" onclick="window.open('${r.url}','_blank')">
     <td><div class="td-artist">${r.artist}${wlTag}</div><div class="td-sub">${r.title} · ${r.label} · ${r.year}</div></td>
     <td><span class="td-tag">${r.pressing}</span></td>
-    <td><span class="td-tag">${r.condition}</span></td>
-    <td class="td-mono">£${r.ask}</td>
-    <td class="td-sm">£${r.market}</td>
-    <td style="font-family:var(--mono);font-size:13px;color:var(--green)">−£${abs}<span style="color:var(--t3);font-size:11px;margin-left:4px">(${pct}%)</span></td>
+    <td><span class="td-tag">${r.is12inch ? '12"' : 'LP'}</span></td>
+    <td class="td-mono" style="color:var(--green)">£${price}</td>
+    <td>${demand}</td>
     <td>${liqLabel(r)}</td>
     <td>${statusPill(r.status)}</td>
     <td><span class="${gradeClass(s)}">${s}</span></td>
-    <td><span class="tr-badge">TRACK ${r.track}</span></td>
-    <td><a href="${r.url}" target="_blank" onclick="event.stopPropagation()" class="view-btn">VIEW ↗</a></td>
+    <td><span class="td-tag">${r.numForSale} for sale</span></td>
+    <td><a href="${r.url}" target="_blank" onclick="event.stopPropagation()" class="view-btn">BUY ↗</a></td>
   </tr>`;
 }
 
@@ -781,7 +781,6 @@ function crateProgress(pct, msg, found) {
 async function runDiscover() {
   const genre    = document.getElementById('disc-genre').value;
   const maxPrice = +document.getElementById('disc-price').value;
-  const minScore = +document.getElementById('disc-score').value;
   const depth    = +document.getElementById('disc-depth').value;
   const btn      = document.getElementById('disc-run');
 
@@ -837,7 +836,7 @@ async function runDiscover() {
       if (!r) continue;
       allScored.push(r);
       if (r.ask > maxPrice) continue;
-      if (r.score < minScore) continue;
+      // No score floor — show everything that has real data
       deals.push(r);
     }
 
