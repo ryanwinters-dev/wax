@@ -195,7 +195,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:52px;background:rgba(
 .disc-result-title{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--t3)}
 
 /* ── WANTLIST ── */
-.wl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:1px;background:var(--b1)}
+.wl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1px;background:var(--b1)}
 .wl-card{background:var(--bg);padding:20px 22px;display:flex;flex-direction:column;gap:7px;cursor:pointer;transition:background .12s}
 .wl-card:hover{background:var(--s1)}
 .wl-genre{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--t3)}
@@ -767,81 +767,186 @@ function setCrateProgress(pct, msg, found) {
 
 /* ═══════════════════════════════════════════
    DISCOVER ENGINE
+   Strategy: query marketplace/search directly
+   (guaranteed priced listings) then enrich
 ═══════════════════════════════════════════ */
-const DISC_QUERIES = {
-  all:        ['jazz vinyl original pressing','electronic vinyl first press','soul funk vinyl original','rare vinyl collectable','hip hop vinyl original'],
-  jazz:       ['jazz vinyl original pressing blue note','jazz vinyl impulse prestige','jazz vinyl rare collectable'],
-  electronic: ['electronic vinyl warp records','electronic vinyl techno first press','ambient vinyl original pressing'],
-  soul:       ['soul vinyl original pressing','funk vinyl rare','soul 45 original pressing'],
-  rock:       ['rock vinyl original pressing','punk vinyl first press','alternative vinyl rare'],
-  'hip-hop':  ['hip hop vinyl original pressing','rap vinyl rare','hip hop 12 inch original'],
-  classical:  ['classical vinyl original pressing','classical vinyl rare collectable']
+
+// Genre style tags that map well to Discogs genre field
+const GENRE_STYLES = {
+  all:        ['Jazz','Electronic','Soul','Funk','Hip Hop','Rock','Classical'],
+  jazz:       ['Jazz'],
+  electronic: ['Electronic'],
+  soul:       ['Soul','Funk'],
+  rock:       ['Rock'],
+  'hip-hop':  ['Hip Hop'],
+  classical:  ['Classical']
 };
 
+async function fetchMarketplaceListings(style, maxPrice, page=1) {
+  // Use marketplace search — returns actual for-sale listings with prices
+  const url = `/marketplace/search?style=${encodeURIComponent(style)}&format=Vinyl&currency=GBP&price_max=${maxPrice}&sort=price&sort_order=asc&per_page=25&page=${page}`;
+  try {
+    const data = await api(url);
+    return data.results || [];
+  } catch {
+    return [];
+  }
+}
+
 async function runDiscover() {
-  const genre = document.getElementById('disc-genre').value;
-  const maxPrice = +document.getElementById('disc-price').value;
-  const minScore = +document.getElementById('disc-minscore').value;
-  const condFilter = document.getElementById('disc-cond').value;
+  const genre     = document.getElementById('disc-genre').value;
+  const maxPrice  = +document.getElementById('disc-price').value;
+  const minScore  = +document.getElementById('disc-minscore').value;
+  const condFilter= document.getElementById('disc-cond').value;
 
   const btn = document.getElementById('disc-run');
   btn.disabled = true;
   showCrate();
 
-  const queries = DISC_QUERIES[genre] || DISC_QUERIES.all;
-  const allReleases = [];
-  const seen = new Set();
+  const styles = GENRE_STYLES[genre] || GENRE_STYLES.all;
+  const allListings = [];
+  const seenRelease = new Set();
 
-  for (let i = 0; i < queries.length; i++) {
-    const q = queries[i];
-    const pct = Math.round((i / queries.length) * 70);
+  // Step 1: Pull marketplace listings per style
+  for (let i = 0; i < styles.length; i++) {
+    const style = styles[i];
+    const pct = Math.round((i / styles.length) * 45);
     setCrateProgress(pct, CRATE_MSGS[i % CRATE_MSGS.length]);
 
-    try {
-      const res = await api(`/database/search?q=${encodeURIComponent(q)}&type=release&per_page=10&format=Vinyl`);
-      const releases = (res.results || []).filter(r => !seen.has(r.id));
-      releases.forEach(r => seen.add(r.id));
-      allReleases.push(...releases.slice(0, 6));
-    } catch {}
+    const listings = await fetchMarketplaceListings(style, maxPrice);
 
-    await new Promise(r => setTimeout(r, 300)); // rate limit breathing room
+    for (const l of listings) {
+      const releaseId = l.release?.id || l.id;
+      if (!releaseId || seenRelease.has(releaseId)) continue;
+
+      // Apply condition filter at listing level
+      const cond = (l.condition || '').toLowerCase();
+      if (condFilter === 'vgplus' && !cond.includes('vg+') && !cond.includes('nm')) continue;
+      if (condFilter === 'nm' && !cond.includes('nm')) continue;
+
+      seenRelease.add(releaseId);
+      allListings.push({
+        id: releaseId,
+        listingPrice: l.price?.value || null,
+        condition: l.condition || 'VG+',
+        seller: l.seller?.username || '—',
+        listingUrl: l.uri ? `https://www.discogs.com${l.uri}` : `https://www.discogs.com/sell/release/${releaseId}`,
+        title: l.release?.title || '—',
+        artist: l.release?.artist || '—',
+        thumb: l.release?.thumbnail || null,
+        year: l.release?.year || '—',
+        label: l.release?.label || '—',
+        country: l.release?.country || '—',
+      });
+    }
+    await sleep(300);
   }
 
-  setCrateProgress(72, 'Pulling prices and market data…');
+  setCrateProgress(48, `Found ${allListings.length} listings — fetching market data…`);
 
-  // Enrich in batches of 4 to respect rate limit
+  if (!allListings.length) {
+    setCrateProgress(100, 'No listings found — try adjusting price or genre.');
+    await sleep(1500);
+    hideCrate();
+    document.getElementById('disc-tbody').innerHTML = `<tr><td colspan="11" class="empty-cell">No listings found. Try raising the max price or broadening the genre.</td></tr>`;
+    btn.disabled = false;
+    return;
+  }
+
+  // Step 2: Enrich with market stats + community data in batches
   const enriched = [];
-  for (let i = 0; i < allReleases.length; i += 4) {
-    const batch = allReleases.slice(i, i+4);
-    const results = await Promise.all(batch.map(enrich));
-    enriched.push(...results);
-    const pct = 72 + Math.round((i / allReleases.length) * 22);
-    const deals = enriched.filter(r => r.ask && r.market && r.ask < r.market && score(r) >= minScore);
-    setCrateProgress(pct, 'Scoring and filtering…', deals.length);
-    await new Promise(r => setTimeout(r, 200));
+  const batch = 4;
+  for (let i = 0; i < allListings.length; i += batch) {
+    const chunk = allListings.slice(i, i+batch);
+    const results = await Promise.all(chunk.map(l => enrichFromListing(l)));
+    enriched.push(...results.filter(Boolean));
+
+    const goodDeals = enriched.filter(r => r.ask && r.market && r.ask < r.market && score(r) >= minScore);
+    const pct = 48 + Math.round(((i+batch) / allListings.length) * 46);
+    setCrateProgress(Math.min(pct, 94), `Scoring ${enriched.length} records…`, goodDeals.length);
+    await sleep(250);
   }
 
-  setCrateProgress(100, 'Done.');
-  await new Promise(r => setTimeout(r, 600));
+  setCrateProgress(100, 'Done digging.');
+  await sleep(700);
   hideCrate();
 
-  // Apply all filters
+  // Final filter
   discoverResults = enriched.filter(r => {
     if (!r.ask || !r.market || r.ask >= r.market) return false;
     if (score(r) < minScore) return false;
     if (r.ask > maxPrice) return false;
-    if (condFilter === 'vgplus' && r.condition === 'VG') return false;
-    if (condFilter === 'nm' && r.condition !== 'NM') return false;
     return true;
   });
 
   discoverResults.sort((a,b) => score(b)-score(a));
-
   renderDiscoverResults();
   updateDiscoverStats();
-  if (discoverResults.length) updateHomeHero(discoverResults[0], discoverResults);
+  if (discoverResults.length) {
+    updateHomeHero(discoverResults[0], discoverResults);
+    // Re-render wantlist now we have deal data
+    renderWantlist();
+    renderWantlistHomeGrid();
+  }
   btn.disabled = false;
 }
+
+// Enrich a marketplace listing with stats + community data
+async function enrichFromListing(l) {
+  const [stats, release] = await Promise.all([
+    safeApi(`/marketplace/stats/${l.id}?curr_abbr=GBP`),
+    safeApi(`/releases/${l.id}`)
+  ]);
+
+  const comm    = release?.community || {};
+  const have    = comm.have  || 0;
+  const want    = comm.want  || 0;
+  const wantRatio = have > 0 ? Math.min(want/have, 1) : 0;
+  const numForSale= stats?.num_for_sale || 0;
+  const median  = stats?.median?.value  || null;
+  const lowest  = l.listingPrice || stats?.lowest_price?.value || null;
+
+  // Must have a median to score meaningfully
+  if (!median || !lowest) return null;
+
+  const wg = wantRatio>0.6?'+15%':wantRatio>0.4?'+7%':wantRatio>0.2?'+3%':'0%';
+
+  let status = 'stable';
+  if (wantRatio>0.5 && numForSale<5)                           status='rare';
+  else if (wantRatio>0.4 && lowest < median*0.75)              status='heat';
+  else if (wantRatio>0.3)                                      status='rise';
+  else if (wantRatio<0.15)                                     status='cool';
+
+  const track = (median > 80 && numForSale < 8) ? 'B' : 'A';
+
+  const gs = ((release?.genres||release?.styles||['other'])[0]||'other').toLowerCase();
+  let genre = 'other';
+  if (gs.includes('jazz'))                                                      genre='jazz';
+  else if (gs.includes('electronic')||gs.includes('techno')||gs.includes('house')||gs.includes('ambient')) genre='electronic';
+  else if (gs.includes('soul')||gs.includes('funk')||gs.includes('r&b'))       genre='soul';
+  else if (gs.includes('rock')||gs.includes('punk')||gs.includes('metal'))     genre='rock';
+  else if (gs.includes('hip'))                                                  genre='hip-hop';
+
+  return {
+    id:       l.id,
+    artist:   l.artist  || (release?.artists_sort) || 'Unknown',
+    title:    l.title   || release?.title || 'Unknown',
+    label:    l.label   || (release?.labels||[{name:'—'}])[0].name,
+    year:     l.year    || release?.year || '—',
+    genre, status, track,
+    condition:  l.condition || 'VG+',
+    pressing:   l.country   || release?.country || '—',
+    ask:        +lowest.toFixed(2),
+    market:     +median.toFixed(2),
+    salesPer30: Math.min(numForSale*3, 50),
+    wantRatio, wg, numForSale, have, want,
+    thumb:      l.thumb || release?.thumb || release?.images?.[0]?.uri150 || null,
+    url:        l.listingUrl || `https://www.discogs.com/release/${l.id}`,
+    live:       true
+  };
+}
+
+const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 function renderDiscoverResults() {
   const tbody = document.getElementById('disc-tbody');
@@ -879,32 +984,160 @@ function updateHomeHero(best, all) {
 }
 
 /* ═══════════════════════════════════════════
-   LIVE WANTLIST FROM DISCOGS
+   LIVE WANTLIST — with full scoring analysis
 ═══════════════════════════════════════════ */
 async function loadWantlist() {
+  document.getElementById('wl-grid').innerHTML = `<div style="padding:32px;color:var(--t3);font-family:var(--mono);font-size:12px"><div style="display:inline-block;width:12px;height:12px;border:1px solid var(--b2);border-top-color:var(--t2);border-radius:50%;animation:spin .8s linear infinite;margin-right:8px;vertical-align:middle"></div>Loading wantlist from Discogs…</div>`;
   try {
     const data = await api(`/users/${DISCOGS_USER}/wants?per_page=50&sort=added&sort_order=desc`);
     const wants = data.wants || [];
+
+    // Build base wantlist
     userWantlist = wants.map(w => ({
-      id: w.basic_information?.id,
+      id:     w.basic_information?.id,
       artist: (w.basic_information?.artists||[{name:'Unknown'}])[0].name,
-      title: w.basic_information?.title || 'Unknown',
-      label: (w.basic_information?.labels||[{name:'—'}])[0].name,
-      year: w.basic_information?.year || '—',
-      thumb: w.basic_information?.thumb || null,
-      url: `https://www.discogs.com/release/${w.basic_information?.id}`
+      title:  w.basic_information?.title || 'Unknown',
+      label:  (w.basic_information?.labels||[{name:'—'}])[0].name,
+      year:   w.basic_information?.year  || '—',
+      thumb:  w.basic_information?.thumb || null,
+      url:    `https://www.discogs.com/release/${w.basic_information?.id}`,
+      scored: null  // will be enriched below
     }));
 
-    document.getElementById('h-wl-count').textContent = userWantlist.length;
+    document.getElementById('h-wl-count').textContent    = userWantlist.length;
     document.getElementById('wl-count-badge').textContent = `(${userWantlist.length})`;
     document.getElementById('wl-live-badge').style.display = 'inline-block';
-    document.getElementById('port-wl').textContent = userWantlist.length;
+    document.getElementById('port-wl').textContent        = userWantlist.length;
 
+    // Show immediately with loading states, then score in background
     renderWantlist();
     renderWantlistHomeGrid();
+
+    // Enrich each wantlist item with scoring data in batches
+    const batchSize = 3;
+    for (let i = 0; i < userWantlist.length; i += batchSize) {
+      const chunk = userWantlist.slice(i, i+batchSize);
+      await Promise.all(chunk.map(async (w, idx) => {
+        if (!w.id) return;
+        const scored = await enrichFromListing({
+          id: w.id, artist: w.artist, title: w.title,
+          label: w.label, year: w.year, thumb: w.thumb,
+          listingPrice: null, condition: 'VG+',
+          country: '—', listingUrl: w.url
+        });
+        if (scored) {
+          userWantlist[i+idx].scored = scored;
+        }
+      }));
+      // Re-render incrementally as scores come in
+      renderWantlist();
+      await sleep(400);
+    }
+
+    renderWantlistHomeGrid();
+
   } catch(e) {
-    document.getElementById('wl-grid').innerHTML = `<div style="padding:32px;color:var(--t3);font-family:var(--mono);font-size:12px">Could not load wantlist — check your token has read permissions</div>`;
+    document.getElementById('wl-grid').innerHTML = `<div style="padding:32px;color:var(--t3);font-family:var(--mono);font-size:12px">Could not load wantlist — check token permissions</div>`;
   }
+}
+
+function wantlistScoreCard(w) {
+  const r = w.scored;
+  const img = w.thumb
+    ? `<img src="${w.thumb}" style="width:48px;height:48px;object-fit:cover;flex-shrink:0;border:1px solid var(--b1)" alt="">`
+    : `<div style="width:48px;height:48px;background:var(--s2);flex-shrink:0;border:1px solid var(--b1)"></div>`;
+
+  // No scoring data yet
+  if (!r) {
+    return `<div class="wl-card">
+      <div style="display:flex;gap:12px;align-items:flex-start">
+        ${img}
+        <div style="min-width:0">
+          <div class="wl-title">${w.title}</div>
+          <div class="wl-artist">${w.artist}</div>
+          <div class="wl-genre">${w.label} · ${w.year}</div>
+        </div>
+      </div>
+      <div class="wl-no">Analysing…</div>
+    </div>`;
+  }
+
+  const s      = score(r);
+  const g      = grade(s);
+  const saving = r.ask && r.market ? (r.market - r.ask).toFixed(0) : null;
+  const pct    = r.ask && r.market ? Math.round((1-r.ask/r.market)*100) : null;
+
+  // Buy signal strength
+  let signal, signalStyle;
+  if (s >= 72 && saving) {
+    signal = '▲ BUY NOW';
+    signalStyle = 'color:var(--green);border:1px solid var(--gdim);background:rgba(29,185,84,.08)';
+  } else if (s >= 50 && saving) {
+    signal = '◆ WATCH';
+    signalStyle = 'color:var(--amber);border:1px solid var(--adim);background:rgba(200,149,42,.07)';
+  } else if (!saving) {
+    signal = '— NO LISTING';
+    signalStyle = 'color:var(--t3);border:1px solid var(--b1)';
+  } else {
+    signal = '↓ HOLD';
+    signalStyle = 'color:var(--t3);border:1px solid var(--b1)';
+  }
+
+  return `<div class="wl-card" onclick="window.open('${r.url}','_blank')">
+    <div style="display:flex;gap:12px;align-items:flex-start">
+      ${img}
+      <div style="min-width:0;flex:1">
+        <div class="wl-title">${w.title}</div>
+        <div class="wl-artist">${w.artist}</div>
+        <div class="wl-genre">${w.label} · ${w.year}</div>
+      </div>
+      <span class="sp ${r.status ? 'sp-'+r.status : ''}" style="flex-shrink:0">${r.status ? r.status.toUpperCase() : '—'}</span>
+    </div>
+
+    <!-- Score breakdown -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--b1);margin-top:8px">
+      <div style="background:var(--bg);padding:8px 10px">
+        <div style="font-family:var(--mono);font-size:9px;color:var(--t3);letter-spacing:.08em;margin-bottom:3px">SCORE</div>
+        <div class="${g}" style="font-size:15px">${s}</div>
+      </div>
+      <div style="background:var(--bg);padding:8px 10px">
+        <div style="font-family:var(--mono);font-size:9px;color:var(--t3);letter-spacing:.08em;margin-bottom:3px">ASK</div>
+        <div style="font-family:var(--mono);font-size:13px">${r.ask ? '£'+r.ask : '—'}</div>
+      </div>
+      <div style="background:var(--bg);padding:8px 10px">
+        <div style="font-family:var(--mono);font-size:9px;color:var(--t3);letter-spacing:.08em;margin-bottom:3px">MARKET</div>
+        <div style="font-family:var(--mono);font-size:13px">${r.market ? '£'+r.market : '—'}</div>
+      </div>
+    </div>
+
+    <!-- Key signals -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--b1)">
+      <div style="background:var(--bg);padding:6px 10px">
+        <div style="font-family:var(--mono);font-size:9px;color:var(--t3);letter-spacing:.08em;margin-bottom:2px">SAVING</div>
+        <div style="font-family:var(--mono);font-size:12px;color:${saving?'var(--green)':'var(--t3)'}">${saving ? '−£'+saving+' ('+pct+'%)' : 'No listing'}</div>
+      </div>
+      <div style="background:var(--bg);padding:6px 10px">
+        <div style="font-family:var(--mono);font-size:9px;color:var(--t3);letter-spacing:.08em;margin-bottom:2px">DEMAND</div>
+        <div style="font-family:var(--mono);font-size:12px;color:var(--t2)">${r.want || 0} want · ${r.have || 0} have</div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--b1)">
+      <div style="background:var(--bg);padding:6px 10px">
+        <div style="font-family:var(--mono);font-size:9px;color:var(--t3);letter-spacing:.08em;margin-bottom:2px">WANTLIST TREND</div>
+        <div style="font-family:var(--mono);font-size:12px;color:${r.wg&&r.wg.startsWith('+')?'var(--green)':'var(--t3)'}">${r.wg || '—'}</div>
+      </div>
+      <div style="background:var(--bg);padding:6px 10px">
+        <div style="font-family:var(--mono);font-size:9px;color:var(--t3);letter-spacing:.08em;margin-bottom:2px">FOR SALE</div>
+        <div style="font-family:var(--mono);font-size:12px;color:${(r.numForSale||0)<5?'var(--blue)':'var(--t2)'}">${r.numForSale || 0} copies</div>
+      </div>
+    </div>
+
+    <!-- Signal -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:6px">
+      <span style="font-family:var(--mono);font-size:10px;letter-spacing:.1em;padding:4px 10px;${signalStyle}">${signal}</span>
+      <span style="font-family:var(--mono);font-size:9px;color:var(--t3)">TRACK ${r.track}</span>
+    </div>
+  </div>`;
 }
 
 function renderWantlist() {
@@ -913,24 +1146,11 @@ function renderWantlist() {
     grid.innerHTML = `<div style="padding:32px;color:var(--t3);font-family:var(--mono);font-size:12px">Your Discogs wantlist is empty</div>`;
     return;
   }
-  grid.innerHTML = userWantlist.map(w => {
-    const disc = discoverResults.find(r => r.id === w.id);
-    const img = w.thumb ? `<img src="${w.thumb}" style="width:40px;height:40px;object-fit:cover;flex-shrink:0" alt="">` : `<div style="width:40px;height:40px;background:var(--s2);flex-shrink:0"></div>`;
-    const dealInfo = disc
-      ? `<div class="wl-mkt" style="color:var(--green)">DEAL: £${disc.ask} (−£${(disc.market-disc.ask).toFixed(0)} below mkt)</div>`
-      : `<div class="wl-no">No deal flagged</div>`;
-    return `<div class="wl-card" onclick="window.open('${w.url}','_blank')">
-      <div style="display:flex;gap:10px;align-items:flex-start">
-        ${img}
-        <div>
-          <div class="wl-title" style="font-size:13px">${w.title}</div>
-          <div class="wl-artist">${w.artist}</div>
-          <div class="wl-genre" style="margin-top:2px">${w.label} · ${w.year}</div>
-        </div>
-      </div>
-      ${dealInfo}
+  grid.innerHTML = userWantlist.map(wantlistScoreCard).join('') +
+    `<div class="wl-card" onclick="window.open('https://www.discogs.com/wantlist','_blank')" style="align-items:center;justify-content:center;min-height:120px;display:flex;flex-direction:column;gap:6px">
+      <div style="font-size:18px;color:var(--t3)">+</div>
+      <div style="font-size:12px;color:var(--t3)">Manage on Discogs</div>
     </div>`;
-  }).join('') + `<div class="wl-card" onclick="window.open('https://www.discogs.com/wantlist','_blank')" style="align-items:center;justify-content:center;min-height:100px;display:flex;flex-direction:column;gap:6px"><div style="font-size:18px;color:var(--t3)">+</div><div style="font-size:12px;color:var(--t3)">Manage on Discogs</div></div>`;
 }
 
 function renderWantlistHomeGrid() {
