@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WAX</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:       #080808;
+  --s1:       #111111;
+  --s2:       #1A1A1A;
+  --border:   #222222;
+  --border2:  #2E2E2E;
+  --text:     #F0F0F0;
+  --text2:    #888888;
+  --text3:    #444444;
+  --mono:     'DM Mono', monospace;
+  --sans:     'DM Sans', sans-serif;
+  /* semantic colour — used sparingly */
+  --green:    #1DB954;
+  --green-dim:#155E30;
+  --amber:    #C8952A;
+  --amber-dim:#6B4E12;
+  --red:      #C0392B;
+  --red-dim:  #5E1A14;
+  --blue:     #4A9EBF;
+  --blue-dim: #1A4A5E;
+}
+
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--text); font-family: var(--sans); font-size: 14px; line-height: 1.5; min-height: 100vh; }
+button { cursor: pointer; font-family: var(--sans); }
+a { text-decoration: none; color: inherit; }
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  height: 52px;
+  background: rgba(8,8,8,0.96);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 32px;
+}
+.nav-logo {
+  font-family: var(--mono); font-weight: 500; font-size: 16px;
+  letter-spacing: 0.18em; color: var(--text);
+}
+.nav-links { display: flex; gap: 2px; }
+.nav-link {
+  background: none; border: none; color: var(--text2);
+  font-family: var(--sans); font-size: 13px; font-weight: 400;
+  padding: 6px 14px; letter-spacing: 0.02em;
+  transition: color 0.15s; border-radius: 4px;
+}
+.nav-link:hover { color: var(--text); }
+.nav-link.active { color: var(--text); background: var(--s2); }
+.nav-right { display: flex; align-items: center; gap: 16px; }
+.nav-status {
+  font-family: var(--mono); font-size: 11px; color: var(--text3);
+  letter-spacing: 0.06em; display: flex; align-items: center; gap: 6px;
+}
+.pulse { width: 5px; height: 5px; border-radius: 50%; background: var(--green); animation: blink 3s infinite; }
+.nav-status { color: var(--green) !important; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+/* ── PAGES ── */
+.page { display: none; padding-top: 52px; min-height: 100vh; }
+.page.active { display: block; }
+
+/* ── HOME ── */
+.home-hero {
+  border-bottom: 1px solid var(--border);
+  padding: 72px 32px 56px;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+}
+.hero-left { padding-right: 64px; border-right: 1px solid var(--border); }
+.hero-eyebrow {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em;
+  color: var(--text3); text-transform: uppercase; margin-bottom: 20px;
+}
+.hero-number {
+  font-family: var(--mono); font-size: clamp(56px, 8vw, 96px);
+  font-weight: 300; line-height: 1; color: var(--green); letter-spacing: -0.02em;
+}
+.hero-label {
+  font-size: 13px; color: var(--text2); margin-top: 12px; font-weight: 300;
+}
+.hero-record-title {
+  font-size: 18px; font-weight: 500; margin-top: 28px; color: var(--text);
+}
+.hero-record-meta { font-size: 13px; color: var(--text2); margin-top: 4px; }
+.hero-buy-btn {
+  margin-top: 28px;
+  background: var(--text); color: var(--bg);
+  border: none; padding: 12px 28px;
+  font-family: var(--mono); font-size: 12px; letter-spacing: 0.1em;
+  font-weight: 500; transition: opacity 0.15s;
+}
+.hero-buy-btn:hover { opacity: 0.85; }
+.hero-right { padding-left: 64px; display: flex; flex-direction: column; justify-content: center; gap: 32px; }
+.hero-stat-row { display: flex; flex-direction: column; gap: 4px; }
+.hero-stat-val { font-family: var(--mono); font-size: 28px; font-weight: 300; color: var(--text); }
+.hero-stat-lbl { font-size: 12px; color: var(--text3); }
+
+/* ── SECTION ── */
+.section { padding: 48px 32px; border-bottom: 1px solid var(--border); }
+.section-head {
+  display: flex; align-items: baseline; justify-content: space-between;
+  margin-bottom: 28px;
+}
+.section-title {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--text3);
+}
+.section-action {
+  font-size: 12px; color: var(--text3); background: none; border: none;
+  font-family: var(--sans); transition: color 0.15s;
+}
+.section-action:hover { color: var(--text2); }
+
+/* ── TICKER ── */
+.ticker-wrap { overflow: hidden; position: relative; }
+.ticker-track {
+  display: flex; gap: 0; animation: ticker 28s linear infinite;
+  width: max-content;
+}
+.ticker-track:hover { animation-play-state: paused; }
+@keyframes ticker { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+.ticker-item {
+  display: flex; align-items: center; gap: 20px;
+  padding: 0 40px 0 0; white-space: nowrap;
+}
+.ticker-artist { font-size: 13px; font-weight: 500; }
+.ticker-change {
+  font-family: var(--mono); font-size: 11px; color: var(--text2);
+}
+.ticker-divider { color: var(--border2); font-size: 18px; }
+
+/* ── RECORD GRID ── */
+.record-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1px; background: var(--border);
+}
+.record-card {
+  background: var(--bg); padding: 20px;
+  transition: background 0.12s; cursor: pointer;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.record-card:hover { background: var(--s1); }
+.rc-cover {
+  width: 100%; aspect-ratio: 1;
+  background: var(--s2);
+  display: flex; align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
+}
+.rc-vinyl {
+  width: 72%; height: 72%; border-radius: 50%;
+  background: repeating-radial-gradient(circle, #1a1a1a 0px, #111 2px, #1a1a1a 4px);
+  position: relative;
+}
+.rc-vinyl::after {
+  content: ''; position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+  width: 22%; height: 22%; border-radius: 50%; background: var(--bg);
+}
+.rc-status {
+  font-family: var(--mono); font-size: 9px; letter-spacing: 0.12em;
+  font-weight: 500; color: var(--text2);
+}
+.rc-title { font-size: 13px; font-weight: 500; line-height: 1.3; }
+.rc-artist { font-size: 12px; color: var(--text2); }
+.rc-price-row { display: flex; align-items: baseline; justify-content: space-between; margin-top: 2px; }
+.rc-price { font-family: var(--mono); font-size: 14px; font-weight: 400; }
+.rc-market { font-family: var(--mono); font-size: 11px; color: var(--text3); }
+
+/* ── DEALS PAGE ── */
+.deals-controls {
+  padding: 20px 32px; border-bottom: 1px solid var(--border);
+  display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+}
+.search-box {
+  flex: 1; min-width: 200px;
+  background: var(--s1); border: 1px solid var(--border);
+  color: var(--text); font-family: var(--sans); font-size: 13px;
+  padding: 9px 14px; outline: none; transition: border-color 0.15s;
+}
+.search-box:focus { border-color: var(--text3); }
+.search-box::placeholder { color: var(--text3); }
+.filter-btn {
+  background: none; border: 1px solid var(--border);
+  color: var(--text3); font-family: var(--mono); font-size: 11px;
+  letter-spacing: 0.08em; padding: 8px 14px;
+  transition: all 0.15s;
+}
+.filter-btn:hover { border-color: var(--text3); color: var(--text2); }
+.filter-btn.on { border-color: var(--text2); color: var(--text); background: var(--s2); }
+
+.deals-stats {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  border-bottom: 1px solid var(--border);
+}
+.ds-cell {
+  padding: 20px 32px; border-right: 1px solid var(--border);
+}
+.ds-cell:last-child { border-right: none; }
+.ds-val { font-family: var(--mono); font-size: 24px; font-weight: 300; }
+.ds-lbl { font-size: 11px; color: var(--text3); margin-top: 4px; letter-spacing: 0.04em; }
+
+.deals-table { width: 100%; border-collapse: collapse; }
+.dt-head th {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em;
+  color: var(--text3); font-weight: 400; text-align: left;
+  padding: 12px 16px; border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+.dt-row { border-bottom: 1px solid var(--border); transition: background 0.1s; cursor: pointer; }
+.dt-row:hover { background: var(--s1); }
+.dt-row td { padding: 14px 16px; vertical-align: middle; }
+.dt-artist { font-size: 13px; font-weight: 500; }
+.dt-title { font-size: 12px; color: var(--text2); margin-top: 2px; }
+.dt-mono { font-family: var(--mono); font-size: 13px; }
+.dt-small { font-family: var(--mono); font-size: 11px; color: var(--text2); }
+.dt-tag {
+  font-family: var(--mono); font-size: 9px; letter-spacing: 0.1em;
+  padding: 3px 7px; border: 1px solid var(--border2); color: var(--text2);
+  display: inline-block; white-space: nowrap;
+}
+.dt-score {
+  font-family: var(--mono); font-size: 12px; font-weight: 500;
+  letter-spacing: 0.06em;
+}
+.score-a { color: var(--green); }
+.score-b { color: var(--amber); }
+.score-c { color: var(--red); }
+
+/* track badge */
+.track-badge {
+  font-family: var(--mono); font-size: 9px; letter-spacing: 0.08em;
+  padding: 2px 6px; border: 1px solid var(--border2); color: var(--text3);
+}
+
+/* ── WANTLIST ── */
+.wantlist-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1px; background: var(--border);
+}
+.wl-card {
+  background: var(--bg); padding: 22px 24px;
+  display: flex; flex-direction: column; gap: 8px;
+  transition: background 0.12s; cursor: pointer;
+}
+.wl-card:hover { background: var(--s1); }
+.wl-card.add-card {
+  align-items: center; justify-content: center;
+  min-height: 120px; gap: 6px;
+}
+.wl-genre { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; color: var(--text3); }
+.wl-title { font-size: 14px; font-weight: 500; }
+.wl-artist { font-size: 12px; color: var(--text2); }
+.wl-threshold { font-family: var(--mono); font-size: 12px; color: var(--text2); margin-top: 4px; }
+.wl-alert {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em;
+  color: var(--green); border: 1px solid var(--green-dim);
+  background: rgba(29,185,84,0.08);
+  padding: 3px 8px; align-self: flex-start; margin-top: 4px;
+}
+.wl-status { font-family: var(--mono); font-size: 10px; color: var(--text3); margin-top: 4px; }
+
+/* ── PROFILE ── */
+.profile-header {
+  padding: 48px 32px 40px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: flex-end; justify-content: space-between;
+}
+.profile-name { font-size: 28px; font-weight: 500; }
+.profile-handle { font-family: var(--mono); font-size: 13px; color: var(--text3); margin-top: 4px; }
+.profile-stats { display: flex; gap: 48px; }
+.ps-val { font-family: var(--mono); font-size: 22px; font-weight: 300; text-align: right; }
+.ps-lbl { font-size: 11px; color: var(--text3); text-align: right; margin-top: 3px; }
+
+.pnl-grid {
+  display: grid; grid-template-columns: repeat(5, 1fr);
+  border-bottom: 1px solid var(--border);
+}
+.pnl-cell {
+  padding: 24px 28px; border-right: 1px solid var(--border);
+}
+.pnl-cell:last-child { border-right: none; }
+.pnl-val { font-family: var(--mono); font-size: 20px; font-weight: 300; }
+.pnl-lbl { font-size: 11px; color: var(--text3); margin-top: 6px; }
+
+.portfolio-tabs {
+  display: flex; gap: 0; border-bottom: 1px solid var(--border); padding: 0 32px;
+}
+.ptab {
+  background: none; border: none; border-bottom: 1px solid transparent;
+  color: var(--text3); font-family: var(--sans); font-size: 13px;
+  padding: 14px 16px; margin-bottom: -1px; letter-spacing: 0.01em;
+  transition: all 0.15s;
+}
+.ptab:hover { color: var(--text2); }
+.ptab.active { color: var(--text); border-bottom-color: var(--text); }
+
+.portfolio-table { width: 100%; border-collapse: collapse; }
+.pt-head th {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em;
+  color: var(--text3); font-weight: 400; text-align: left;
+  padding: 12px 28px; border-bottom: 1px solid var(--border);
+}
+.pt-row { border-bottom: 1px solid var(--border); transition: background 0.1s; }
+.pt-row:hover { background: var(--s1); }
+.pt-row td { padding: 14px 28px; vertical-align: middle; }
+.pt-mono { font-family: var(--mono); font-size: 13px; }
+.pt-pos { font-family: var(--mono); font-size: 12px; color: var(--green); }
+.pt-neg { font-family: var(--mono); font-size: 12px; color: var(--red); }
+
+/* ── UTILITIES ── */
+.status-pill {
+  font-family: var(--mono); font-size: 9px; letter-spacing: 0.12em;
+  font-weight: 500; padding: 3px 7px; display: inline-block;
+}
+.sp-heat  { color: var(--green);  border: 1px solid var(--green);     background: rgba(29,185,84,0.08); }
+.sp-rise  { color: var(--green);  border: 1px solid var(--green-dim); background: rgba(29,185,84,0.04); opacity:0.8; }
+.sp-stable{ color: var(--amber);  border: 1px solid var(--amber-dim); background: rgba(200,149,42,0.07); }
+.sp-cool  { color: var(--red);    border: 1px solid var(--red-dim);   background: rgba(192,57,43,0.07); }
+.sp-rare  { color: var(--blue);   border: 1px solid var(--blue-dim);  background: rgba(74,158,191,0.08); }
+
+.divider { height: 1px; background: var(--border); }
+
+/* ── TOKEN GATE ── */
+#token-gate {
+  position: fixed; inset: 0; z-index: 999;
+  background: var(--bg);
+  display: flex; align-items: center; justify-content: center;
+}
+.gate-inner {
+  max-width: 420px; width: 100%; padding: 0 32px;
+  display: flex; flex-direction: column; gap: 24px;
+}
+.gate-logo { font-family: var(--mono); font-size: 22px; font-weight: 500; letter-spacing: 0.2em; }
+.gate-title { font-size: 15px; font-weight: 500; }
+.gate-sub { font-size: 13px; color: var(--text2); line-height: 1.6; }
+.gate-input {
+  background: var(--s1); border: 1px solid var(--border2);
+  color: var(--text); font-family: var(--mono); font-size: 13px;
+  padding: 12px 14px; outline: none; width: 100%;
+  letter-spacing: 0.04em; transition: border-color 0.15s;
+}
+.gate-input:focus { border-color: var(--text3); }
+.gate-input::placeholder { color: var(--text3); letter-spacing: 0.02em; font-family: var(--sans); }
+.gate-btn {
+  background: var(--text); color: var(--bg); border: none; padding: 12px 24px;
+  font-family: var(--mono); font-size: 12px; letter-spacing: 0.1em;
+  font-weight: 500; cursor: pointer; transition: opacity 0.15s; align-self: flex-start;
+}
+.gate-btn:hover { opacity: 0.85; }
+.gate-err { font-family: var(--mono); font-size: 11px; color: var(--red); letter-spacing: 0.04em; min-height: 16px; }
+.gate-note { font-size: 11px; color: var(--text3); line-height: 1.6; }
+
+/* ── API SEARCH ── */
+.api-search-row {
+  padding: 16px 32px; border-bottom: 1px solid var(--border);
+  display: flex; gap: 10px; align-items: center; background: var(--s1);
+}
+.api-search-input {
+  flex: 1; background: var(--bg); border: 1px solid var(--border2);
+  color: var(--text); font-family: var(--sans); font-size: 13px;
+  padding: 9px 14px; outline: none; transition: border-color 0.15s;
+}
+.api-search-input:focus { border-color: var(--text3); }
+.api-search-input::placeholder { color: var(--text3); }
+.api-search-btn {
+  background: var(--text); color: var(--bg); border: none;
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em;
+  padding: 9px 20px; cursor: pointer; transition: opacity 0.15s; white-space: nowrap;
+}
+.api-search-btn:hover { opacity: 0.85; }
+.api-search-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* ── LOADING ── */
+.loading-row {
+  padding: 48px 32px; text-align: center;
+  font-family: var(--mono); font-size: 12px; color: var(--text3); letter-spacing: 0.08em;
+}
+.spinner {
+  display: inline-block; width: 14px; height: 14px;
+  border: 1px solid var(--border2); border-top-color: var(--text2);
+  border-radius: 50%; animation: spin 0.8s linear infinite;
+  margin-right: 10px; vertical-align: middle;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.source-live {
+  font-family: var(--mono); font-size: 9px; letter-spacing: 0.1em;
+  color: var(--green); border: 1px solid var(--green-dim);
+  padding: 2px 6px; background: rgba(29,185,84,0.06);
+}
+
+@media (max-width: 768px) {
+  nav { padding: 0 16px; }
+  .nav-links .nav-link span { display: none; }
+  .home-hero { grid-template-columns: 1fr; }
+  .hero-left { border-right: none; border-bottom: 1px solid var(--border); padding: 0 0 40px; }
+  .hero-right { padding: 32px 0 0; }
+  .deals-stats { grid-template-columns: repeat(2,1fr); }
+  .pnl-grid { grid-template-columns: repeat(2,1fr); }
+  .profile-header { flex-direction: column; gap: 24px; align-items: flex-start; }
+  .section, .deals-controls, .pt-head th, .pt-row td { padding-left: 16px; padding-right: 16px; }
+}
+</style>
+</head>
+<body>
+
+<!-- TOKEN GATE -->
+<div id="token-gate">
+  <div class="gate-inner">
+    <div class="gate-logo">WAX</div>
+    <div>
+      <div class="gate-title">Connect to Discogs</div>
+      <div class="gate-sub" style="margin-top:8px;">Paste your Discogs personal access token to load live marketplace data.</div>
+    </div>
+    <input class="gate-input" id="gate-token-input" type="password" placeholder="Paste your Discogs token…" onkeydown="if(event.key==='Enter')connectDiscogs()">
+    <div class="gate-err" id="gate-err"></div>
+    <button class="gate-btn" onclick="connectDiscogs()">CONNECT →</button>
+    <div class="gate-note">
+      Get a free token at discogs.com/settings/developers.<br>
+      Your token stays in this browser session only — never stored or sent anywhere except directly to Discogs.
+    </div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">WAX</div>
+  <div class="nav-links">
+    <button class="nav-link active" onclick="goto('home',this)">Home</button>
+    <button class="nav-link" onclick="goto('deals',this)">Deals</button>
+    <button class="nav-link" onclick="goto('wantlist',this)">Wantlist</button>
+    <button class="nav-link" onclick="goto('profile',this)">Portfolio</button>
+  </div>
+  <div class="nav-right">
+    <div class="nav-status"><span class="pulse"></span>LIVE</div>
+  </div>
+</nav>
+
+<!-- ════════════════════════════════
+     HOME
+════════════════════════════════ -->
+<div class="page active" id="page-home">
+
+  <!-- Hero -->
+  <div class="home-hero">
+    <div class="hero-left">
+      <div class="hero-eyebrow">Best deal right now</div>
+      <div class="hero-number">−£52</div>
+      <div class="hero-label">below market value</div>
+      <div class="hero-record-title">John Coltrane — A Love Supreme</div>
+      <div class="hero-record-meta">1965 · Impulse! · US Original · VG+</div>
+      <button class="hero-buy-btn" onclick="goto('deals', document.querySelectorAll('.nav-link')[1])">VIEW DEAL →</button>
+    </div>
+    <div class="hero-right">
+      <div class="hero-stat-row">
+        <div class="hero-stat-val">23</div>
+        <div class="hero-stat-lbl">deals flagged today</div>
+      </div>
+      <div class="hero-stat-row">
+        <div class="hero-stat-val">£38</div>
+        <div class="hero-stat-lbl">average saving per deal</div>
+      </div>
+      <div class="hero-stat-row">
+        <div class="hero-stat-val">4</div>
+        <div class="hero-stat-lbl">wantlist matches</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Trending Ticker -->
+  <div style="border-bottom:1px solid var(--border); padding: 14px 0; overflow:hidden;">
+    <div class="ticker-track" id="ticker"></div>
+  </div>
+
+  <!-- What's Hot -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-title">What's Hot</span>
+      <button class="section-action">See all →</button>
+    </div>
+    <div class="record-grid" id="hot-grid"></div>
+  </div>
+
+  <!-- Records to Watch -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-title">Records to Watch</span>
+      <button class="section-action">See all →</button>
+    </div>
+    <div class="record-grid" id="watch-grid"></div>
+  </div>
+
+</div>
+
+<!-- ════════════════════════════════
+     DEALS
+════════════════════════════════ -->
+<div class="page" id="page-deals">
+
+  <div class="api-search-row">
+    <input class="api-search-input" id="apiSearchInput" placeholder="Search Discogs live — artist, title, label…" onkeydown="if(event.key==='Enter')searchDiscogs()">
+    <button class="api-search-btn" id="apiSearchBtn" onclick="searchDiscogs()">SEARCH DISCOGS</button>
+    <span class="source-live" id="data-source-badge" style="display:none;">LIVE</span>
+  </div>
+
+  <div class="deals-controls">
+    <input class="search-box" id="dealSearch" placeholder="Search artist, title, label…" oninput="renderDeals()">
+    <button class="filter-btn on" data-f="all" onclick="toggleFilter(this)">ALL</button>
+    <button class="filter-btn" data-f="fire" onclick="toggleFilter(this)">TOP DEALS</button>
+    <button class="filter-btn" data-f="rare" onclick="toggleFilter(this)">RARE</button>
+    <button class="filter-btn" data-f="jazz" onclick="toggleFilter(this)">JAZZ</button>
+    <button class="filter-btn" data-f="electronic" onclick="toggleFilter(this)">ELECTRONIC</button>
+    <button class="filter-btn" data-f="soul" onclick="toggleFilter(this)">SOUL</button>
+    <button class="filter-btn" data-f="rock" onclick="toggleFilter(this)">ROCK</button>
+  </div>
+
+  <div class="deals-stats">
+    <div class="ds-cell"><div class="ds-val" id="ds-count">—</div><div class="ds-lbl">Deals found</div></div>
+    <div class="ds-cell"><div class="ds-val" style="color:var(--green);">38%</div><div class="ds-lbl">Avg below market</div></div>
+    <div class="ds-cell"><div class="ds-val" style="color:var(--green);">−£52</div><div class="ds-lbl">Best saving today</div></div>
+    <div class="ds-cell"><div class="ds-val" style="color:var(--amber);">4</div><div class="ds-lbl">Wantlist hits</div></div>
+  </div>
+
+  <div style="padding: 0 0; overflow-x: auto;">
+    <table class="deals-table">
+      <thead class="dt-head">
+        <tr>
+          <th style="padding-left:32px;">Record</th>
+          <th>Pressing</th>
+          <th>Condition</th>
+          <th>Ask</th>
+          <th>Market</th>
+          <th>Saving</th>
+          <th>Liquidity</th>
+          <th>Status</th>
+          <th>Score</th>
+          <th>Track</th>
+          <th style="padding-right:32px;"></th>
+        </tr>
+      </thead>
+      <tbody id="deals-tbody"></tbody>
+    </table>
+  </div>
+
+</div>
+
+<!-- ════════════════════════════════
+     WANTLIST
+════════════════════════════════ -->
+<div class="page" id="page-wantlist">
+
+  <div class="section" style="border-bottom:none;">
+    <div class="section-head">
+      <span class="section-title">Your Wantlist</span>
+      <button class="section-action" style="font-family:var(--mono);font-size:11px;letter-spacing:0.08em;border:1px solid var(--border);padding:7px 14px;color:var(--text3);">+ ADD RECORD</button>
+    </div>
+    <div class="wantlist-grid" id="wantlist-grid"></div>
+  </div>
+
+  <!-- Alert settings note -->
+  <div style="padding: 32px; border-top: 1px solid var(--border);">
+    <div class="section-title" style="margin-bottom:12px;">How alerts work</div>
+    <p style="font-size:13px;color:var(--text2);max-width:560px;line-height:1.7;">
+      WAX checks every active listing against your threshold price. When a match appears — accounting for condition grade, pressing variant, and market trajectory — you're notified immediately. Alerts fire only when the deal score clears the minimum threshold.
+    </p>
+  </div>
+
+</div>
+
+<!-- ════════════════════════════════
+     PROFILE / PORTFOLIO
+════════════════════════════════ -->
+<div class="page" id="page-profile">
+
+  <div class="profile-header">
+    <div>
+      <div class="profile-name">Ryan</div>
+      <div class="profile-handle">@ryanwax · member since 2024</div>
+    </div>
+    <div class="profile-stats">
+      <div>
+        <div class="ps-val">31</div>
+        <div class="ps-lbl">Records traded</div>
+      </div>
+      <div>
+        <div class="ps-val">£1,840</div>
+        <div class="ps-lbl">Total revenue</div>
+      </div>
+      <div>
+        <div class="ps-val" style="color:var(--green);">£612</div>
+        <div class="ps-lbl">Net profit</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- P&L summary -->
+  <div class="pnl-grid">
+    <div class="pnl-cell">
+      <div class="pnl-val" style="color:var(--green);">£612</div>
+      <div class="pnl-lbl">Total profit</div>
+    </div>
+    <div class="pnl-cell">
+      <div class="pnl-val">£1,228</div>
+      <div class="pnl-lbl">Capital deployed</div>
+    </div>
+    <div class="pnl-cell">
+      <div class="pnl-val" style="color:var(--green);">49.8%</div>
+      <div class="pnl-lbl">Avg ROI per record</div>
+    </div>
+    <div class="pnl-cell">
+      <div class="pnl-val" style="color:var(--amber);">9d</div>
+      <div class="pnl-lbl">Avg days to sell</div>
+    </div>
+    <div class="pnl-cell">
+      <div class="pnl-val">£340</div>
+      <div class="pnl-lbl">Current inventory value</div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="portfolio-tabs">
+    <button class="ptab active" onclick="switchTab('held',this)">Holding</button>
+    <button class="ptab" onclick="switchTab('sold',this)">Sold</button>
+    <button class="ptab" onclick="switchTab('watch',this)">Watching</button>
+  </div>
+
+  <div id="portfolio-content"></div>
+
+</div>
+
+<script>
+/* ══════════════════════════════════════
+   DISCOGS API LAYER
+══════════════════════════════════════ */
+let DISCOGS_TOKEN = '';
+const BASE = 'https://api.discogs.com';
+const UA   = 'WAXApp/1.0';
+
+function discogsHeaders() {
+  return {
+    'Authorization': `Discogs token=${DISCOGS_TOKEN}`,
+    'User-Agent': UA
+  };
+}
+
+async function connectDiscogs() {
+  const input = document.getElementById('gate-token-input');
+  const err   = document.getElementById('gate-err');
+  const token = input.value.trim();
+  if (!token) { err.textContent = 'Token required.'; return; }
+  err.textContent = '';
+  input.disabled = true;
+  document.querySelector('.gate-btn').textContent = 'CONNECTING…';
+
+  // Try a lightweight search call to validate — identity endpoint has CORS issues in some browsers
+  try {
+    const res = await fetch(`${BASE}/database/search?q=test&per_page=1`, {
+      headers: { 'Authorization': `Discogs token=${token}`, 'User-Agent': UA }
+    });
+    if (res.status === 401) {
+      throw new Error('Invalid token');
+    }
+    // 200 or any non-401 means token is accepted
+    DISCOGS_TOKEN = token;
+    document.getElementById('token-gate').style.display = 'none';
+    init();
+  } catch(e) {
+    if (e.message === 'Invalid token') {
+      err.textContent = 'Token rejected by Discogs — double check it and try again.';
+    } else {
+      // Network/CORS error — token format looks ok, let them through
+      // We'll catch real auth errors when searches run
+      if (token.length > 10) {
+        DISCOGS_TOKEN = token;
+        document.getElementById('token-gate').style.display = 'none';
+        init();
+      } else {
+        err.textContent = 'Connection error — check your internet and try again.';
+      }
+    }
+    input.disabled = false;
+    document.querySelector('.gate-btn').textContent = 'CONNECT →';
+  }
+}
+
+/* Search marketplace listings for a query */
+async function searchMarketplace(query) {
+  // Step 1: search releases
+  const url = `${BASE}/database/search?q=${encodeURIComponent(query)}&type=release&per_page=10&format=Vinyl`;
+  const res = await fetch(url, { headers: discogsHeaders() });
+  if (!res.ok) throw new Error('Search failed');
+  const data = await res.json();
+  return data.results || [];
+}
+
+/* Get marketplace stats for a release (median price, lowest, num for sale) */
+async function getMarketStats(releaseId) {
+  try {
+    const res = await fetch(`${BASE}/marketplace/stats/${releaseId}?curr_abbr=GBP`, { headers: discogsHeaders() });
+    if (!res.ok) return null;
+    return await res.json();
+  } catch { return null; }
+}
+
+/* Get community want/have for a release */
+async function getReleaseStats(releaseId) {
+  try {
+    const res = await fetch(`${BASE}/releases/${releaseId}`, { headers: discogsHeaders() });
+    if (!res.ok) return null;
+    return await res.json();
+  } catch { return null; }
+}
+
+/* Get cheapest marketplace listings for a release */
+async function getListings(releaseId) {
+  try {
+    const res = await fetch(`${BASE}/marketplace/listings?release_id=${releaseId}&curr_abbr=GBP&sort=price&sort_order=asc&per_page=5`, { headers: discogsHeaders() });
+    if (!res.ok) return [];
+    const d = await res.json();
+    return d.listings || [];
+  } catch { return []; }
+}
+
+/* Full enrichment pipeline for a release */
+async function enrichRelease(release) {
+  const [stats, releaseData] = await Promise.all([
+    getMarketStats(release.id),
+    getReleaseStats(release.id)
+  ]);
+
+  const community = releaseData?.community || {};
+  const have  = community.have  || 0;
+  const want  = community.want  || 0;
+  const wantRatio = have > 0 ? Math.min(want / have, 1) : 0;
+
+  const mktStats = stats?.num_for_sale > 0 ? stats : null;
+  const medianGBP = mktStats?.median?.value || null;
+  const lowestGBP = mktStats?.lowest_price?.value || null;
+  const numForSale = mktStats?.num_for_sale || 0;
+
+  // Estimate wantlist growth from community data (proxy: want/have trend)
+  const wantGrowthProxy = wantRatio > 0.6 ? '+15%' : wantRatio > 0.4 ? '+7%' : wantRatio > 0.2 ? '+3%' : '0%';
+
+  // Determine status
+  let status = 'stable';
+  if (wantRatio > 0.5 && numForSale < 5) status = 'rare';
+  else if (wantRatio > 0.4 && lowestGBP && medianGBP && lowestGBP < medianGBP * 0.75) status = 'heat';
+  else if (wantRatio > 0.3) status = 'rise';
+  else if (wantRatio < 0.15) status = 'cool';
+
+  // Track A vs B
+  const track = (medianGBP && medianGBP > 80 && numForSale < 8) ? 'B' : 'A';
+
+  // Genre mapping
+  const genres = release.genre || release.style || ['Unknown'];
+  const genreRaw = (Array.isArray(genres) ? genres[0] : genres).toLowerCase();
+  let genre = 'other';
+  if (genreRaw.includes('jazz')) genre = 'jazz';
+  else if (genreRaw.includes('electronic') || genreRaw.includes('techno') || genreRaw.includes('house') || genreRaw.includes('ambient')) genre = 'electronic';
+  else if (genreRaw.includes('soul') || genreRaw.includes('funk') || genreRaw.includes('r&b')) genre = 'soul';
+  else if (genreRaw.includes('rock') || genreRaw.includes('punk') || genreRaw.includes('metal')) genre = 'rock';
+
+  const formats = release.format || [];
+  const pressing = release.country ? `${release.country} Press` : 'Unknown Press';
+
+  return {
+    id: release.id,
+    artist: (release.title || '').split(' - ')[0] || 'Unknown',
+    title:  (release.title || '').split(' - ').slice(1).join(' - ') || release.title || 'Unknown',
+    label:  (release.label || ['Unknown'])[0],
+    year:   release.year || '—',
+    genre,
+    condition: 'VG+',
+    pressing,
+    ask:    lowestGBP ? parseFloat(lowestGBP.toFixed(2)) : null,
+    market: medianGBP ? parseFloat(medianGBP.toFixed(2)) : null,
+    salesPer30: Math.min(numForSale * 3, 50), // proxy from stock level
+    wantRatio,
+    wantlistGrowth: wantGrowthProxy,
+    status,
+    track,
+    wantlist: false,
+    numForSale,
+    have,
+    want,
+    discogsUrl: `https://www.discogs.com/release/${release.id}`,
+    thumb: release.thumb || null,
+    live: true
+  };
+}
+
+/* ── SEARCH DISCOGS & RENDER ── */
+let liveResults = [];
+
+async function searchDiscogs() {
+  const q = document.getElementById('apiSearchInput').value.trim();
+  if (!q) return;
+  const btn = document.getElementById('apiSearchBtn');
+  btn.disabled = true;
+  btn.textContent = 'SEARCHING…';
+
+  const tbody = document.getElementById('deals-tbody');
+  tbody.innerHTML = `<tr><td colspan="11" class="loading-row"><span class="spinner"></span>FETCHING LIVE DATA FROM DISCOGS</td></tr>`;
+  document.getElementById('data-source-badge').style.display = 'inline-block';
+
+  try {
+    const releases = await searchMarketplace(q);
+    // Enrich top results in parallel (limit 6 to stay within rate limit)
+    const toEnrich = releases.slice(0, 6);
+    const enriched = await Promise.all(toEnrich.map(enrichRelease));
+
+    // Filter to only those with real pricing
+    liveResults = enriched.filter(r => r.ask !== null && r.market !== null && r.ask < r.market);
+    liveResults.sort((a,b) => score(b) - score(a));
+
+    if (liveResults.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="11" class="loading-row">No priced listings found for that search. Try a different query.</td></tr>`;
+      btn.disabled = false; btn.textContent = 'SEARCH DISCOGS';
+      return;
+    }
+
+    // Update home hero with best live deal
+    updateHeroLive(liveResults[0]);
+    renderLiveDeals(liveResults);
+
+    document.getElementById('ds-count').textContent = liveResults.length;
+    const savings = liveResults.map(r => r.market - r.ask);
+    const avgSaving = Math.round(savings.reduce((a,b)=>a+b,0)/savings.length);
+    const bestSaving = Math.round(Math.max(...savings));
+    document.querySelectorAll('.ds-cell')[1].querySelector('.ds-val').textContent = Math.round((1 - liveResults.reduce((a,r)=>a+r.ask/r.market,0)/liveResults.length)*100) + '%';
+    document.querySelectorAll('.ds-cell')[2].querySelector('.ds-val').textContent = `−£${bestSaving}`;
+
+  } catch(e) {
+    tbody.innerHTML = `<tr><td colspan="11" class="loading-row" style="color:var(--red);">Error fetching data. Check your token or try again.</td></tr>`;
+  }
+
+  btn.disabled = false; btn.textContent = 'SEARCH DISCOGS';
+}
+
+function updateHeroLive(r) {
+  const saving = (r.market - r.ask).toFixed(0);
+  document.querySelector('.hero-number').textContent = `−£${saving}`;
+  document.querySelector('.hero-record-title').textContent = `${r.artist} — ${r.title}`;
+  document.querySelector('.hero-record-meta').textContent = `${r.year} · ${r.label} · ${r.pressing} · ${r.condition}`;
+}
+
+function renderLiveDeals(records) {
+  document.getElementById('deals-tbody').innerHTML = records.map(r => {
+    const s = score(r);
+    const g = scoreGrade(s);
+    const pct = savingPct(r);
+    const abs = savingAbs(r);
+    const wl = r.wantlist ? `<span style="font-family:var(--mono);font-size:9px;color:var(--green);border:1px solid var(--green-dim);background:rgba(29,185,84,0.08);padding:2px 6px;letter-spacing:0.08em;">★ WANTLIST</span>` : '';
+    const liveTag = r.live ? `<span class="source-live" style="margin-left:6px;">LIVE</span>` : '';
+    return `
+    <tr class="dt-row" onclick="window.open('${r.discogsUrl}','_blank')">
+      <td style="padding-left:32px;">
+        <div class="dt-artist">${r.artist} ${wl}${liveTag}</div>
+        <div class="dt-title">${r.title} · ${r.label} · ${r.year}</div>
+      </td>
+      <td><span class="dt-tag">${r.pressing}</span></td>
+      <td><span class="dt-tag">${r.condition}</span></td>
+      <td class="dt-mono">£${r.ask}</td>
+      <td class="dt-small">£${r.market}</td>
+      <td style="font-family:var(--mono);font-size:13px;color:var(--green);">−£${abs} <span style="color:var(--text3);font-size:11px;">(${pct}%)</span></td>
+      <td>${liquidityLabel(r)}</td>
+      <td>${statusPill(r.status)}</td>
+      <td><span class="dt-score ${g.cls}">${g.label}</span></td>
+      <td><span class="track-badge">TRACK ${r.track}</span></td>
+      <td style="padding-right:32px;">
+        <a href="${r.discogsUrl}" target="_blank" style="background:var(--s2);border:1px solid var(--border2);color:var(--text2);font-family:var(--mono);font-size:10px;letter-spacing:0.08em;padding:6px 12px;display:inline-block;">VIEW ↗</a>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+/* ══════════════════════════════════════
+   MOCK DATA (fallback while no search)
+══════════════════════════════════════ */
+const RECORDS = [
+  { id:1,  artist:"John Coltrane",    title:"A Love Supreme",            label:"Impulse!",   year:1965, genre:"jazz",       condition:"VG+", pressing:"US Original",  ask:28,  market:80,  salesPer30:18, wantRatio:0.72, wantlistGrowth:"+14%", status:"heat",   track:"A", wantlist:true,  live:false, discogsUrl:"#" },
+  { id:2,  artist:"Miles Davis",      title:"Kind of Blue",              label:"Columbia",   year:1959, genre:"jazz",       condition:"VG+", pressing:"UK 1st Press", ask:55,  market:110, salesPer30:22, wantRatio:0.81, wantlistGrowth:"+19%", status:"heat",   track:"A", wantlist:true,  live:false, discogsUrl:"#" },
+  { id:3,  artist:"Aphex Twin",       title:"Selected Ambient Works II", label:"Warp",       year:1994, genre:"electronic", condition:"VG+", pressing:"UK Original",  ask:38,  market:85,  salesPer30:14, wantRatio:0.64, wantlistGrowth:"+11%", status:"heat",   track:"A", wantlist:true,  live:false, discogsUrl:"#" },
+  { id:4,  artist:"Boards of Canada", title:"Music Has the Right…",      label:"Warp/Skam",  year:1998, genre:"electronic", condition:"NM",  pressing:"EU Original",  ask:52,  market:90,  salesPer30:9,  wantRatio:0.58, wantlistGrowth:"+8%",  status:"rise",   track:"A", wantlist:false, live:false, discogsUrl:"#" },
+  { id:5,  artist:"James Brown",      title:"Sex Machine",               label:"King",       year:1970, genre:"soul",       condition:"VG",  pressing:"US Original",  ask:18,  market:42,  salesPer30:28, wantRatio:0.44, wantlistGrowth:"+4%",  status:"rise",   track:"A", wantlist:false, live:false, discogsUrl:"#" },
+  { id:6,  artist:"Massive Attack",   title:"Blue Lines",                label:"Wild Bunch", year:1991, genre:"electronic", condition:"VG+", pressing:"UK 1st Press", ask:34,  market:60,  salesPer30:11, wantRatio:0.50, wantlistGrowth:"+6%",  status:"rise",   track:"A", wantlist:false, live:false, discogsUrl:"#" },
+  { id:7,  artist:"Herbie Hancock",   title:"Head Hunters",              label:"Columbia",   year:1973, genre:"jazz",       condition:"VG+", pressing:"US Original",  ask:22,  market:38,  salesPer30:19, wantRatio:0.41, wantlistGrowth:"+3%",  status:"stable", track:"A", wantlist:false, live:false, discogsUrl:"#" },
+  { id:8,  artist:"The Clash",        title:"London Calling",            label:"CBS",        year:1979, genre:"rock",       condition:"VG+", pressing:"UK Original",  ask:30,  market:52,  salesPer30:14, wantRatio:0.38, wantlistGrowth:"+2%",  status:"stable", track:"A", wantlist:false, live:false, discogsUrl:"#" },
+  { id:9,  artist:"Marvin Gaye",      title:"Let's Get It On",           label:"Tamla",      year:1973, genre:"soul",       condition:"VG",  pressing:"US Original",  ask:14,  market:22,  salesPer30:31, wantRatio:0.30, wantlistGrowth:"0%",   status:"stable", track:"A", wantlist:false, live:false, discogsUrl:"#" },
+  { id:10, artist:"Portishead",       title:"Dummy",                     label:"Go! Discs",  year:1994, genre:"electronic", condition:"VG+", pressing:"UK Original",  ask:19,  market:28,  salesPer30:16, wantRatio:0.35, wantlistGrowth:"+1%",  status:"stable", track:"A", wantlist:false, live:false, discogsUrl:"#" },
+  { id:11, artist:"Eric Dolphy",      title:"Out to Lunch",              label:"Blue Note",  year:1964, genre:"jazz",       condition:"VG",  pressing:"US Original",  ask:120, market:340, salesPer30:2,  wantRatio:0.88, wantlistGrowth:"+22%", status:"rare",   track:"B", wantlist:false, live:false, discogsUrl:"#" },
+  { id:12, artist:"Sun Ra",           title:"The Heliocentric Worlds I", label:"ESP-Disk",   year:1965, genre:"jazz",       condition:"VG+", pressing:"US 1st Press", ask:180, market:420, salesPer30:1,  wantRatio:0.92, wantlistGrowth:"+31%", status:"rare",   track:"B", wantlist:false, live:false, discogsUrl:"#" },
+  { id:13, artist:"Curtis Mayfield",  title:"Superfly",                  label:"Curtom",     year:1972, genre:"soul",       condition:"VG+", pressing:"US Original",  ask:20,  market:30,  salesPer30:24, wantRatio:0.36, wantlistGrowth:"+2%",  status:"cool",   track:"A", wantlist:false, live:false, discogsUrl:"#" },
+  { id:14, artist:"Led Zeppelin",     title:"IV",                        label:"Atlantic",   year:1971, genre:"rock",       condition:"VG",  pressing:"UK 1st Press", ask:25,  market:38,  salesPer30:12, wantRatio:0.28, wantlistGrowth:"-2%",  status:"cool",   track:"A", wantlist:false, live:false, discogsUrl:"#" },
+];
+
+/* ══════════════════════════════════════
+   SCORING ENGINE
+══════════════════════════════════════ */
+function score(r) {
+  if (!r.ask || !r.market || r.ask >= r.market) return 0;
+  const priceDislocation = Math.min((1 - r.ask / r.market) * 100, 100);
+  let liquidity, scarcity, momentum;
+  if (r.track === "A") {
+    liquidity = Math.min((r.salesPer30 / 30) * 100, 100);
+    scarcity  = Math.min(r.wantRatio * 100, 100);
+    momentum  = parseFloat(r.wantlistGrowth) > 5 ? 80 : parseFloat(r.wantlistGrowth) > 0 ? 50 : 20;
+    return Math.round(priceDislocation*0.30 + liquidity*0.25 + scarcity*0.20 + momentum*0.15 + 10);
+  } else {
+    scarcity  = Math.min(r.wantRatio * 100, 100);
+    momentum  = parseFloat(r.wantlistGrowth) > 15 ? 90 : parseFloat(r.wantlistGrowth) > 5 ? 65 : 30;
+    return Math.round(priceDislocation*0.35 + scarcity*0.30 + momentum*0.25 + 50*0.10);
+  }
+}
+
+
+
+/* ══════════════════════════════════════
+   HOME
+══════════════════════════════════════ */
+function buildTicker() {
+  const artists = ["John Coltrane +19%","Miles Davis +14%","Aphex Twin +11%","Boards of Canada +8%","Sun Ra +31%","Eric Dolphy +22%","James Brown +4%","Massive Attack +6%","Portishead +1%","Led Zeppelin −2%","Curtis Mayfield −1%"];
+  const doubled = [...artists,...artists];
+  const el = document.getElementById('ticker');
+  el.innerHTML = doubled.map(a => {
+    const parts = a.split(' ');
+    const chg = parts[parts.length - 1];
+    const name = parts.slice(0, -1).join(' ');
+    const isPos = chg.startsWith('+');
+    const isNeg = chg.startsWith('−') || chg.startsWith('-');
+    const chgColor = isPos ? 'var(--green)' : isNeg ? 'var(--red)' : 'var(--text3)';
+    return `<span class="ticker-item"><span class="ticker-artist">${name}</span><span class="ticker-change" style="color:${chgColor}">${chg}</span><span class="ticker-divider">·</span></span>`;
+  }).join('');
+}
+
+function buildHomeGrids() {
+  const hot   = RECORDS.filter(r => r.status === 'heat').slice(0,4);
+  const watch = RECORDS.filter(r => r.status === 'rise' || r.status === 'rare').slice(0,4);
+  const statusColor = { heat:'var(--green)', rise:'var(--green)', stable:'var(--amber)', cool:'var(--red)', rare:'var(--blue)' };
+  [['hot-grid', hot],['watch-grid', watch]].forEach(([id, recs]) => {
+    document.getElementById(id).innerHTML = recs.map(r => {
+      const sc = statusColor[r.status] || 'var(--text3)';
+      const saving = (r.market - r.ask).toFixed(0);
+      return `
+      <div class="record-card" onclick="goto('deals', document.querySelectorAll('.nav-link')[1])">
+        <div class="rc-cover"><div class="rc-vinyl"></div></div>
+        <div class="rc-status" style="color:${sc}">${r.status.toUpperCase()} · ${r.wantlistGrowth} wantlist</div>
+        <div class="rc-title">${r.title}</div>
+        <div class="rc-artist">${r.artist}</div>
+        <div class="rc-price-row">
+          <span class="rc-price">£${r.ask}</span>
+          <span class="rc-market" style="color:var(--green)">−£${saving} below mkt</span>
+        </div>
+      </div>`;
+    }).join('');
+  });
+}
+
+/* ══════════════════════════════════════
+   DEALS (mock fallback)
+══════════════════════════════════════ */
+let activeFilter = 'all';
+function toggleFilter(btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  activeFilter = btn.dataset.f;
+  renderDeals();
+}
+
+function renderDeals() {
+  // If live results exist, re-filter those; otherwise use mock
+  const source = liveResults.length > 0 ? liveResults : RECORDS;
+  const q = document.getElementById('dealSearch').value.toLowerCase();
+  let recs = source.filter(r => {
+    const mf = activeFilter === 'all' || activeFilter === r.genre ||
+               (activeFilter === 'fire' && score(r) >= 72) ||
+               (activeFilter === 'rare' && r.track === 'B');
+    const mq = !q || r.artist.toLowerCase().includes(q) || r.title.toLowerCase().includes(q) || r.label.toLowerCase().includes(q);
+    return mf && mq;
+  });
+  recs.sort((a,b) => score(b) - score(a));
+  document.getElementById('ds-count').textContent = recs.length;
+  document.getElementById('deals-tbody').innerHTML = recs.map(r => {
+    const s = score(r);
+    const g = scoreGrade(s);
+    const pct = savingPct(r);
+    const abs = savingAbs(r);
+    const wl = r.wantlist ? `<span style="font-family:var(--mono);font-size:9px;color:var(--green);border:1px solid var(--green-dim);background:rgba(29,185,84,0.08);padding:2px 6px;letter-spacing:0.08em;">★ WANTLIST</span>` : '';
+    const liveTag = r.live ? `<span class="source-live" style="margin-left:6px;">LIVE</span>` : '';
+    return `
+    <tr class="dt-row" onclick="window.open('${r.discogsUrl}','_blank')">
+      <td style="padding-left:32px;">
+        <div class="dt-artist">${r.artist} ${wl}${liveTag}</div>
+        <div class="dt-title">${r.title} · ${r.label} · ${r.year}</div>
+      </td>
+      <td><span class="dt-tag">${r.pressing}</span></td>
+      <td><span class="dt-tag">${r.condition}</span></td>
+      <td class="dt-mono">£${r.ask}</td>
+      <td class="dt-small">£${r.market}</td>
+      <td style="font-family:var(--mono);font-size:13px;color:var(--green);">−£${abs} <span style="color:var(--text3);font-size:11px;">(${pct}%)</span></td>
+      <td>${liquidityLabel(r)}</td>
+      <td>${statusPill(r.status)}</td>
+      <td><span class="dt-score ${g.cls}">${g.label}</span></td>
+      <td><span class="track-badge">TRACK ${r.track}</span></td>
+      <td style="padding-right:32px;">
+        <a href="${r.discogsUrl}" target="_blank" onclick="event.stopPropagation()" style="background:var(--s2);border:1px solid var(--border2);color:var(--text2);font-family:var(--mono);font-size:10px;letter-spacing:0.08em;padding:6px 12px;display:inline-block;">VIEW ↗</a>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+/* ══════════════════════════════════════
+   WANTLIST
+══════════════════════════════════════ */
+const WANTLIST = [
+  { genre:"Jazz",       title:"Kind of Blue",              artist:"Miles Davis", threshold:"£60", alert:true,  note:"1 match today" },
+  { genre:"Electronic", title:"Selected Ambient Works II", artist:"Aphex Twin",  threshold:"£45", alert:true,  note:"1 match today" },
+  { genre:"Soul",       title:"What's Going On",           artist:"Marvin Gaye", threshold:"£80", alert:false, note:"No matches today" },
+  { genre:"Jazz",       title:"Out to Lunch",              artist:"Eric Dolphy", threshold:"£150",alert:false, note:"No matches today" },
+];
+
+function buildWantlist() {
+  const grid = document.getElementById('wantlist-grid');
+  grid.innerHTML = WANTLIST.map(w => `
+    <div class="wl-card">
+      <div class="wl-genre">${w.genre.toUpperCase()}</div>
+      <div class="wl-title">${w.title}</div>
+      <div class="wl-artist">${w.artist}</div>
+      <div class="wl-threshold">Alert below ${w.threshold}</div>
+      ${w.alert ? `<div class="wl-alert">MATCH TODAY</div>` : `<div class="wl-status">${w.note}</div>`}
+    </div>
+  `).join('') + `
+    <div class="wl-card add-card">
+      <div style="font-size:20px;color:var(--text3);">+</div>
+      <div style="font-size:12px;color:var(--text3);">Add record</div>
+    </div>`;
+}
+
+/* ══════════════════════════════════════
+   PORTFOLIO
+══════════════════════════════════════ */
+const HELD = [
+  { artist:"Boards of Canada", title:"Music Has the Right…", bought:52,  estSell:90,  estProfit:38,  daysHeld:3  },
+  { artist:"Massive Attack",   title:"Blue Lines",           bought:34,  estSell:58,  estProfit:24,  daysHeld:7  },
+  { artist:"Sun Ra",           title:"Heliocentric Worlds",  bought:180, estSell:400, estProfit:220, daysHeld:11 },
+];
+const SOLD = [
+  { artist:"John Coltrane",  title:"A Love Supreme", bought:28, sold:76, profit:48, days:5  },
+  { artist:"Herbie Hancock", title:"Head Hunters",   bought:22, sold:35, profit:13, days:8  },
+  { artist:"James Brown",    title:"Sex Machine",    bought:18, sold:38, profit:20, days:4  },
+  { artist:"The Clash",      title:"London Calling", bought:30, sold:49, profit:19, days:12 },
+];
+
+let activeTab = 'held';
+function switchTab(tab, el) {
+  document.querySelectorAll('.ptab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  activeTab = tab;
+  renderPortfolio();
+}
+
+function renderPortfolio() {
+  const el = document.getElementById('portfolio-content');
+  if (activeTab === 'held') {
+    el.innerHTML = `
+    <table class="portfolio-table">
+      <thead class="pt-head"><tr>
+        <th>Record</th><th>Bought</th><th>Est. sell</th><th>Est. profit</th><th>Days held</th><th>Status</th>
+      </tr></thead>
+      <tbody>${HELD.map(h => {
+        const daysColor = h.daysHeld > 10 ? 'var(--amber)' : 'var(--text2)';
+        return `<tr class="pt-row">
+          <td><div style="font-size:13px;font-weight:500;">${h.artist}</div><div style="font-size:12px;color:var(--text2);">${h.title}</div></td>
+          <td class="pt-mono">£${h.bought}</td>
+          <td class="pt-mono">£${h.estSell}</td>
+          <td class="pt-pos">+£${h.estProfit}</td>
+          <td style="font-family:var(--mono);font-size:13px;color:${daysColor};">${h.daysHeld}d</td>
+          <td>${statusPill('rise')}</td>
+        </tr>`;
+      }).join('')}</tbody>
+    </table>`;
+  } else if (activeTab === 'sold') {
+    el.innerHTML = `
+    <table class="portfolio-table">
+      <thead class="pt-head"><tr>
+        <th>Record</th><th>Bought</th><th>Sold for</th><th>Profit</th><th>Days to sell</th><th>ROI</th>
+      </tr></thead>
+      <tbody>${SOLD.map(s => {
+        const roi = Math.round(s.profit/s.bought*100);
+        return `<tr class="pt-row">
+          <td><div style="font-size:13px;font-weight:500;">${s.artist}</div><div style="font-size:12px;color:var(--text2);">${s.title}</div></td>
+          <td class="pt-mono">£${s.bought}</td>
+          <td class="pt-mono">£${s.sold}</td>
+          <td class="pt-pos">+£${s.profit}</td>
+          <td class="pt-mono">${s.days}d</td>
+          <td style="font-family:var(--mono);font-size:12px;color:var(--green);">${roi}%</td>
+        </tr>`;
+      }).join('')}</tbody>
+    </table>`;
+  } else {
+    el.innerHTML = `<div style="padding:48px 28px;color:var(--text3);font-family:var(--mono);font-size:12px;letter-spacing:0.06em;">No records on watchlist yet.</div>`;
+  }
+}
+
+/* ══════════════════════════════════════
+   INIT
+══════════════════════════════════════ */
+function init() {
+  buildTicker();
+  buildHomeGrids();
+  renderDeals();
+  buildWantlist();
+  renderPortfolio();
+}
+</script>
+</body>
+</html>
