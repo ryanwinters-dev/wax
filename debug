@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>WAX Debug</title>
+<style>
+body{background:#080808;color:#f0f0f0;font-family:'Courier New',monospace;padding:32px;font-size:13px}
+h2{color:#888;font-size:11px;letter-spacing:.1em;margin:24px 0 8px}
+.box{background:#111;border:1px solid #222;padding:16px;margin-bottom:8px;white-space:pre-wrap;word-break:break-all;max-height:300px;overflow-y:auto}
+.ok{color:#1db954}.err{color:#c0392b}.warn{color:#c8952a}
+input{background:#111;border:1px solid #333;color:#f0f0f0;padding:8px 12px;font-family:monospace;font-size:13px;width:400px}
+button{background:#f0f0f0;color:#080808;border:none;padding:9px 20px;font-family:monospace;font-size:12px;letter-spacing:.08em;cursor:pointer;margin-left:8px}
+</style>
+</head>
+<body>
+<div style="font-size:20px;font-weight:500;letter-spacing:.2em;margin-bottom:24px">WAX · API DIAGNOSTICS</div>
+
+<div>
+  <input id="tok" type="password" placeholder="Paste your Discogs token…">
+  <button onclick="runAll()">RUN TESTS</button>
+</div>
+
+<h2>1 · TOKEN VALIDATION</h2>
+<div class="box" id="r1">—</div>
+
+<h2>2 · DATABASE SEARCH (Miles Davis, Vinyl)</h2>
+<div class="box" id="r2">—</div>
+
+<h2>3 · MARKETPLACE STATS (release 249504 = Kind of Blue)</h2>
+<div class="box" id="r3">—</div>
+
+<h2>4 · RELEASE DETAIL (249504)</h2>
+<div class="box" id="r4">—</div>
+
+<h2>5 · USER WANTLIST (rynamo)</h2>
+<div class="box" id="r5">—</div>
+
+<h2>6 · FULL PIPELINE — enrich release 249504</h2>
+<div class="box" id="r6">—</div>
+
+<script>
+const BASE = 'https://api.discogs.com';
+let TOKEN = '';
+
+function H() {
+  return { 'Authorization': 'Discogs token='+TOKEN, 'User-Agent': 'WAXApp/1.0' };
+}
+
+function show(id, data, isErr) {
+  const el = document.getElementById(id);
+  const txt = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
+  el.textContent = txt;
+  el.className = 'box ' + (isErr ? 'err' : 'ok');
+}
+
+async function test(id, url, label) {
+  document.getElementById(id).textContent = 'Testing…';
+  try {
+    const r = await fetch(BASE + url, { headers: H() });
+    const data = await r.json();
+    if (!r.ok) {
+      show(id, `HTTP ${r.status}\n${JSON.stringify(data, null, 2)}`, true);
+      return null;
+    }
+    show(id, `HTTP ${r.status} ✓\n${JSON.stringify(data, null, 2)}`);
+    return data;
+  } catch(e) {
+    show(id, `NETWORK ERROR: ${e.message}\n\nThis usually means CORS is blocking the request from this origin.`, true);
+    return null;
+  }
+}
+
+async function runAll() {
+  TOKEN = document.getElementById('tok').value.trim();
+  if (!TOKEN) { alert('Paste your token first'); return; }
+
+  // Test 1: token
+  await test('r1', '/oauth/identity', 'Token');
+
+  // Test 2: database search
+  const search = await test('r2', '/database/search?q=Miles+Davis&type=release&format=Vinyl&per_page=3', 'Search');
+
+  // Test 3: marketplace stats
+  const stats = await test('r3', '/marketplace/stats/249504?curr_abbr=GBP', 'Stats');
+
+  // Test 4: release detail
+  const release = await test('r4', '/releases/249504', 'Release');
+
+  // Test 5: wantlist
+  await test('r5', '/users/rynamo/wants?per_page=3', 'Wantlist');
+
+  // Test 6: full pipeline summary
+  const r6 = document.getElementById('r6');
+  r6.textContent = 'Running pipeline analysis…';
+  try {
+    const median = stats?.median?.value;
+    const lowest = stats?.lowest_price?.value;
+    const have   = release?.community?.have;
+    const want   = release?.community?.want;
+    const numForSale = stats?.num_for_sale;
+
+    const summary = {
+      release_title:   release?.title,
+      median_GBP:      median,
+      lowest_GBP:      lowest,
+      num_for_sale:    numForSale,
+      community_have:  have,
+      community_want:  want,
+      want_have_ratio: have > 0 ? (want/have).toFixed(3) : null,
+      can_score:       !!(median),
+      would_be_deal:   !!(median && lowest && lowest < median * 0.97),
+      score_inputs_ok: !!(median && have !== undefined && want !== undefined),
+    };
+    r6.textContent = JSON.stringify(summary, null, 2);
+    r6.className = 'box ' + (summary.can_score ? 'ok' : 'warn');
+  } catch(e) {
+    r6.textContent = 'Pipeline error: ' + e.message;
+    r6.className = 'box err';
+  }
+}
+</script>
+</body>
+</html>
