@@ -371,9 +371,10 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:52px;background:rgba(
     <div>
       <div class="ctrl-lbl">Min Deal Score</div>
       <select class="ctrl-sel" id="disc-score">
-        <option value="40">40+ (Any deal)</option>
-        <option value="55" selected>55+ (Strong)</option>
-        <option value="72">72+ (Fire only)</option>
+        <option value="1" selected>Show all scored</option>
+        <option value="25">25+ (Any deal)</option>
+        <option value="40">40+ (Strong)</option>
+        <option value="55">55+ (Fire only)</option>
       </select>
     </div>
     <div>
@@ -388,6 +389,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:52px;background:rgba(
       <button class="disc-run" id="disc-run">DIG THE CRATES →</button>
     </div>
   </div>
+  <div id="disc-debug" style="display:none"></div>
   <div class="stats-row" id="disc-stats" style="display:none">
     <div class="stat-cell"><div class="stat-val" id="disc-n">—</div><div class="stat-lbl">Deals surfaced</div></div>
     <div class="stat-cell"><div class="stat-val" id="disc-avg" style="color:var(--green)">—</div><div class="stat-lbl">Avg saving</div></div>
@@ -823,6 +825,7 @@ async function runDiscover() {
   crateProgress(42, `Found ${allReleaseIds.size} releases — fetching market data…`);
 
   // Step 2: Enrich in batches of 3
+  const allScored = [];
   const deals = [];
   const ids = Array.from(allReleaseIds);
 
@@ -832,19 +835,43 @@ async function runDiscover() {
 
     for (const r of results) {
       if (!r) continue;
+      allScored.push(r);
       if (r.ask > maxPrice) continue;
       if (r.score < minScore) continue;
       deals.push(r);
     }
 
     const pct = 42 + Math.round(((i+3)/ids.length)*52);
-    crateProgress(Math.min(pct, 94), `Scored ${i+3} of ${ids.length}…`, deals.length);
+    crateProgress(Math.min(pct, 94), `Scored ${allScored.length} of ${ids.length}…`, deals.length);
     await sleep(280);
   }
+
+  // Debug: log score distribution to console
+  console.log(`WAX Discover: ${allScored.length} scored, ${deals.length} cleared minScore=${minScore}`);
+  console.log('Score distribution:', allScored.map(r => ({
+    artist: r.artist, title: r.title, ask: r.ask, market: r.market, score: r.score
+  })).sort((a,b) => b.score - a.score).slice(0, 10));
 
   crateProgress(100, `Done — ${deals.length} deals found`);
   await sleep(800);
   document.getElementById('crate-overlay').classList.remove('show');
+
+  // Show debug info visibly on page so we can diagnose
+  const debugEl = document.getElementById('disc-debug');
+  if (debugEl) {
+    const top10 = allScored.sort((a,b) => b.score - a.score).slice(0, 10);
+    debugEl.style.display = 'block';
+    debugEl.innerHTML = `
+      <div style="font-family:var(--mono);font-size:11px;color:var(--t3);padding:16px 32px;border-bottom:1px solid var(--b1)">
+        DEBUG — ${allScored.length} enriched, ${deals.length} passed filter (minScore=${minScore}, maxPrice=£${maxPrice})<br>
+        Top 10 by score:
+        <div style="margin-top:8px;display:flex;flex-direction:column;gap:4px">
+          ${top10.map(r => `<span style="color:${r.score>0?'var(--t2)':'var(--red)'}">
+            score=${r.score} ask=£${r.ask} market=£${r.market} wantRatio=${r.wantRatio?.toFixed(2)} numForSale=${r.numForSale} — ${r.artist} / ${r.title}
+          </span>`).join('')}
+        </div>
+      </div>`;
+  }
 
   discoverResults = deals.sort((a,b) => b.score - a.score);
   renderDiscoverTable();
