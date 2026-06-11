@@ -19,10 +19,10 @@ body{background:var(--bg);color:var(--t1);font-family:var(--sans);font-size:14px
 button{cursor:pointer;font-family:var(--sans);background:none;border:none}
 a{text-decoration:none;color:inherit}
 
-/* GATE */
+/* ── GATE ── */
 #gate{position:fixed;inset:0;z-index:999;background:var(--bg);display:flex;align-items:center;justify-content:center}
 .g-inner{max-width:400px;width:100%;padding:0 32px;display:flex;flex-direction:column;gap:20px}
-.g-logo{font-family:var(--mono);font-size:13px;letter-spacing:0.16em;color:var(--t3)}
+.g-logo{font-family:var(--mono);font-size:13px;letter-spacing:.16em;color:var(--t3)}
 .g-title{font-size:16px;font-weight:500}
 .g-sub{font-size:13px;color:var(--t2);line-height:1.6}
 .g-input{background:var(--s1);border:1px solid var(--b2);color:var(--t1);font-family:var(--mono);font-size:13px;padding:12px 14px;outline:none;width:100%;transition:border-color .15s}
@@ -32,7 +32,7 @@ a{text-decoration:none;color:inherit}
 .g-btn:hover{opacity:.85}
 .g-err{font-family:var(--mono);font-size:11px;color:var(--red);min-height:14px}
 
-/* NAV */
+/* ── NAV ── */
 nav{position:fixed;top:0;left:0;right:0;z-index:100;height:52px;background:rgba(8,8,8,.96);backdrop-filter:blur(12px);border-bottom:1px solid var(--b1);display:flex;align-items:center;justify-content:space-between;padding:0 32px}
 .nav-logo{font-family:var(--mono);font-weight:500;font-size:16px;letter-spacing:.18em}
 .nav-links{display:flex;gap:2px}
@@ -43,11 +43,11 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:52px;background:rgba(
 .pulse{width:5px;height:5px;border-radius:50%;background:var(--green);animation:blink 3s infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
 
-/* PAGES */
+/* ── PAGES ── */
 .page{display:none;padding-top:52px;min-height:100vh}
 .page.on{display:block}
 
-/* HOME HERO */
+/* ── HOME HERO ── */
 .hero{border-bottom:1px solid var(--b1);padding:64px 32px 52px;display:grid;grid-template-columns:1fr 1fr;gap:0}
 .hero-l{padding-right:56px;border-right:1px solid var(--b1)}
 .hero-eye{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--t3);text-transform:uppercase;margin-bottom:16px}
@@ -61,7 +61,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:52px;background:rgba(
 .h-stat-val{font-family:var(--mono);font-size:26px;font-weight:300}
 .h-stat-lbl{font-size:12px;color:var(--t3);margin-top:3px}
 
-/* TICKER */
+/* ── TICKER ── */
 .ticker-wrap{border-bottom:1px solid var(--b1);padding:12px 0;overflow:hidden}
 .ticker-track{display:flex;width:max-content;animation:tick 30s linear infinite}
 .ticker-track:hover{animation-play-state:paused}
@@ -71,18 +71,18 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:52px;background:rgba(
 .t-chg{font-family:var(--mono);font-size:11px}
 .t-div{color:var(--b2);font-size:16px}
 
-/* SECTION */
+/* ── SECTION ── */
 .section{padding:44px 32px;border-bottom:1px solid var(--b1)}
 .sec-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:24px}
 .sec-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--t3)}
 .sec-more{font-size:12px;color:var(--t3);transition:color .15s}
 .sec-more:hover{color:var(--t2)}
 
-/* RECORD CARDS */
+/* ── RECORD CARDS ── */
 .rec-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1px;background:var(--b1)}
 .rec-card{background:var(--bg);padding:18px;display:flex;flex-direction:column;gap:8px;cursor:pointer;transition:background .12s}
 .rec-card:hover{background:var(--s1)}
-.rc-art{width:100%;aspect-ratio:1;background:var(--s2);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
+.rc-art{width:100%;aspect-ratio:1;background:var(--s2);display:flex;align-items:center;justify-content:center;overflow:hidden}
 .rc-art img{width:100%;height:100%;object-fit:cover}
 .rc-vinyl{width:70%;height:70%;border-radius:50%;background:repeating-radial-gradient(circle,#1a1a1a 0,#111 2px,#1a1a1a 4px);position:relative;flex-shrink:0}
 .rc-vinyl::after{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:22%;height:22%;border-radius:50%;background:var(--s2)}
@@ -93,31 +93,11 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:52px;background:rgba(
 .rc-ask{font-family:var(--mono);font-size:14px}
 .rc-save{font-family:var(--mono);font-size:11px;color:var(--green)}
 
-/* DEALS */
-.deals-search-bar{padding:16px 32px;border-bottom:1px solid var(--b1);display:flex;gap:10px;align-items:center;background:var(--s1)}
-.d-input{flex:1;background:var(--bg);border:1px solid var(--b2);color:var(--t1);font-family:var(--sans);font-size:13px;padding:9px 14px;outline:none;transition:border-color .15s}
-.d-input:focus{border-color:var(--t3)}
-.d-input::placeholder{color:var(--t3)}
-.d-go{background:var(--t1);color:var(--bg);font-family:var(--mono);font-size:11px;letter-spacing:.08em;padding:9px 20px;transition:opacity .15s;white-space:nowrap}
-.d-go:hover{opacity:.85}
-.d-go:disabled{opacity:.4;cursor:not-allowed}
-.live-badge{font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--green);border:1px solid var(--gdim);padding:2px 6px;background:rgba(29,185,84,.06)}
-
-.deals-filters{padding:14px 32px;border-bottom:1px solid var(--b1);display:flex;gap:8px;flex-wrap:wrap}
-.f-btn{background:none;border:1px solid var(--b1);color:var(--t3);font-family:var(--mono);font-size:10px;letter-spacing:.08em;padding:7px 13px;transition:all .15s}
-.f-btn:hover{border-color:var(--t3);color:var(--t2)}
-.f-btn.on{border-color:var(--t2);color:var(--t1);background:var(--s2)}
-
-.deals-stats{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--b1)}
-.ds{padding:18px 28px;border-right:1px solid var(--b1)}
-.ds:last-child{border-right:none}
-.ds-val{font-family:var(--mono);font-size:22px;font-weight:300}
-.ds-lbl{font-size:11px;color:var(--t3);margin-top:4px}
-
-.deals-table{width:100%;border-collapse:collapse}
-.deals-table th{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--t3);font-weight:400;text-align:left;padding:11px 14px;border-bottom:1px solid var(--b1);white-space:nowrap}
-.deals-table th:first-child{padding-left:32px}
-.deals-table th:last-child{padding-right:32px}
+/* ── SHARED TABLE STYLES ── */
+.data-table{width:100%;border-collapse:collapse}
+.data-table th{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--t3);font-weight:400;text-align:left;padding:11px 14px;border-bottom:1px solid var(--b1);white-space:nowrap}
+.data-table th:first-child{padding-left:32px}
+.data-table th:last-child{padding-right:32px}
 .dt-row{border-bottom:1px solid var(--b1);transition:background .1s;cursor:pointer}
 .dt-row:hover{background:var(--s1)}
 .dt-row td{padding:13px 14px;vertical-align:middle}
@@ -128,8 +108,9 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:52px;background:rgba(
 .td-mono{font-family:var(--mono);font-size:13px}
 .td-sm{font-family:var(--mono);font-size:11px;color:var(--t2)}
 .td-tag{font-family:var(--mono);font-size:9px;letter-spacing:.08em;padding:3px 7px;border:1px solid var(--b2);color:var(--t2);white-space:nowrap}
-.td-score{font-family:var(--mono);font-size:12px;font-weight:500}
-.sc-a{color:var(--green)}.sc-b{color:var(--amber)}.sc-c{color:var(--red)}
+.sc-a{color:var(--green);font-family:var(--mono);font-size:12px;font-weight:500}
+.sc-b{color:var(--amber);font-family:var(--mono);font-size:12px;font-weight:500}
+.sc-c{color:var(--red);font-family:var(--mono);font-size:12px;font-weight:500}
 .sp{font-family:var(--mono);font-size:9px;letter-spacing:.1em;padding:3px 7px;font-weight:500}
 .sp-heat{color:var(--green);border:1px solid var(--green);background:rgba(29,185,84,.07)}
 .sp-rise{color:var(--green);border:1px solid var(--gdim);background:rgba(29,185,84,.04);opacity:.8}
@@ -137,12 +118,83 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:52px;background:rgba(
 .sp-cool{color:var(--red);border:1px solid var(--rdim);background:rgba(192,57,43,.07)}
 .sp-rare{color:var(--blue);border:1px solid var(--bdim);background:rgba(74,158,191,.07)}
 .tr-badge{font-family:var(--mono);font-size:9px;letter-spacing:.08em;padding:2px 6px;border:1px solid var(--b2);color:var(--t3)}
-.view-btn{background:var(--s2);border:1px solid var(--b2);color:var(--t2);font-family:var(--mono);font-size:10px;letter-spacing:.08em;padding:6px 12px;display:inline-block;white-space:nowrap}
-.loading-cell{padding:48px 32px;text-align:center;font-family:var(--mono);font-size:12px;color:var(--t3);letter-spacing:.08em}
-.spin{display:inline-block;width:13px;height:13px;border:1px solid var(--b2);border-top-color:var(--t2);border-radius:50%;animation:spin .8s linear infinite;margin-right:8px;vertical-align:middle}
-@keyframes spin{to{transform:rotate(360deg)}}
+.view-btn{background:var(--s2);border:1px solid var(--b2);color:var(--t2);font-family:var(--mono);font-size:10px;letter-spacing:.08em;padding:6px 12px;display:inline-block;white-space:nowrap;transition:all .15s}
+.view-btn:hover{color:var(--t1);border-color:var(--t3)}
+.live-badge{font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--green);border:1px solid var(--gdim);padding:2px 6px;background:rgba(29,185,84,.06)}
+.empty-cell{padding:48px 32px;text-align:center;font-family:var(--mono);font-size:12px;color:var(--t3);letter-spacing:.06em}
 
-/* WANTLIST */
+/* ── DEALS PAGE ── */
+.deals-search-bar{padding:16px 32px;border-bottom:1px solid var(--b1);display:flex;gap:10px;align-items:center;background:var(--s1)}
+.d-input{flex:1;background:var(--bg);border:1px solid var(--b2);color:var(--t1);font-family:var(--sans);font-size:13px;padding:9px 14px;outline:none;transition:border-color .15s}
+.d-input:focus{border-color:var(--t3)}
+.d-input::placeholder{color:var(--t3)}
+.d-go{background:var(--t1);color:var(--bg);font-family:var(--mono);font-size:11px;letter-spacing:.08em;padding:9px 20px;transition:opacity .15s;white-space:nowrap}
+.d-go:hover{opacity:.85}
+.d-go:disabled{opacity:.4;cursor:not-allowed}
+.deals-filters{padding:14px 32px;border-bottom:1px solid var(--b1);display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.f-btn{background:none;border:1px solid var(--b1);color:var(--t3);font-family:var(--mono);font-size:10px;letter-spacing:.08em;padding:7px 13px;transition:all .15s}
+.f-btn:hover{border-color:var(--t3);color:var(--t2)}
+.f-btn.on{border-color:var(--t2);color:var(--t1);background:var(--s2)}
+.deals-stats{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--b1)}
+.ds{padding:18px 28px;border-right:1px solid var(--b1)}
+.ds:last-child{border-right:none}
+.ds-val{font-family:var(--mono);font-size:22px;font-weight:300}
+.ds-lbl{font-size:11px;color:var(--t3);margin-top:4px}
+
+/* ── DISCOVER PAGE ── */
+.disc-controls{padding:24px 32px;border-bottom:1px solid var(--b1);display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px;background:var(--s1)}
+.ctrl-group{display:flex;flex-direction:column;gap:6px}
+.ctrl-label{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--t3);text-transform:uppercase}
+.ctrl-select{background:var(--bg);border:1px solid var(--b2);color:var(--t1);font-family:var(--sans);font-size:13px;padding:8px 12px;outline:none;width:100%;transition:border-color .15s;appearance:none;cursor:pointer}
+.ctrl-select:focus{border-color:var(--t3)}
+.ctrl-select option{background:var(--s1)}
+.disc-run-wrap{display:flex;align-items:flex-end;padding-bottom:0}
+.disc-run{background:var(--t1);color:var(--bg);font-family:var(--mono);font-size:11px;letter-spacing:.1em;font-weight:500;padding:10px 28px;transition:opacity .15s;width:100%}
+.disc-run:hover{opacity:.85}
+.disc-run:disabled{opacity:.4;cursor:not-allowed}
+
+/* ── CRATE DIG ANIMATION ── */
+#crate-overlay{position:fixed;inset:0;z-index:500;background:var(--bg);display:none;flex-direction:column;align-items:center;justify-content:center;gap:40px}
+#crate-overlay.show{display:flex}
+.crate-scene{position:relative;width:320px;height:200px}
+.crate-box{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:260px;height:120px;border:1px solid var(--b2);background:var(--s1)}
+.crate-box::before{content:'';position:absolute;top:-4px;left:8px;right:8px;height:8px;background:var(--s2);border:1px solid var(--b2)}
+
+/* Records in crate */
+.crate-records{position:absolute;bottom:8px;left:12px;right:12px;height:100px;display:flex;align-items:flex-end;gap:3px;overflow:hidden}
+.cr{width:14px;border-radius:1px;background:var(--b2);transform-origin:bottom center;transition:transform .3s}
+
+/* Browsing hand */
+.browse-hand{position:absolute;top:0;left:50%;transform:translateX(-50%);width:32px;height:60px;animation:browse 2s ease-in-out infinite}
+@keyframes browse{
+  0%{transform:translateX(-80px) rotate(-8deg)}
+  30%{transform:translateX(-20px) rotate(-4deg)}
+  60%{transform:translateX(20px) rotate(4deg)}
+  100%{transform:translateX(80px) rotate(8deg)}
+}
+.browse-hand::before{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:18px;height:40px;background:var(--t3);border-radius:2px 2px 0 0}
+.browse-hand::after{content:'';position:absolute;bottom:38px;left:50%;transform:translateX(-50%);width:24px;height:3px;background:var(--t2)}
+
+/* Pulled record */
+.pulled-record{position:absolute;top:20px;left:50%;transform:translateX(-50%) rotate(-5deg);width:48px;height:48px;border-radius:50%;background:repeating-radial-gradient(circle,#1a1a1a 0,#111 2px,#1a1a1a 4px);animation:pullup 2s ease-in-out infinite;opacity:0}
+.pulled-record::after{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:20%;height:20%;border-radius:50%;background:var(--bg)}
+@keyframes pullup{
+  0%,40%{opacity:0;transform:translateX(-50%) translateY(20px) rotate(-5deg)}
+  55%,75%{opacity:1;transform:translateX(-50%) translateY(0) rotate(-5deg)}
+  90%,100%{opacity:0;transform:translateX(-50%) translateY(-10px) rotate(5deg)}
+}
+
+.crate-status{font-family:var(--mono);font-size:12px;color:var(--t2);letter-spacing:.08em;text-align:center;min-height:18px}
+.crate-progress{width:320px;height:1px;background:var(--b1);overflow:hidden}
+.crate-progress-bar{height:100%;background:var(--green);width:0%;transition:width .4s ease}
+.crate-found{font-family:var(--mono);font-size:11px;color:var(--green);letter-spacing:.06em}
+
+/* Discover results */
+.disc-stats{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--b1)}
+.disc-result-head{padding:20px 32px;border-bottom:1px solid var(--b1);display:flex;align-items:center;justify-content:space-between}
+.disc-result-title{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--t3)}
+
+/* ── WANTLIST ── */
 .wl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:1px;background:var(--b1)}
 .wl-card{background:var(--bg);padding:20px 22px;display:flex;flex-direction:column;gap:7px;cursor:pointer;transition:background .12s}
 .wl-card:hover{background:var(--s1)}
@@ -152,13 +204,13 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:52px;background:rgba(
 .wl-thresh{font-family:var(--mono);font-size:12px;color:var(--t2);margin-top:2px}
 .wl-hit{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--green);border:1px solid var(--gdim);background:rgba(29,185,84,.07);padding:3px 8px;align-self:flex-start;margin-top:2px}
 .wl-no{font-family:var(--mono);font-size:10px;color:var(--t3);margin-top:2px}
-.wl-add{align-items:center;justify-content:center;min-height:110px;gap:6px}
+.wl-mkt{font-family:var(--mono);font-size:11px;margin-top:2px}
 
-/* PORTFOLIO */
+/* ── PORTFOLIO ── */
 .port-header{padding:44px 32px 36px;border-bottom:1px solid var(--b1);display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:24px}
 .port-name{font-size:26px;font-weight:500}
 .port-handle{font-family:var(--mono);font-size:13px;color:var(--t3);margin-top:3px}
-.port-stats{display:flex;gap:40px}
+.port-stats{display:flex;gap:40px;flex-wrap:wrap}
 .ps-val{font-family:var(--mono);font-size:20px;font-weight:300;text-align:right}
 .ps-lbl{font-size:11px;color:var(--t3);text-align:right;margin-top:3px}
 .pnl{display:grid;grid-template-columns:repeat(5,1fr);border-bottom:1px solid var(--b1)}
@@ -178,16 +230,31 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:52px;background:rgba(
 .pt-pos{font-family:var(--mono);font-size:12px;color:var(--green)}
 .pt-neu{font-family:var(--mono);font-size:13px}
 
+/* Add entry form */
+.add-entry-bar{padding:16px 28px;border-bottom:1px solid var(--b1);display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;background:var(--s1)}
+.ae-group{display:flex;flex-direction:column;gap:5px}
+.ae-label{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--t3)}
+.ae-input{background:var(--bg);border:1px solid var(--b2);color:var(--t1);font-family:var(--sans);font-size:13px;padding:7px 10px;outline:none;width:140px;transition:border-color .15s}
+.ae-input:focus{border-color:var(--t3)}
+.ae-input::placeholder{color:var(--t3)}
+.ae-input.wide{width:200px}
+.ae-btn{background:var(--t1);color:var(--bg);font-family:var(--mono);font-size:11px;letter-spacing:.08em;padding:8px 18px;transition:opacity .15s;align-self:flex-end;white-space:nowrap}
+.ae-btn:hover{opacity:.85}
+
 @media(max-width:768px){
   nav{padding:0 16px}
   .hero{grid-template-columns:1fr;padding:48px 16px 36px}
   .hero-l{border-right:none;border-bottom:1px solid var(--b1);padding:0 0 32px}
   .hero-r{padding:28px 0 0}
-  .deals-stats{grid-template-columns:repeat(2,1fr)}
+  .deals-stats,.disc-stats{grid-template-columns:repeat(2,1fr)}
   .pnl{grid-template-columns:repeat(2,1fr)}
-  .section,.deals-search-bar,.deals-filters{padding-left:16px;padding-right:16px}
+  .section,.deals-search-bar,.deals-filters,.disc-controls,.disc-result-head{padding-left:16px;padding-right:16px}
   .port-header{padding:32px 16px}
   .port-table th,.port-table td{padding-left:16px;padding-right:16px}
+  .data-table th:first-child,.dt-row td:first-child{padding-left:16px}
+  .data-table th:last-child,.dt-row td:last-child{padding-right:16px}
+  .crate-scene{width:260px}
+  .crate-progress{width:260px}
 }
 </style>
 </head>
@@ -205,12 +272,27 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:52px;background:rgba(
   </div>
 </div>
 
+<!-- CRATE DIG OVERLAY -->
+<div id="crate-overlay">
+  <div class="crate-scene">
+    <div class="pulled-record"></div>
+    <div class="browse-hand"></div>
+    <div class="crate-box">
+      <div class="crate-records" id="crate-records"></div>
+    </div>
+  </div>
+  <div class="crate-status" id="crate-status">Initialising sweep…</div>
+  <div class="crate-progress"><div class="crate-progress-bar" id="crate-bar"></div></div>
+  <div class="crate-found" id="crate-found"></div>
+</div>
+
 <!-- NAV -->
 <nav>
   <div class="nav-logo">WAX</div>
   <div class="nav-links">
     <button class="nav-btn on" data-p="home">Home</button>
     <button class="nav-btn" data-p="deals">Deals</button>
+    <button class="nav-btn" data-p="discover">Discover</button>
     <button class="nav-btn" data-p="wantlist">Wantlist</button>
     <button class="nav-btn" data-p="portfolio">Portfolio</button>
   </div>
@@ -224,24 +306,24 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:52px;background:rgba(
       <div class="hero-eye">Best deal right now</div>
       <div class="hero-num" id="h-saving">—</div>
       <div class="hero-lbl">below market value</div>
-      <div class="hero-rec" id="h-rec">Search to find live deals</div>
-      <div class="hero-meta" id="h-meta">Go to Deals and run a search</div>
-      <button class="hero-cta" id="h-cta">FIND DEALS →</button>
+      <div class="hero-rec" id="h-rec">Run Discover to find live deals</div>
+      <div class="hero-meta" id="h-meta">Use the Discover tab to sweep the market</div>
+      <button class="hero-cta" id="h-cta">DISCOVER DEALS →</button>
     </div>
     <div class="hero-r">
-      <div><div class="h-stat-val" id="h-count">—</div><div class="h-stat-lbl">deals found today</div></div>
+      <div><div class="h-stat-val" id="h-count">—</div><div class="h-stat-lbl">deals found</div></div>
       <div><div class="h-stat-val" id="h-avg">—</div><div class="h-stat-lbl">average saving</div></div>
-      <div><div class="h-stat-val" id="h-wl">4</div><div class="h-stat-lbl">wantlist matches</div></div>
+      <div><div class="h-stat-val" id="h-wl-count">—</div><div class="h-stat-lbl">wantlist items</div></div>
     </div>
   </div>
   <div class="ticker-wrap"><div class="ticker-track" id="ticker"></div></div>
   <div class="section">
     <div class="sec-head"><span class="sec-title">What's Hot</span><button class="sec-more" id="hot-more">See all →</button></div>
-    <div class="rec-grid" id="hot-grid"></div>
+    <div class="rec-grid" id="hot-grid"><div style="padding:32px;color:var(--t3);font-family:var(--mono);font-size:12px">Run Discover to populate</div></div>
   </div>
   <div class="section">
-    <div class="sec-head"><span class="sec-title">Records to Watch</span><button class="sec-more" id="watch-more">See all →</button></div>
-    <div class="rec-grid" id="watch-grid"></div>
+    <div class="sec-head"><span class="sec-title">From Your Wantlist</span><button class="sec-more" id="wl-more">See all →</button></div>
+    <div class="rec-grid" id="wl-home-grid"><div style="padding:32px;color:var(--t3);font-family:var(--mono);font-size:12px">Loading your wantlist…</div></div>
   </div>
 </div>
 
@@ -253,7 +335,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:52px;background:rgba(
     <span class="live-badge" id="live-badge" style="display:none">LIVE</span>
   </div>
   <div class="deals-filters">
-    <input class="d-input" id="d-filter" placeholder="Filter results…" style="max-width:200px;padding:7px 12px;font-size:12px">
+    <input class="d-input" id="d-filter" placeholder="Filter…" style="max-width:180px;padding:7px 12px;font-size:12px">
     <button class="f-btn on" data-f="all">ALL</button>
     <button class="f-btn" data-f="top">TOP DEALS</button>
     <button class="f-btn" data-f="rare">RARE</button>
@@ -266,15 +348,85 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:52px;background:rgba(
     <div class="ds"><div class="ds-val" id="ds-count">—</div><div class="ds-lbl">Deals found</div></div>
     <div class="ds"><div class="ds-val" id="ds-avg" style="color:var(--green)">—</div><div class="ds-lbl">Avg below market</div></div>
     <div class="ds"><div class="ds-val" id="ds-best" style="color:var(--green)">—</div><div class="ds-lbl">Best saving</div></div>
-    <div class="ds"><div class="ds-val" style="color:var(--amber)">4</div><div class="ds-lbl">Wantlist hits</div></div>
+    <div class="ds"><div class="ds-val" id="ds-wl" style="color:var(--amber)">—</div><div class="ds-lbl">Wantlist hits</div></div>
   </div>
   <div style="overflow-x:auto">
-    <table class="deals-table">
+    <table class="data-table">
       <thead><tr>
         <th>Record</th><th>Pressing</th><th>Cond.</th><th>Ask</th><th>Market</th>
         <th>Saving</th><th>Liquidity</th><th>Status</th><th>Score</th><th>Track</th><th></th>
       </tr></thead>
-      <tbody id="d-tbody"><tr><td colspan="11" class="loading-cell">Search above to load live data from Discogs</td></tr></tbody>
+      <tbody id="d-tbody"><tr><td colspan="11" class="empty-cell">Search above to load live data</td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- DISCOVER -->
+<div class="page" id="page-discover">
+  <div class="disc-controls">
+    <div class="ctrl-group">
+      <div class="ctrl-label">Genre</div>
+      <select class="ctrl-select" id="disc-genre">
+        <option value="all">All genres</option>
+        <option value="jazz">Jazz</option>
+        <option value="electronic">Electronic</option>
+        <option value="soul">Soul / Funk</option>
+        <option value="rock">Rock</option>
+        <option value="hip-hop">Hip-Hop</option>
+        <option value="classical">Classical</option>
+      </select>
+    </div>
+    <div class="ctrl-group">
+      <div class="ctrl-label">Max Price</div>
+      <select class="ctrl-select" id="disc-price">
+        <option value="50">Under £50</option>
+        <option value="100" selected>Under £100</option>
+        <option value="250">Under £250</option>
+        <option value="500">Under £500</option>
+        <option value="9999">No limit</option>
+      </select>
+    </div>
+    <div class="ctrl-group">
+      <div class="ctrl-label">Min Score</div>
+      <select class="ctrl-select" id="disc-minscore">
+        <option value="50">50+ (Good)</option>
+        <option value="65" selected>65+ (Strong)</option>
+        <option value="72">72+ (Fire only)</option>
+      </select>
+    </div>
+    <div class="ctrl-group">
+      <div class="ctrl-label">Condition</div>
+      <select class="ctrl-select" id="disc-cond">
+        <option value="any">Any</option>
+        <option value="vg" selected>VG or better</option>
+        <option value="vgplus">VG+ or better</option>
+        <option value="nm">NM only</option>
+      </select>
+    </div>
+    <div class="ctrl-group disc-run-wrap">
+      <button class="disc-run" id="disc-run">DIG THE CRATES →</button>
+    </div>
+  </div>
+
+  <div class="disc-stats" id="disc-stats-row" style="display:none">
+    <div class="ds"><div class="ds-val" id="disc-found">—</div><div class="ds-lbl">Deals surfaced</div></div>
+    <div class="ds"><div class="ds-val" id="disc-savg" style="color:var(--green)">—</div><div class="ds-lbl">Avg saving</div></div>
+    <div class="ds"><div class="ds-val" id="disc-sbest" style="color:var(--green)">—</div><div class="ds-lbl">Best saving</div></div>
+    <div class="ds"><div class="ds-val" id="disc-swl" style="color:var(--amber)">—</div><div class="ds-lbl">Wantlist matches</div></div>
+  </div>
+
+  <div class="disc-result-head" id="disc-result-head" style="display:none">
+    <span class="disc-result-title">Discovery Results</span>
+    <span class="live-badge">LIVE · DISCOGS</span>
+  </div>
+
+  <div style="overflow-x:auto">
+    <table class="data-table">
+      <thead><tr>
+        <th>Record</th><th>Pressing</th><th>Cond.</th><th>Ask</th><th>Market</th>
+        <th>Saving</th><th>Liquidity</th><th>Status</th><th>Score</th><th>Track</th><th></th>
+      </tr></thead>
+      <tbody id="disc-tbody"><tr><td colspan="11" class="empty-cell">Configure your sweep above and hit Dig the Crates</td></tr></tbody>
     </table>
   </div>
 </div>
@@ -283,55 +435,73 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:52px;background:rgba(
 <div class="page" id="page-wantlist">
   <div class="section" style="border-bottom:none">
     <div class="sec-head">
-      <span class="sec-title">Your Wantlist</span>
-      <button style="font-family:var(--mono);font-size:11px;letter-spacing:.08em;border:1px solid var(--b1);padding:7px 14px;color:var(--t3)">+ ADD RECORD</button>
+      <span class="sec-title">Your Wantlist <span id="wl-count-badge" style="color:var(--t3)"></span></span>
+      <span class="live-badge" id="wl-live-badge" style="display:none">LIVE · DISCOGS</span>
     </div>
-    <div class="wl-grid" id="wl-grid"></div>
+    <div class="wl-grid" id="wl-grid"><div style="padding:32px;color:var(--t3);font-family:var(--mono);font-size:12px">Loading your wantlist from Discogs…</div></div>
   </div>
   <div style="padding:28px 32px;border-top:1px solid var(--b1)">
     <div style="font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);margin-bottom:10px">How alerts work</div>
-    <p style="font-size:13px;color:var(--t2);max-width:520px;line-height:1.7">WAX monitors every active listing against your threshold. When a match appears — checked against condition grade, pressing variant and market trajectory — you're notified immediately. Alerts only fire when the deal score clears the minimum threshold.</p>
+    <p style="font-size:13px;color:var(--t2);max-width:520px;line-height:1.7">WAX cross-references your Discogs wantlist against live marketplace listings. When a match appears below market value and clears the deal score threshold, it surfaces here and on the Discover feed automatically.</p>
   </div>
 </div>
 
 <!-- PORTFOLIO -->
 <div class="page" id="page-portfolio">
   <div class="port-header">
-    <div><div class="port-name">Ryan</div><div class="port-handle">@ryanwax · member since 2024</div></div>
+    <div>
+      <div class="port-name" id="port-username">—</div>
+      <div class="port-handle" id="port-handle">Loading profile…</div>
+    </div>
     <div class="port-stats">
-      <div><div class="ps-val">31</div><div class="ps-lbl">Records traded</div></div>
-      <div><div class="ps-val">£1,840</div><div class="ps-lbl">Total revenue</div></div>
-      <div><div class="ps-val" style="color:var(--green)">£612</div><div class="ps-lbl">Net profit</div></div>
+      <div><div class="ps-val" id="port-trades">—</div><div class="ps-lbl">Records in collection</div></div>
+      <div><div class="ps-val" id="port-wl">—</div><div class="ps-lbl">Wantlist items</div></div>
+      <div><div class="ps-val" id="port-profit" style="color:var(--green)">£0</div><div class="ps-lbl">Logged profit</div></div>
     </div>
   </div>
   <div class="pnl">
-    <div class="pnl-c"><div class="pnl-v" style="color:var(--green)">£612</div><div class="pnl-l">Total profit</div></div>
-    <div class="pnl-c"><div class="pnl-v">£1,228</div><div class="pnl-l">Capital deployed</div></div>
-    <div class="pnl-c"><div class="pnl-v" style="color:var(--green)">49.8%</div><div class="pnl-l">Avg ROI per record</div></div>
-    <div class="pnl-c"><div class="pnl-v" style="color:var(--amber)">9d</div><div class="pnl-l">Avg days to sell</div></div>
-    <div class="pnl-c"><div class="pnl-v">£340</div><div class="pnl-l">Inventory value</div></div>
+    <div class="pnl-c"><div class="pnl-v" id="pnl-profit" style="color:var(--green)">£0</div><div class="pnl-l">Total profit</div></div>
+    <div class="pnl-c"><div class="pnl-v" id="pnl-spent">£0</div><div class="pnl-l">Capital deployed</div></div>
+    <div class="pnl-c"><div class="pnl-v" id="pnl-roi" style="color:var(--green)">—</div><div class="pnl-l">Avg ROI</div></div>
+    <div class="pnl-c"><div class="pnl-v" id="pnl-days" style="color:var(--amber)">—</div><div class="pnl-l">Avg days to sell</div></div>
+    <div class="pnl-c"><div class="pnl-v" id="pnl-inv">£0</div><div class="pnl-l">Est. inventory value</div></div>
   </div>
   <div class="port-tabs">
-    <button class="ptab on" data-t="held">Holding</button>
+    <button class="ptab on" data-t="holding">Holding</button>
     <button class="ptab" data-t="sold">Sold</button>
-    <button class="ptab" data-t="watch">Watching</button>
+    <button class="ptab" data-t="collection">Discogs Collection</button>
+  </div>
+  <!-- Add entry form -->
+  <div class="add-entry-bar" id="add-entry-bar">
+    <div class="ae-group"><div class="ae-label">Artist</div><input class="ae-input wide" id="ae-artist" placeholder="Artist name"></div>
+    <div class="ae-group"><div class="ae-label">Title</div><input class="ae-input wide" id="ae-title" placeholder="Record title"></div>
+    <div class="ae-group"><div class="ae-label">Paid £</div><input class="ae-input" id="ae-paid" type="number" placeholder="0.00"></div>
+    <div class="ae-group"><div class="ae-label">Sold for £ (optional)</div><input class="ae-input" id="ae-sold" type="number" placeholder="0.00"></div>
+    <div class="ae-group"><div class="ae-label">Days held</div><input class="ae-input" id="ae-days" type="number" placeholder="0"></div>
+    <button class="ae-btn" id="ae-submit">+ ADD ENTRY</button>
   </div>
   <div id="port-content"></div>
 </div>
 
 <script>
-/* ═══════════════════════════════
-   STATE
-═══════════════════════════════ */
-let TOKEN = '';
-let liveData = [];
-let activeFilter = 'all';
-let activeTab = 'held';
+/* ═══════════════════════════════════════════
+   CONSTANTS & STATE
+═══════════════════════════════════════════ */
+const DISCOGS_USER = 'rynamo';
 const BASE = 'https://api.discogs.com';
+let TOKEN = '';
+let liveDeals = [];
+let discoverResults = [];
+let userWantlist = [];
+let activeFilter = 'all';
+let activeTab = 'holding';
 
-/* ═══════════════════════════════
+// Persistent portfolio stored in memory (survives session)
+let portfolio = { holding: [], sold: [] };
+
+/* ═══════════════════════════════════════════
    GATE
-═══════════════════════════════ */
+═══════════════════════════════════════════ */
 document.getElementById('g-submit').addEventListener('click', doConnect);
 document.getElementById('g-key').addEventListener('keydown', e => { if(e.key==='Enter') doConnect(); });
 
@@ -342,10 +512,9 @@ async function doConnect() {
   err.textContent = '';
   document.getElementById('g-submit').textContent = 'CONNECTING…';
   document.getElementById('g-key').disabled = true;
-
   try {
     const r = await fetch(`${BASE}/database/search?q=test&per_page=1`, {
-      headers:{ 'Authorization':'Discogs token='+key, 'User-Agent':'WAXApp/1.0' }
+      headers: H(key)
     });
     if (r.status === 401) throw new Error('auth');
     TOKEN = key;
@@ -353,7 +522,6 @@ async function doConnect() {
     boot();
   } catch(e) {
     if (key.length > 10) {
-      // CORS block — token likely fine, let through
       TOKEN = key;
       document.getElementById('gate').style.display = 'none';
       boot();
@@ -365,33 +533,71 @@ async function doConnect() {
   }
 }
 
-/* ═══════════════════════════════
-   DISCOGS API
-═══════════════════════════════ */
-const H = () => ({ 'Authorization':'Discogs token='+TOKEN, 'User-Agent':'WAXApp/1.0' });
+/* ═══════════════════════════════════════════
+   API HELPERS
+═══════════════════════════════════════════ */
+const H = (tok) => ({
+  'Authorization': `Discogs token=${tok || TOKEN}`,
+  'User-Agent': 'WAXApp/1.0'
+});
 
-async function apiSearch(q) {
-  const r = await fetch(`${BASE}/database/search?q=${encodeURIComponent(q)}&type=release&per_page=8&format=Vinyl`, {headers:H()});
-  if (!r.ok) throw new Error('search failed');
-  return (await r.json()).results || [];
+async function api(path) {
+  const r = await fetch(BASE + path, { headers: H() });
+  if (!r.ok) throw new Error(r.status);
+  return r.json();
 }
 
-async function apiStats(id) {
-  try {
-    const r = await fetch(`${BASE}/marketplace/stats/${id}?curr_abbr=GBP`, {headers:H()});
-    return r.ok ? await r.json() : null;
-  } catch { return null; }
+async function safeApi(path) {
+  try { return await api(path); } catch { return null; }
 }
 
-async function apiRelease(id) {
-  try {
-    const r = await fetch(`${BASE}/releases/${id}`, {headers:H()});
-    return r.ok ? await r.json() : null;
-  } catch { return null; }
+/* ═══════════════════════════════════════════
+   SCORING ENGINE
+═══════════════════════════════════════════ */
+function score(r) {
+  if (!r.ask || !r.market || r.ask >= r.market) return 0;
+  const pd = Math.min((1 - r.ask/r.market)*100, 100);
+  if (r.track === 'B') {
+    const sc = Math.min(r.wantRatio*100, 100);
+    const mo = parseFloat(r.wg)>15 ? 90 : parseFloat(r.wg)>5 ? 65 : 30;
+    return Math.round(pd*0.35 + sc*0.30 + mo*0.25 + 50*0.10);
+  }
+  const lq = Math.min((r.salesPer30/30)*100, 100);
+  const sc = Math.min(r.wantRatio*100, 100);
+  const mo = parseFloat(r.wg)>5 ? 80 : parseFloat(r.wg)>0 ? 50 : 20;
+  return Math.round(pd*0.30 + lq*0.25 + sc*0.20 + mo*0.15 + 10);
 }
 
+function grade(s) {
+  if (s >= 72) return 'sc-a';
+  if (s >= 50) return 'sc-b';
+  return 'sc-c';
+}
+
+function pill(s) {
+  const m = {
+    heat:['sp-heat','HEATING'], rise:['sp-rise','RISING'],
+    stable:['sp-stable','STABLE'], cool:['sp-cool','COOLING'], rare:['sp-rare','◆ RARE']
+  };
+  const [c,l] = m[s] || m.stable;
+  return `<span class="sp ${c}">${l}</span>`;
+}
+
+function liqLabel(r) {
+  if (r.track==='B') return `<span style="font-family:var(--mono);font-size:11px;color:var(--blue)">COLLECTABLE</span>`;
+  if (r.salesPer30>=20) return `<span style="font-family:var(--mono);font-size:11px;color:var(--green)">HIGH</span>`;
+  if (r.salesPer30>=10) return `<span style="font-family:var(--mono);font-size:11px;color:var(--amber)">MED</span>`;
+  return `<span style="font-family:var(--mono);font-size:11px;color:var(--red)">LOW</span>`;
+}
+
+/* ═══════════════════════════════════════════
+   ENRICH RELEASE (core pipeline)
+═══════════════════════════════════════════ */
 async function enrich(rel) {
-  const [stats, release] = await Promise.all([apiStats(rel.id), apiRelease(rel.id)]);
+  const [stats, release] = await Promise.all([
+    safeApi(`/marketplace/stats/${rel.id}?curr_abbr=GBP`),
+    safeApi(`/releases/${rel.id}`)
+  ]);
   const comm = release?.community || {};
   const have = comm.have || 0;
   const want = comm.want || 0;
@@ -399,32 +605,32 @@ async function enrich(rel) {
   const numForSale = stats?.num_for_sale || 0;
   const median = stats?.median?.value || null;
   const lowest = stats?.lowest_price?.value || null;
-  const wg = wantRatio > 0.6 ? '+15%' : wantRatio > 0.4 ? '+7%' : wantRatio > 0.2 ? '+3%' : '0%';
+  const wg = wantRatio>0.6?'+15%':wantRatio>0.4?'+7%':wantRatio>0.2?'+3%':'0%';
 
   let status = 'stable';
-  if (wantRatio > 0.5 && numForSale < 5) status = 'rare';
-  else if (wantRatio > 0.4 && lowest && median && lowest < median * 0.75) status = 'heat';
-  else if (wantRatio > 0.3) status = 'rise';
-  else if (wantRatio < 0.15) status = 'cool';
+  if (wantRatio>0.5 && numForSale<5) status='rare';
+  else if (wantRatio>0.4 && lowest && median && lowest<median*0.75) status='heat';
+  else if (wantRatio>0.3) status='rise';
+  else if (wantRatio<0.15) status='cool';
 
-  const track = (median && median > 80 && numForSale < 8) ? 'B' : 'A';
-
-  const gs = (release?.genres||release?.styles||['other'])[0].toLowerCase();
+  const track = (median && median>80 && numForSale<8) ? 'B' : 'A';
+  const gs = ((release?.genres||release?.styles||['other'])[0]||'other').toLowerCase();
   let genre = 'other';
   if (gs.includes('jazz')) genre='jazz';
-  else if (gs.includes('electronic')||gs.includes('techno')||gs.includes('house')||gs.includes('ambient')) genre='electronic';
+  else if (gs.includes('electronic')||gs.includes('techno')||gs.includes('house')||gs.includes('ambient')||gs.includes('experimental')) genre='electronic';
   else if (gs.includes('soul')||gs.includes('funk')||gs.includes('r&b')) genre='soul';
   else if (gs.includes('rock')||gs.includes('punk')||gs.includes('metal')) genre='rock';
+  else if (gs.includes('hip')) genre='hip-hop';
 
   const parts = (rel.title||'').split(' - ');
   return {
     id: rel.id,
-    artist: parts[0]||'Unknown',
+    artist: parts[0]||rel.artist||'Unknown',
     title: parts.slice(1).join(' - ')||rel.title||'Unknown',
     label: (rel.label||['Unknown'])[0],
     year: rel.year||'—',
     genre, status, track,
-    condition:'VG+',
+    condition: 'VG+',
     pressing: rel.country ? rel.country+' Press' : '—',
     ask: lowest ? +lowest.toFixed(2) : null,
     market: median ? +median.toFixed(2) : null,
@@ -436,245 +642,449 @@ async function enrich(rel) {
   };
 }
 
-/* ═══════════════════════════════
-   SCORING
-═══════════════════════════════ */
-function score(r) {
-  if (!r.ask||!r.market||r.ask>=r.market) return 0;
-  const pd = Math.min((1-r.ask/r.market)*100,100);
-  if (r.track==='B') {
-    const sc = Math.min(r.wantRatio*100,100);
-    const mo = parseFloat(r.wg)>15?90:parseFloat(r.wg)>5?65:30;
-    return Math.round(pd*0.35+sc*0.30+mo*0.25+50*0.10);
-  }
-  const lq = Math.min((r.salesPer30/30)*100,100);
-  const sc = Math.min(r.wantRatio*100,100);
-  const mo = parseFloat(r.wg)>5?80:parseFloat(r.wg)>0?50:20;
-  return Math.round(pd*0.30+lq*0.25+sc*0.20+mo*0.15+10);
+/* ═══════════════════════════════════════════
+   DEAL ROW HTML
+═══════════════════════════════════════════ */
+function dealRow(r) {
+  const s = score(r);
+  const abs = (r.market - r.ask).toFixed(0);
+  const pct = Math.round((1 - r.ask/r.market)*100);
+  const wlMatch = userWantlist.some(w => w.id === r.id);
+  const wlTag = wlMatch ? `<span style="font-family:var(--mono);font-size:9px;color:var(--green);border:1px solid var(--gdim);background:rgba(29,185,84,.08);padding:2px 6px;margin-left:6px">★ WANT</span>` : '';
+  return `<tr class="dt-row" onclick="window.open('${r.url}','_blank')">
+    <td><div class="td-artist">${r.artist}${wlTag}</div><div class="td-sub">${r.title} · ${r.label} · ${r.year}</div></td>
+    <td><span class="td-tag">${r.pressing}</span></td>
+    <td><span class="td-tag">${r.condition}</span></td>
+    <td class="td-mono">£${r.ask}</td>
+    <td class="td-sm">£${r.market}</td>
+    <td style="font-family:var(--mono);font-size:13px;color:var(--green)">−£${abs} <span style="color:var(--t3);font-size:11px">(${pct}%)</span></td>
+    <td>${liqLabel(r)}</td>
+    <td>${pill(r.status)}</td>
+    <td><span class="${grade(s)}">${s}</span></td>
+    <td><span class="tr-badge">TRACK ${r.track}</span></td>
+    <td><a href="${r.url}" target="_blank" onclick="event.stopPropagation()" class="view-btn">VIEW ↗</a></td>
+  </tr>`;
 }
 
-function grade(s) {
-  if (s>=72) return {cls:'sc-a',val:s};
-  if (s>=50) return {cls:'sc-b',val:s};
-  return {cls:'sc-c',val:s};
+function updateDealStats(data, countId, avgId, bestId) {
+  if (!data.length) return;
+  const savings = data.map(r => r.market - r.ask);
+  document.getElementById(countId).textContent = data.length;
+  if (avgId) document.getElementById(avgId).textContent = Math.round((1 - data.reduce((a,r)=>a+r.ask/r.market,0)/data.length)*100)+'%';
+  if (bestId) document.getElementById(bestId).textContent = '−£'+Math.round(Math.max(...savings));
 }
 
-function pill(s) {
-  const m={heat:['sp-heat','HEATING'],rise:['sp-rise','RISING'],stable:['sp-stable','STABLE'],cool:['sp-cool','COOLING'],rare:['sp-rare','◆ RARE']};
-  const [c,l]=m[s]||m.stable;
-  return `<span class="sp ${c}">${l}</span>`;
-}
-
-function liqLabel(r) {
-  if (r.track==='B') return `<span style="font-family:var(--mono);font-size:11px;color:var(--blue)">COLLECTABLE</span>`;
-  if (r.salesPer30>=20) return `<span style="font-family:var(--mono);font-size:11px;color:var(--green)">HIGH</span>`;
-  if (r.salesPer30>=10) return `<span style="font-family:var(--mono);font-size:11px;color:var(--amber)">MED</span>`;
-  return `<span style="font-family:var(--mono);font-size:11px;color:var(--red)">LOW</span>`;
-}
-
-/* ═══════════════════════════════
-   SEARCH
-═══════════════════════════════ */
+/* ═══════════════════════════════════════════
+   DEALS PAGE — manual search
+═══════════════════════════════════════════ */
 async function runSearch() {
   const q = document.getElementById('d-query').value.trim();
   if (!q) return;
   const btn = document.getElementById('d-go');
   btn.disabled = true; btn.textContent = 'SEARCHING…';
-  document.getElementById('d-tbody').innerHTML = `<tr><td colspan="11" class="loading-cell"><span class="spin"></span>FETCHING FROM DISCOGS</td></tr>`;
+  document.getElementById('d-tbody').innerHTML = `<tr><td colspan="11" class="empty-cell"><div style="display:inline-block;width:12px;height:12px;border:1px solid var(--b2);border-top-color:var(--t2);border-radius:50%;animation:spin .8s linear infinite;margin-right:8px;vertical-align:middle"></div>FETCHING FROM DISCOGS</td></tr>`;
 
   try {
-    const results = await apiSearch(q);
-    const enriched = await Promise.all(results.slice(0,6).map(enrich));
-    liveData = enriched.filter(r => r.ask && r.market && r.ask < r.market);
-    liveData.sort((a,b)=>score(b)-score(a));
-
-    if (liveData.length===0) {
-      document.getElementById('d-tbody').innerHTML=`<tr><td colspan="11" class="loading-cell">No priced listings found — try a different search</td></tr>`;
-      btn.disabled=false; btn.textContent='SEARCH'; return;
+    const res = await api(`/database/search?q=${encodeURIComponent(q)}&type=release&per_page=8&format=Vinyl`);
+    const enriched = await Promise.all((res.results||[]).slice(0,6).map(enrich));
+    liveDeals = enriched.filter(r => r.ask && r.market && r.ask < r.market);
+    liveDeals.sort((a,b) => score(b)-score(a));
+    document.getElementById('live-badge').style.display = 'inline-block';
+    if (liveDeals.length) {
+      updateHomeHero(liveDeals[0], liveDeals);
+      updateDealStats(liveDeals, 'ds-count', 'ds-avg', 'ds-best');
+      const wlHits = liveDeals.filter(r => userWantlist.some(w=>w.id===r.id)).length;
+      document.getElementById('ds-wl').textContent = wlHits;
     }
-
-    document.getElementById('live-badge').style.display='inline-block';
-    updateHomeHero(liveData[0], liveData);
-    renderDeals();
-
-    const savings = liveData.map(r=>r.market-r.ask);
-    const best = Math.round(Math.max(...savings));
-    const avgPct = Math.round((1-liveData.reduce((a,r)=>a+r.ask/r.market,0)/liveData.length)*100);
-    document.getElementById('ds-avg').textContent = avgPct+'%';
-    document.getElementById('ds-best').textContent = '−£'+best;
-
+    renderDealsTable();
   } catch(e) {
-    document.getElementById('d-tbody').innerHTML=`<tr><td colspan="11" class="loading-cell" style="color:var(--red)">Error loading data — check connection and try again</td></tr>`;
+    document.getElementById('d-tbody').innerHTML = `<tr><td colspan="11" class="empty-cell" style="color:var(--red)">Error — check connection and try again</td></tr>`;
   }
-  btn.disabled=false; btn.textContent='SEARCH';
+  btn.disabled = false; btn.textContent = 'SEARCH';
 }
 
-function updateHomeHero(best, all) {
-  const saving = (best.market-best.ask).toFixed(0);
-  document.getElementById('h-saving').textContent = '−£'+saving;
-  document.getElementById('h-rec').textContent = best.artist+' — '+best.title;
-  document.getElementById('h-meta').textContent = best.year+' · '+best.label+' · '+best.pressing+' · '+best.condition;
-  document.getElementById('h-count').textContent = all.length;
-  const avgS = Math.round(all.reduce((a,r)=>a+(r.market-r.ask),0)/all.length);
-  document.getElementById('h-avg').textContent = '£'+avgS;
-}
-
-/* ═══════════════════════════════
-   RENDER DEALS
-═══════════════════════════════ */
-function renderDeals() {
+function renderDealsTable() {
   const q = document.getElementById('d-filter').value.toLowerCase();
-  let recs = liveData.filter(r => {
-    const mf = activeFilter==='all' || activeFilter===r.genre ||
-      (activeFilter==='top' && score(r)>=72) ||
-      (activeFilter==='rare' && r.track==='B');
-    const mq = !q || r.artist.toLowerCase().includes(q) || r.title.toLowerCase().includes(q) || r.label.toLowerCase().includes(q);
+  const filtered = liveDeals.filter(r => {
+    const mf = activeFilter==='all'||activeFilter===r.genre||
+      (activeFilter==='top'&&score(r)>=72)||(activeFilter==='rare'&&r.track==='B');
+    const mq = !q||r.artist.toLowerCase().includes(q)||r.title.toLowerCase().includes(q);
     return mf && mq;
   });
-  recs.sort((a,b)=>score(b)-score(a));
-  document.getElementById('ds-count').textContent = recs.length;
+  filtered.sort((a,b)=>score(b)-score(a));
+  document.getElementById('ds-count').textContent = filtered.length;
+  document.getElementById('d-tbody').innerHTML = filtered.length
+    ? filtered.map(dealRow).join('')
+    : `<tr><td colspan="11" class="empty-cell">No results match that filter</td></tr>`;
+}
 
-  if (!recs.length) {
-    document.getElementById('d-tbody').innerHTML=`<tr><td colspan="11" class="loading-cell">No results match that filter</td></tr>`;
-    return;
+/* ═══════════════════════════════════════════
+   CRATE DIG ANIMATION
+═══════════════════════════════════════════ */
+const CRATE_MSGS = [
+  'Flipping through Jazz section…',
+  'Checking Blue Note pressings…',
+  'Scanning Electronic releases…',
+  'Pulling out interesting sleeves…',
+  'Checking market prices…',
+  'Found something — running the numbers…',
+  'Comparing against sold history…',
+  'Scoring deals…',
+  'Almost there…',
+  'Surfacing the best finds…'
+];
+
+function buildCrateRecords() {
+  const container = document.getElementById('crate-records');
+  container.innerHTML = '';
+  const heights = [60,75,85,70,90,65,80,72,88,68,78,82,71,86,74,69,83,76];
+  heights.forEach((h, i) => {
+    const el = document.createElement('div');
+    el.className = 'cr';
+    el.style.height = h+'px';
+    el.style.background = `hsl(${220+i*8},8%,${14+i%3*3}%)`;
+    el.style.animationDelay = (i*0.1)+'s';
+    container.appendChild(el);
+  });
+}
+
+function showCrate() {
+  buildCrateRecords();
+  document.getElementById('crate-overlay').classList.add('show');
+  document.getElementById('crate-bar').style.width = '0%';
+  document.getElementById('crate-found').textContent = '';
+}
+
+function hideCrate() {
+  document.getElementById('crate-overlay').classList.remove('show');
+}
+
+function setCrateProgress(pct, msg, found) {
+  document.getElementById('crate-bar').style.width = pct+'%';
+  if (msg) document.getElementById('crate-status').textContent = msg;
+  if (found !== undefined) document.getElementById('crate-found').textContent = found ? `${found} deal${found===1?'':'s'} found so far` : '';
+}
+
+/* ═══════════════════════════════════════════
+   DISCOVER ENGINE
+═══════════════════════════════════════════ */
+const DISC_QUERIES = {
+  all:        ['jazz vinyl original pressing','electronic vinyl first press','soul funk vinyl original','rare vinyl collectable','hip hop vinyl original'],
+  jazz:       ['jazz vinyl original pressing blue note','jazz vinyl impulse prestige','jazz vinyl rare collectable'],
+  electronic: ['electronic vinyl warp records','electronic vinyl techno first press','ambient vinyl original pressing'],
+  soul:       ['soul vinyl original pressing','funk vinyl rare','soul 45 original pressing'],
+  rock:       ['rock vinyl original pressing','punk vinyl first press','alternative vinyl rare'],
+  'hip-hop':  ['hip hop vinyl original pressing','rap vinyl rare','hip hop 12 inch original'],
+  classical:  ['classical vinyl original pressing','classical vinyl rare collectable']
+};
+
+async function runDiscover() {
+  const genre = document.getElementById('disc-genre').value;
+  const maxPrice = +document.getElementById('disc-price').value;
+  const minScore = +document.getElementById('disc-minscore').value;
+  const condFilter = document.getElementById('disc-cond').value;
+
+  const btn = document.getElementById('disc-run');
+  btn.disabled = true;
+  showCrate();
+
+  const queries = DISC_QUERIES[genre] || DISC_QUERIES.all;
+  const allReleases = [];
+  const seen = new Set();
+
+  for (let i = 0; i < queries.length; i++) {
+    const q = queries[i];
+    const pct = Math.round((i / queries.length) * 70);
+    setCrateProgress(pct, CRATE_MSGS[i % CRATE_MSGS.length]);
+
+    try {
+      const res = await api(`/database/search?q=${encodeURIComponent(q)}&type=release&per_page=10&format=Vinyl`);
+      const releases = (res.results || []).filter(r => !seen.has(r.id));
+      releases.forEach(r => seen.add(r.id));
+      allReleases.push(...releases.slice(0, 6));
+    } catch {}
+
+    await new Promise(r => setTimeout(r, 300)); // rate limit breathing room
   }
 
-  document.getElementById('d-tbody').innerHTML = recs.map(r => {
-    const s=score(r), g=grade(s);
-    const abs=(r.market-r.ask).toFixed(0);
-    const pct=Math.round((1-r.ask/r.market)*100);
-    return `<tr class="dt-row" onclick="window.open('${r.url}','_blank')">
-      <td><div class="td-artist">${r.artist}</div><div class="td-sub">${r.title} · ${r.label} · ${r.year}</div></td>
-      <td><span class="td-tag">${r.pressing}</span></td>
-      <td><span class="td-tag">${r.condition}</span></td>
-      <td class="td-mono">£${r.ask}</td>
-      <td class="td-sm">£${r.market}</td>
-      <td style="font-family:var(--mono);font-size:13px;color:var(--green)">−£${abs} <span style="color:var(--t3);font-size:11px">(${pct}%)</span></td>
-      <td>${liqLabel(r)}</td>
-      <td>${pill(r.status)}</td>
-      <td><span class="td-score ${g.cls}">${g.val}</span></td>
-      <td><span class="tr-badge">TRACK ${r.track}</span></td>
-      <td><a href="${r.url}" target="_blank" onclick="event.stopPropagation()" class="view-btn">VIEW ↗</a></td>
-    </tr>`;
+  setCrateProgress(72, 'Pulling prices and market data…');
+
+  // Enrich in batches of 4 to respect rate limit
+  const enriched = [];
+  for (let i = 0; i < allReleases.length; i += 4) {
+    const batch = allReleases.slice(i, i+4);
+    const results = await Promise.all(batch.map(enrich));
+    enriched.push(...results);
+    const pct = 72 + Math.round((i / allReleases.length) * 22);
+    const deals = enriched.filter(r => r.ask && r.market && r.ask < r.market && score(r) >= minScore);
+    setCrateProgress(pct, 'Scoring and filtering…', deals.length);
+    await new Promise(r => setTimeout(r, 200));
+  }
+
+  setCrateProgress(100, 'Done.');
+  await new Promise(r => setTimeout(r, 600));
+  hideCrate();
+
+  // Apply all filters
+  discoverResults = enriched.filter(r => {
+    if (!r.ask || !r.market || r.ask >= r.market) return false;
+    if (score(r) < minScore) return false;
+    if (r.ask > maxPrice) return false;
+    if (condFilter === 'vgplus' && r.condition === 'VG') return false;
+    if (condFilter === 'nm' && r.condition !== 'NM') return false;
+    return true;
+  });
+
+  discoverResults.sort((a,b) => score(b)-score(a));
+
+  renderDiscoverResults();
+  updateDiscoverStats();
+  if (discoverResults.length) updateHomeHero(discoverResults[0], discoverResults);
+  btn.disabled = false;
+}
+
+function renderDiscoverResults() {
+  const tbody = document.getElementById('disc-tbody');
+  document.getElementById('disc-stats-row').style.display = 'grid';
+  document.getElementById('disc-result-head').style.display = 'flex';
+
+  if (!discoverResults.length) {
+    tbody.innerHTML = `<tr><td colspan="11" class="empty-cell">No deals cleared the threshold — try loosening the filters</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = discoverResults.map(dealRow).join('');
+}
+
+function updateDiscoverStats() {
+  if (!discoverResults.length) return;
+  const savings = discoverResults.map(r => r.market - r.ask);
+  document.getElementById('disc-found').textContent = discoverResults.length;
+  document.getElementById('disc-savg').textContent = '£'+Math.round(savings.reduce((a,b)=>a+b,0)/savings.length);
+  document.getElementById('disc-sbest').textContent = '−£'+Math.round(Math.max(...savings));
+  const wlHits = discoverResults.filter(r => userWantlist.some(w=>w.id===r.id)).length;
+  document.getElementById('disc-swl').textContent = wlHits;
+  // Also update home stats
+  document.getElementById('h-count').textContent = discoverResults.length;
+  document.getElementById('h-avg').textContent = '£'+Math.round(savings.reduce((a,b)=>a+b,0)/savings.length);
+}
+
+/* ═══════════════════════════════════════════
+   HOME HERO UPDATE
+═══════════════════════════════════════════ */
+function updateHomeHero(best, all) {
+  const saving = (best.market - best.ask).toFixed(0);
+  document.getElementById('h-saving').textContent = '−£'+saving;
+  document.getElementById('h-rec').textContent = best.artist+' — '+best.title;
+  document.getElementById('h-meta').textContent = best.year+' · '+best.label+' · '+best.pressing;
+}
+
+/* ═══════════════════════════════════════════
+   LIVE WANTLIST FROM DISCOGS
+═══════════════════════════════════════════ */
+async function loadWantlist() {
+  try {
+    const data = await api(`/users/${DISCOGS_USER}/wants?per_page=50&sort=added&sort_order=desc`);
+    const wants = data.wants || [];
+    userWantlist = wants.map(w => ({
+      id: w.basic_information?.id,
+      artist: (w.basic_information?.artists||[{name:'Unknown'}])[0].name,
+      title: w.basic_information?.title || 'Unknown',
+      label: (w.basic_information?.labels||[{name:'—'}])[0].name,
+      year: w.basic_information?.year || '—',
+      thumb: w.basic_information?.thumb || null,
+      url: `https://www.discogs.com/release/${w.basic_information?.id}`
+    }));
+
+    document.getElementById('h-wl-count').textContent = userWantlist.length;
+    document.getElementById('wl-count-badge').textContent = `(${userWantlist.length})`;
+    document.getElementById('wl-live-badge').style.display = 'inline-block';
+    document.getElementById('port-wl').textContent = userWantlist.length;
+
+    renderWantlist();
+    renderWantlistHomeGrid();
+  } catch(e) {
+    document.getElementById('wl-grid').innerHTML = `<div style="padding:32px;color:var(--t3);font-family:var(--mono);font-size:12px">Could not load wantlist — check your token has read permissions</div>`;
+  }
+}
+
+function renderWantlist() {
+  const grid = document.getElementById('wl-grid');
+  if (!userWantlist.length) {
+    grid.innerHTML = `<div style="padding:32px;color:var(--t3);font-family:var(--mono);font-size:12px">Your Discogs wantlist is empty</div>`;
+    return;
+  }
+  grid.innerHTML = userWantlist.map(w => {
+    const disc = discoverResults.find(r => r.id === w.id);
+    const img = w.thumb ? `<img src="${w.thumb}" style="width:40px;height:40px;object-fit:cover;flex-shrink:0" alt="">` : `<div style="width:40px;height:40px;background:var(--s2);flex-shrink:0"></div>`;
+    const dealInfo = disc
+      ? `<div class="wl-mkt" style="color:var(--green)">DEAL: £${disc.ask} (−£${(disc.market-disc.ask).toFixed(0)} below mkt)</div>`
+      : `<div class="wl-no">No deal flagged</div>`;
+    return `<div class="wl-card" onclick="window.open('${w.url}','_blank')">
+      <div style="display:flex;gap:10px;align-items:flex-start">
+        ${img}
+        <div>
+          <div class="wl-title" style="font-size:13px">${w.title}</div>
+          <div class="wl-artist">${w.artist}</div>
+          <div class="wl-genre" style="margin-top:2px">${w.label} · ${w.year}</div>
+        </div>
+      </div>
+      ${dealInfo}
+    </div>`;
+  }).join('') + `<div class="wl-card" onclick="window.open('https://www.discogs.com/wantlist','_blank')" style="align-items:center;justify-content:center;min-height:100px;display:flex;flex-direction:column;gap:6px"><div style="font-size:18px;color:var(--t3)">+</div><div style="font-size:12px;color:var(--t3)">Manage on Discogs</div></div>`;
+}
+
+function renderWantlistHomeGrid() {
+  const grid = document.getElementById('wl-home-grid');
+  const items = userWantlist.slice(0, 4);
+  if (!items.length) { grid.innerHTML = `<div style="padding:32px;color:var(--t3);font-family:var(--mono);font-size:12px">No wantlist items</div>`; return; }
+  const SC = {heat:'var(--green)',rise:'var(--green)',stable:'var(--amber)',cool:'var(--red)',rare:'var(--blue)'};
+  grid.innerHTML = items.map(w => {
+    const disc = discoverResults.find(r => r.id === w.id);
+    const img = w.thumb ? `<img src="${w.thumb}" alt="" loading="lazy">` : `<div class="rc-vinyl"></div>`;
+    const priceRow = disc
+      ? `<div class="rc-prices"><span class="rc-ask">£${disc.ask}</span><span class="rc-save">−£${(disc.market-disc.ask).toFixed(0)}</span></div>`
+      : `<div style="font-size:11px;color:var(--t3);font-family:var(--mono)">No deal yet</div>`;
+    return `<div class="rec-card" onclick="window.open('${w.url}','_blank')">
+      <div class="rc-art">${img}</div>
+      <div class="rc-status" style="color:${disc?SC[disc.status]:'var(--t3)'}">WANTLIST${disc?' · DEAL FOUND':''}</div>
+      <div class="rc-title">${w.title}</div>
+      <div class="rc-artist">${w.artist}</div>
+      ${priceRow}
+    </div>`;
   }).join('');
 }
 
-/* ═══════════════════════════════
-   HOME GRIDS (mock cards until live data)
-═══════════════════════════════ */
-const MOCK = [
-  {artist:'John Coltrane',title:'A Love Supreme',label:'Impulse!',year:1965,ask:28,market:80,status:'heat',wg:'+14%',genre:'jazz',track:'A',wantRatio:.72,salesPer30:18,condition:'VG+',pressing:'US Original',thumb:null,url:'#',live:false},
-  {artist:'Miles Davis',title:'Kind of Blue',label:'Columbia',year:1959,ask:55,market:110,status:'heat',wg:'+19%',genre:'jazz',track:'A',wantRatio:.81,salesPer30:22,condition:'VG+',pressing:'UK 1st Press',thumb:null,url:'#',live:false},
-  {artist:'Aphex Twin',title:'Selected Ambient Works II',label:'Warp',year:1994,ask:38,market:85,status:'heat',wg:'+11%',genre:'electronic',track:'A',wantRatio:.64,salesPer30:14,condition:'VG+',pressing:'UK Original',thumb:null,url:'#',live:false},
-  {artist:'Boards of Canada',title:'Music Has the Right…',label:'Warp',year:1998,ask:52,market:90,status:'rise',wg:'+8%',genre:'electronic',track:'A',wantRatio:.58,salesPer30:9,condition:'NM',pressing:'EU Original',thumb:null,url:'#',live:false},
-  {artist:'Sun Ra',title:'Heliocentric Worlds',label:'ESP-Disk',year:1965,ask:180,market:420,status:'rare',wg:'+31%',genre:'jazz',track:'B',wantRatio:.92,salesPer30:1,condition:'VG+',pressing:'US 1st Press',thumb:null,url:'#',live:false},
-  {artist:'Eric Dolphy',title:'Out to Lunch',label:'Blue Note',year:1964,ask:120,market:340,status:'rare',wg:'+22%',genre:'jazz',track:'B',wantRatio:.88,salesPer30:2,condition:'VG',pressing:'US Original',thumb:null,url:'#',live:false},
-  {artist:'Massive Attack',title:'Blue Lines',label:'Wild Bunch',year:1991,ask:34,market:60,status:'rise',wg:'+6%',genre:'electronic',track:'A',wantRatio:.50,salesPer30:11,condition:'VG+',pressing:'UK 1st Press',thumb:null,url:'#',live:false},
-  {artist:'James Brown',title:'Sex Machine',label:'King',year:1970,ask:18,market:42,status:'rise',wg:'+4%',genre:'soul',track:'A',wantRatio:.44,salesPer30:28,condition:'VG',pressing:'US Original',thumb:null,url:'#',live:false},
-];
-
-const SC = {heat:'var(--green)',rise:'var(--green)',stable:'var(--amber)',cool:'var(--red)',rare:'var(--blue)'};
-
-function recCard(r, onclick) {
-  const saving = (r.market-r.ask).toFixed(0);
-  const img = r.thumb ? `<img src="${r.thumb}" alt="" loading="lazy">` : `<div class="rc-vinyl"></div>`;
-  return `<div class="rec-card" onclick="${onclick}">
-    <div class="rc-art">${img}</div>
-    <div class="rc-status" style="color:${SC[r.status]||'var(--t3)'}">${r.status.toUpperCase()} · ${r.wg} wantlist</div>
-    <div class="rc-title">${r.title}</div>
-    <div class="rc-artist">${r.artist}</div>
-    <div class="rc-prices"><span class="rc-ask">£${r.ask}</span><span class="rc-save">−£${saving} below mkt</span></div>
-  </div>`;
+/* ═══════════════════════════════════════════
+   DISCOGS COLLECTION (profile)
+═══════════════════════════════════════════ */
+async function loadProfile() {
+  try {
+    const profile = await api(`/users/${DISCOGS_USER}`);
+    document.getElementById('port-username').textContent = profile.username || DISCOGS_USER;
+    document.getElementById('port-handle').textContent = `@${profile.username} · ${profile.location||''}`;
+    document.getElementById('port-trades').textContent = profile.num_collection || '—';
+    if (profile.num_wantlist) {
+      document.getElementById('port-wl').textContent = profile.num_wantlist;
+    }
+  } catch {}
 }
 
-function buildHomeGrids(data) {
-  const src = data && data.length ? data : MOCK;
-  const hot = src.filter(r=>r.status==='heat').slice(0,4);
-  const watch = src.filter(r=>r.status==='rise'||r.status==='rare').slice(0,4);
-  document.getElementById('hot-grid').innerHTML = hot.map(r=>recCard(r,`goTo('deals')`)).join('');
-  document.getElementById('watch-grid').innerHTML = watch.map(r=>recCard(r,`goTo('deals')`)).join('');
+async function loadCollection() {
+  try {
+    const data = await api(`/users/${DISCOGS_USER}/collection/folders/0/releases?per_page=25&sort=added&sort_order=desc`);
+    const releases = (data.releases || []).map(r => ({
+      artist: (r.basic_information?.artists||[{name:'Unknown'}])[0].name,
+      title: r.basic_information?.title || '—',
+      label: (r.basic_information?.labels||[{name:'—'}])[0].name,
+      year: r.basic_information?.year || '—',
+      thumb: r.basic_information?.thumb || null,
+      url: `https://www.discogs.com/release/${r.basic_information?.id}`
+    }));
+    return releases;
+  } catch { return []; }
 }
 
-/* ═══════════════════════════════
+/* ═══════════════════════════════════════════
+   PORTFOLIO (manual P&L)
+═══════════════════════════════════════════ */
+function calcPnL() {
+  const totalSpent = portfolio.holding.reduce((a,r)=>a+r.paid,0) + portfolio.sold.reduce((a,r)=>a+r.paid,0);
+  const totalProfit = portfolio.sold.reduce((a,r)=>a+(r.sold-r.paid),0);
+  const avgROI = portfolio.sold.length ? Math.round(portfolio.sold.reduce((a,r)=>a+(r.sold-r.paid)/r.paid*100,0)/portfolio.sold.length) : null;
+  const avgDays = portfolio.sold.length ? Math.round(portfolio.sold.reduce((a,r)=>a+r.days,0)/portfolio.sold.length) : null;
+  const invValue = portfolio.holding.reduce((a,r)=>a+r.paid,0);
+
+  document.getElementById('port-profit').textContent = '£'+totalProfit;
+  document.getElementById('pnl-profit').textContent = '£'+totalProfit;
+  document.getElementById('pnl-spent').textContent = '£'+totalSpent;
+  document.getElementById('pnl-roi').textContent = avgROI !== null ? avgROI+'%' : '—';
+  document.getElementById('pnl-days').textContent = avgDays !== null ? avgDays+'d' : '—';
+  document.getElementById('pnl-inv').textContent = '£'+invValue;
+}
+
+function addEntry() {
+  const artist = document.getElementById('ae-artist').value.trim();
+  const title  = document.getElementById('ae-title').value.trim();
+  const paid   = parseFloat(document.getElementById('ae-paid').value) || 0;
+  const sold   = parseFloat(document.getElementById('ae-sold').value) || 0;
+  const days   = parseInt(document.getElementById('ae-days').value) || 0;
+  if (!artist || !title || !paid) return;
+
+  if (sold > 0) {
+    portfolio.sold.push({artist, title, paid, sold, days});
+  } else {
+    portfolio.holding.push({artist, title, paid, days});
+  }
+
+  ['ae-artist','ae-title','ae-paid','ae-sold','ae-days'].forEach(id => document.getElementById(id).value='');
+  calcPnL();
+  renderPortfolio();
+}
+
+async function renderPortfolio() {
+  const el = document.getElementById('port-content');
+  if (activeTab==='holding') {
+    document.getElementById('add-entry-bar').style.display='flex';
+    if (!portfolio.holding.length) {
+      el.innerHTML=`<div class="empty-cell">No records held — add one above</div>`; return;
+    }
+    el.innerHTML=`<table class="port-table"><thead><tr><th>Record</th><th>Paid</th><th>Est. sell</th><th>Est. profit</th><th>Days held</th></tr></thead><tbody>
+    ${portfolio.holding.map(h=>{
+      const disc = discoverResults.find(r=>r.artist===h.artist&&r.title===h.title);
+      const estSell = disc ? disc.market : '—';
+      const estProfit = disc ? (disc.market - h.paid).toFixed(0) : '—';
+      return `<tr class="pt-row">
+        <td><div style="font-size:13px;font-weight:500">${h.artist}</div><div style="font-size:12px;color:var(--t2)">${h.title}</div></td>
+        <td class="pt-neu">£${h.paid}</td>
+        <td class="pt-neu">${estSell!=='—'?'£'+estSell:'—'}</td>
+        <td>${estProfit!=='—'?`<span class="pt-pos">+£${estProfit}</span>`:'—'}</td>
+        <td style="font-family:var(--mono);font-size:13px;color:${h.days>14?'var(--amber)':'var(--t2)'}">${h.days}d</td>
+      </tr>`;
+    }).join('')}</tbody></table>`;
+  } else if (activeTab==='sold') {
+    document.getElementById('add-entry-bar').style.display='flex';
+    if (!portfolio.sold.length) {
+      el.innerHTML=`<div class="empty-cell">No sold records — log a sale above</div>`; return;
+    }
+    el.innerHTML=`<table class="port-table"><thead><tr><th>Record</th><th>Paid</th><th>Sold</th><th>Profit</th><th>Days</th><th>ROI</th></tr></thead><tbody>
+    ${portfolio.sold.map(s=>`<tr class="pt-row">
+      <td><div style="font-size:13px;font-weight:500">${s.artist}</div><div style="font-size:12px;color:var(--t2)">${s.title}</div></td>
+      <td class="pt-neu">£${s.paid}</td><td class="pt-neu">£${s.sold}</td>
+      <td class="pt-pos">+£${(s.sold-s.paid).toFixed(0)}</td>
+      <td class="pt-neu">${s.days}d</td>
+      <td style="font-family:var(--mono);font-size:12px;color:var(--green)">${Math.round((s.sold-s.paid)/s.paid*100)}%</td>
+    </tr>`).join('')}</tbody></table>`;
+  } else {
+    document.getElementById('add-entry-bar').style.display='none';
+    el.innerHTML=`<div class="empty-cell"><div style="display:inline-block;width:12px;height:12px;border:1px solid var(--b2);border-top-color:var(--t2);border-radius:50%;animation:spin .8s linear infinite;margin-right:8px;vertical-align:middle"></div>Loading collection…</div>`;
+    const collection = await loadCollection();
+    if (!collection.length) { el.innerHTML=`<div class="empty-cell">No records in Discogs collection</div>`; return; }
+    el.innerHTML=`<table class="port-table"><thead><tr><th>Record</th><th>Label</th><th>Year</th><th>Discogs</th></tr></thead><tbody>
+    ${collection.map(c=>`<tr class="pt-row" onclick="window.open('${c.url}','_blank')" style="cursor:pointer">
+      <td><div style="display:flex;align-items:center;gap:10px">${c.thumb?`<img src="${c.thumb}" style="width:36px;height:36px;object-fit:cover" alt="">`:''}<div><div style="font-size:13px;font-weight:500">${c.artist}</div><div style="font-size:12px;color:var(--t2)">${c.title}</div></div></div></td>
+      <td class="td-sm">${c.label}</td>
+      <td class="td-sm">${c.year}</td>
+      <td><a href="${c.url}" target="_blank" onclick="event.stopPropagation()" class="view-btn">VIEW ↗</a></td>
+    </tr>`).join('')}</tbody></table>`;
+  }
+}
+
+/* ═══════════════════════════════════════════
    TICKER
-═══════════════════════════════ */
+═══════════════════════════════════════════ */
 function buildTicker() {
-  const items = ['John Coltrane +19%','Miles Davis +14%','Aphex Twin +11%','Boards of Canada +8%','Sun Ra +31%','Eric Dolphy +22%','Massive Attack +6%','James Brown +4%','Led Zeppelin −2%','Portishead +1%'];
+  const items = ['John Coltrane +19%','Miles Davis +14%','Aphex Twin +11%','Boards of Canada +8%','Sun Ra +31%','Eric Dolphy +22%','Massive Attack +6%','James Brown +4%','Led Zeppelin −2%','Portishead +1%','Curtis Mayfield −1%','Herbie Hancock +9%'];
   const all = [...items,...items];
-  document.getElementById('ticker').innerHTML = all.map(a=>{
-    const pts=a.split(' '), chg=pts[pts.length-1], name=pts.slice(0,-1).join(' ');
-    const col=chg.startsWith('+')?'var(--green)':chg.startsWith('−')||chg.startsWith('-')?'var(--red)':'var(--t3)';
+  document.getElementById('ticker').innerHTML = all.map(a => {
+    const pts = a.split(' '), chg = pts[pts.length-1], name = pts.slice(0,-1).join(' ');
+    const col = chg.startsWith('+')?'var(--green)':chg.startsWith('−')||chg.startsWith('-')?'var(--red)':'var(--t3)';
     return `<span class="t-item"><span class="t-name">${name}</span><span class="t-chg" style="color:${col}">${chg}</span><span class="t-div">·</span></span>`;
   }).join('');
 }
 
-/* ═══════════════════════════════
-   WANTLIST
-═══════════════════════════════ */
-const WL = [
-  {genre:'Jazz',title:'Kind of Blue',artist:'Miles Davis',thresh:'£60',hit:true},
-  {genre:'Electronic',title:'Selected Ambient Works II',artist:'Aphex Twin',thresh:'£45',hit:true},
-  {genre:'Soul',title:"What's Going On",artist:'Marvin Gaye',thresh:'£80',hit:false},
-  {genre:'Jazz',title:'Out to Lunch',artist:'Eric Dolphy',thresh:'£150',hit:false},
-];
-
-function buildWantlist() {
-  document.getElementById('wl-grid').innerHTML = WL.map(w=>`
-    <div class="wl-card">
-      <div class="wl-genre">${w.genre.toUpperCase()}</div>
-      <div class="wl-title">${w.title}</div>
-      <div class="wl-artist">${w.artist}</div>
-      <div class="wl-thresh">Alert below ${w.thresh}</div>
-      ${w.hit?'<div class="wl-hit">MATCH TODAY</div>':'<div class="wl-no">No matches today</div>'}
-    </div>`).join('')+`
-    <div class="wl-card wl-add" style="display:flex">
-      <div style="font-size:20px;color:var(--t3)">+</div>
-      <div style="font-size:12px;color:var(--t3)">Add record</div>
-    </div>`;
-}
-
-/* ═══════════════════════════════
-   PORTFOLIO
-═══════════════════════════════ */
-const HELD=[
-  {artist:'Boards of Canada',title:'Music Has the Right…',bought:52,est:90,profit:38,days:3},
-  {artist:'Massive Attack',title:'Blue Lines',bought:34,est:58,profit:24,days:7},
-  {artist:'Sun Ra',title:'Heliocentric Worlds',bought:180,est:400,profit:220,days:11},
-];
-const SOLD=[
-  {artist:'John Coltrane',title:'A Love Supreme',bought:28,sold:76,profit:48,days:5},
-  {artist:'Herbie Hancock',title:'Head Hunters',bought:22,sold:35,profit:13,days:8},
-  {artist:'James Brown',title:'Sex Machine',bought:18,sold:38,profit:20,days:4},
-  {artist:'The Clash',title:'London Calling',bought:30,sold:49,profit:19,days:12},
-];
-
-function renderPortfolio() {
-  const el = document.getElementById('port-content');
-  if (activeTab==='held') {
-    el.innerHTML=`<table class="port-table"><thead><tr><th>Record</th><th>Bought</th><th>Est. sell</th><th>Est. profit</th><th>Days held</th><th>Status</th></tr></thead><tbody>
-    ${HELD.map(h=>`<tr class="pt-row">
-      <td><div style="font-size:13px;font-weight:500">${h.artist}</div><div style="font-size:12px;color:var(--t2)">${h.title}</div></td>
-      <td class="pt-neu">£${h.bought}</td><td class="pt-neu">£${h.est}</td>
-      <td class="pt-pos">+£${h.profit}</td>
-      <td style="font-family:var(--mono);font-size:13px;color:${h.days>10?'var(--amber)':'var(--t2)'}">${h.days}d</td>
-      <td>${pill('rise')}</td>
-    </tr>`).join('')}</tbody></table>`;
-  } else if (activeTab==='sold') {
-    el.innerHTML=`<table class="port-table"><thead><tr><th>Record</th><th>Bought</th><th>Sold</th><th>Profit</th><th>Days</th><th>ROI</th></tr></thead><tbody>
-    ${SOLD.map(s=>`<tr class="pt-row">
-      <td><div style="font-size:13px;font-weight:500">${s.artist}</div><div style="font-size:12px;color:var(--t2)">${s.title}</div></td>
-      <td class="pt-neu">£${s.bought}</td><td class="pt-neu">£${s.sold}</td>
-      <td class="pt-pos">+£${s.profit}</td><td class="pt-neu">${s.days}d</td>
-      <td style="font-family:var(--mono);font-size:12px;color:var(--green)">${Math.round(s.profit/s.bought*100)}%</td>
-    </tr>`).join('')}</tbody></table>`;
-  } else {
-    el.innerHTML=`<div style="padding:48px 28px;color:var(--t3);font-family:var(--mono);font-size:12px;letter-spacing:.06em">Nothing on watchlist yet.</div>`;
-  }
-}
-
-/* ═══════════════════════════════
+/* ═══════════════════════════════════════════
    NAVIGATION
-═══════════════════════════════ */
+═══════════════════════════════════════════ */
 function goTo(id) {
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('on'));
@@ -684,44 +1094,54 @@ function goTo(id) {
   window.scrollTo(0,0);
 }
 
-/* ═══════════════════════════════
-   BOOT — runs after token accepted
-═══════════════════════════════ */
+/* ═══════════════════════════════════════════
+   BOOT
+═══════════════════════════════════════════ */
 function boot() {
   // Nav
   document.querySelectorAll('.nav-btn').forEach(b => b.addEventListener('click', ()=>goTo(b.dataset.p)));
 
-  // Hero CTA
-  document.getElementById('h-cta').addEventListener('click', ()=>goTo('deals'));
-  document.getElementById('hot-more').addEventListener('click', ()=>goTo('deals'));
-  document.getElementById('watch-more').addEventListener('click', ()=>goTo('deals'));
+  // Home CTAs
+  document.getElementById('h-cta').addEventListener('click', ()=>goTo('discover'));
+  document.getElementById('hot-more').addEventListener('click', ()=>goTo('discover'));
+  document.getElementById('wl-more').addEventListener('click', ()=>goTo('wantlist'));
 
-  // Deals search
+  // Deals
   document.getElementById('d-go').addEventListener('click', runSearch);
   document.getElementById('d-query').addEventListener('keydown', e=>{ if(e.key==='Enter') runSearch(); });
-  document.getElementById('d-filter').addEventListener('input', renderDeals);
-
-  // Filter buttons
+  document.getElementById('d-filter').addEventListener('input', renderDealsTable);
   document.querySelectorAll('.f-btn').forEach(b => b.addEventListener('click', ()=>{
     document.querySelectorAll('.f-btn').forEach(x=>x.classList.remove('on'));
     b.classList.add('on');
     activeFilter = b.dataset.f;
-    renderDeals();
+    renderDealsTable();
   }));
 
-  // Portfolio tabs
+  // Discover
+  document.getElementById('disc-run').addEventListener('click', runDiscover);
+
+  // Portfolio tabs + entry
   document.querySelectorAll('.ptab').forEach(b => b.addEventListener('click', ()=>{
     document.querySelectorAll('.ptab').forEach(x=>x.classList.remove('on'));
     b.classList.add('on');
     activeTab = b.dataset.t;
     renderPortfolio();
   }));
+  document.getElementById('ae-submit').addEventListener('click', addEntry);
 
-  // Build everything
+  // Crate animation — add style for spin
+  const style = document.createElement('style');
+  style.textContent = '@keyframes spin{to{transform:rotate(360deg)}}';
+  document.head.appendChild(style);
+
+  // Build static elements
   buildTicker();
-  buildHomeGrids();
-  buildWantlist();
+  calcPnL();
   renderPortfolio();
+
+  // Load live Discogs data
+  loadProfile();
+  loadWantlist();
 }
 </script>
 </body>
