@@ -682,19 +682,19 @@ async function runSearch() {
       return;
     }
 
-    // Enrich in batches — pass community data from search results to skip an API call
+    // Enrich in batches with timeout protection
+    const withTimeout = (p, ms=8000) => Promise.race([p, new Promise(r=>setTimeout(()=>r(null),ms))]);
     const enriched = [];
     for (let i = 0; i < releases.length; i += 3) {
       const batch = releases.slice(i, i+3);
-      const results = await Promise.all(batch.map(r => enrichById(r.id, {
+      const results = await Promise.all(batch.map(r => withTimeout(enrichById(r.id, {
         artist: r.title?.split(' - ')[0]?.trim() || '',
         title:  r.title?.split(' - ').slice(1).join(' - ').trim() || r.title || '',
         thumb:  r.cover_image || r.thumb || null,
         year:   r.year || '—',
-        // Pass community from search result to avoid extra API call
         have:   r.community?.have,
         want:   r.community?.want,
-      })));
+      }))));
       enriched.push(...results.filter(Boolean));
       await sleep(250);
     }
@@ -823,54 +823,35 @@ async function runDiscover() {
 
   crateProgress(42, `Found ${allReleaseIds.size} releases — fetching market data…`);
 
-  // Step 2: Enrich in batches of 3
+  // Step 2: Enrich in batches of 3 with timeout protection
   const allScored = [];
   const deals = [];
   const ids = Array.from(allReleaseIds);
 
+  const withTimeout = (promise, ms=8000) =>
+    Promise.race([promise, new Promise(r => setTimeout(() => r(null), ms))]);
+
   for (let i = 0; i < ids.length; i += 3) {
     const batch = ids.slice(i, i+3);
-    const results = await Promise.all(batch.map(id => enrichById(id, releaseBase[id] || {})));
+    const results = await Promise.all(
+      batch.map(id => withTimeout(enrichById(id, releaseBase[id] || {})))
+    );
 
     for (const r of results) {
       if (!r) continue;
       allScored.push(r);
       if (r.ask > maxPrice) continue;
-      // No score floor — show everything that has real data
       deals.push(r);
     }
 
     const pct = 42 + Math.round(((i+3)/ids.length)*52);
     crateProgress(Math.min(pct, 94), `Scored ${allScored.length} of ${ids.length}…`, deals.length);
-    await sleep(280);
+    await sleep(200);
   }
-
-  // Debug: log score distribution to console
-  console.log(`WAX Discover: ${allScored.length} scored, ${deals.length} cleared minScore=${minScore}`);
-  console.log('Score distribution:', allScored.map(r => ({
-    artist: r.artist, title: r.title, ask: r.ask, market: r.market, score: r.score
-  })).sort((a,b) => b.score - a.score).slice(0, 10));
 
   crateProgress(100, `Done — ${deals.length} deals found`);
-  await sleep(800);
+  await sleep(600);
   document.getElementById('crate-overlay').classList.remove('show');
-
-  // Show debug info visibly on page so we can diagnose
-  const debugEl = document.getElementById('disc-debug');
-  if (debugEl) {
-    const top10 = allScored.sort((a,b) => b.score - a.score).slice(0, 10);
-    debugEl.style.display = 'block';
-    debugEl.innerHTML = `
-      <div style="font-family:var(--mono);font-size:11px;color:var(--t3);padding:16px 32px;border-bottom:1px solid var(--b1)">
-        DEBUG — ${allScored.length} enriched, ${deals.length} passed filter (minScore=${minScore}, maxPrice=£${maxPrice})<br>
-        Top 10 by score:
-        <div style="margin-top:8px;display:flex;flex-direction:column;gap:4px">
-          ${top10.map(r => `<span style="color:${r.score>0?'var(--t2)':'var(--red)'}">
-            score=${r.score} ask=£${r.ask} market=£${r.market} wantRatio=${r.wantRatio?.toFixed(2)} numForSale=${r.numForSale} — ${r.artist} / ${r.title}
-          </span>`).join('')}
-        </div>
-      </div>`;
-  }
 
   discoverResults = deals.sort((a,b) => b.score - a.score);
   renderDiscoverTable();
