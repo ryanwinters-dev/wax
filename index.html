@@ -4,427 +4,204 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>WAX</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#080808;--s1:#111;--s2:#1a1a1a;--b1:#222;--b2:#2e2e2e;
+  --t1:#f0f0f0;--t2:#888;--t3:#444;
+  --green:#1db954;--gdim:#155e30;--amber:#c8952a;--adim:#6b4e12;
+  --red:#c0392b;--rdim:#5e1a14;--blue:#4a9ebf;--bdim:#1a4a5e;
+  --mono:'DM Mono',monospace;--sans:'DM Sans',sans-serif;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--t1);font-family:var(--sans);font-size:14px;line-height:1.5;min-height:100vh}
+button{cursor:pointer;font-family:var(--sans);background:none;border:none}
+a{text-decoration:none;color:inherit}
 
-:root {
-  --bg:       #080808;
-  --s1:       #111111;
-  --s2:       #1A1A1A;
-  --border:   #222222;
-  --border2:  #2E2E2E;
-  --text:     #F0F0F0;
-  --text2:    #888888;
-  --text3:    #444444;
-  --mono:     'DM Mono', monospace;
-  --sans:     'DM Sans', sans-serif;
-  /* semantic colour — used sparingly */
-  --green:    #1DB954;
-  --green-dim:#155E30;
-  --amber:    #C8952A;
-  --amber-dim:#6B4E12;
-  --red:      #C0392B;
-  --red-dim:  #5E1A14;
-  --blue:     #4A9EBF;
-  --blue-dim: #1A4A5E;
-}
+/* GATE */
+#gate{position:fixed;inset:0;z-index:999;background:var(--bg);display:flex;align-items:center;justify-content:center}
+.g-inner{max-width:400px;width:100%;padding:0 32px;display:flex;flex-direction:column;gap:20px}
+.g-logo{font-family:var(--mono);font-size:13px;letter-spacing:0.16em;color:var(--t3)}
+.g-title{font-size:16px;font-weight:500}
+.g-sub{font-size:13px;color:var(--t2);line-height:1.6}
+.g-input{background:var(--s1);border:1px solid var(--b2);color:var(--t1);font-family:var(--mono);font-size:13px;padding:12px 14px;outline:none;width:100%;transition:border-color .15s}
+.g-input:focus{border-color:var(--t3)}
+.g-input::placeholder{color:var(--t3);font-family:var(--sans)}
+.g-btn{background:var(--t1);color:var(--bg);padding:11px 24px;font-family:var(--mono);font-size:12px;letter-spacing:.1em;font-weight:500;align-self:flex-start;transition:opacity .15s}
+.g-btn:hover{opacity:.85}
+.g-err{font-family:var(--mono);font-size:11px;color:var(--red);min-height:14px}
 
-html { scroll-behavior: smooth; }
-body { background: var(--bg); color: var(--text); font-family: var(--sans); font-size: 14px; line-height: 1.5; min-height: 100vh; }
-button { cursor: pointer; font-family: var(--sans); }
-a { text-decoration: none; color: inherit; }
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;height:52px;background:rgba(8,8,8,.96);backdrop-filter:blur(12px);border-bottom:1px solid var(--b1);display:flex;align-items:center;justify-content:space-between;padding:0 32px}
+.nav-logo{font-family:var(--mono);font-weight:500;font-size:16px;letter-spacing:.18em}
+.nav-links{display:flex;gap:2px}
+.nav-btn{color:var(--t2);font-size:13px;padding:6px 14px;border-radius:4px;transition:color .15s}
+.nav-btn:hover{color:var(--t1)}
+.nav-btn.on{color:var(--t1);background:var(--s2)}
+.nav-live{font-family:var(--mono);font-size:11px;color:var(--green);display:flex;align-items:center;gap:6px}
+.pulse{width:5px;height:5px;border-radius:50%;background:var(--green);animation:blink 3s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
 
-/* ── NAV ── */
-nav {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
-  height: 52px;
-  background: rgba(8,8,8,0.96);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 0 32px;
-}
-.nav-logo {
-  font-family: var(--mono); font-weight: 500; font-size: 16px;
-  letter-spacing: 0.18em; color: var(--text);
-}
-.nav-links { display: flex; gap: 2px; }
-.nav-link {
-  background: none; border: none; color: var(--text2);
-  font-family: var(--sans); font-size: 13px; font-weight: 400;
-  padding: 6px 14px; letter-spacing: 0.02em;
-  transition: color 0.15s; border-radius: 4px;
-}
-.nav-link:hover { color: var(--text); }
-.nav-link.active { color: var(--text); background: var(--s2); }
-.nav-right { display: flex; align-items: center; gap: 16px; }
-.nav-status {
-  font-family: var(--mono); font-size: 11px; color: var(--text3);
-  letter-spacing: 0.06em; display: flex; align-items: center; gap: 6px;
-}
-.pulse { width: 5px; height: 5px; border-radius: 50%; background: var(--green); animation: blink 3s infinite; }
-.nav-status { color: var(--green) !important; }
-@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+/* PAGES */
+.page{display:none;padding-top:52px;min-height:100vh}
+.page.on{display:block}
 
-/* ── PAGES ── */
-.page { display: none; padding-top: 52px; min-height: 100vh; }
-.page.active { display: block; }
+/* HOME HERO */
+.hero{border-bottom:1px solid var(--b1);padding:64px 32px 52px;display:grid;grid-template-columns:1fr 1fr;gap:0}
+.hero-l{padding-right:56px;border-right:1px solid var(--b1)}
+.hero-eye{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--t3);text-transform:uppercase;margin-bottom:16px}
+.hero-num{font-family:var(--mono);font-size:clamp(52px,8vw,88px);font-weight:300;line-height:1;color:var(--green);letter-spacing:-.02em}
+.hero-lbl{font-size:13px;color:var(--t2);margin-top:10px}
+.hero-rec{font-size:17px;font-weight:500;margin-top:24px}
+.hero-meta{font-size:13px;color:var(--t2);margin-top:4px}
+.hero-cta{margin-top:24px;background:var(--t1);color:var(--bg);padding:11px 24px;font-family:var(--mono);font-size:12px;letter-spacing:.1em;font-weight:500;transition:opacity .15s}
+.hero-cta:hover{opacity:.85}
+.hero-r{padding-left:56px;display:flex;flex-direction:column;justify-content:center;gap:28px}
+.h-stat-val{font-family:var(--mono);font-size:26px;font-weight:300}
+.h-stat-lbl{font-size:12px;color:var(--t3);margin-top:3px}
 
-/* ── HOME ── */
-.home-hero {
-  border-bottom: 1px solid var(--border);
-  padding: 72px 32px 56px;
-  display: grid; grid-template-columns: 1fr 1fr; gap: 0;
-}
-.hero-left { padding-right: 64px; border-right: 1px solid var(--border); }
-.hero-eyebrow {
-  font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em;
-  color: var(--text3); text-transform: uppercase; margin-bottom: 20px;
-}
-.hero-number {
-  font-family: var(--mono); font-size: clamp(56px, 8vw, 96px);
-  font-weight: 300; line-height: 1; color: var(--green); letter-spacing: -0.02em;
-}
-.hero-label {
-  font-size: 13px; color: var(--text2); margin-top: 12px; font-weight: 300;
-}
-.hero-record-title {
-  font-size: 18px; font-weight: 500; margin-top: 28px; color: var(--text);
-}
-.hero-record-meta { font-size: 13px; color: var(--text2); margin-top: 4px; }
-.hero-buy-btn {
-  margin-top: 28px;
-  background: var(--text); color: var(--bg);
-  border: none; padding: 12px 28px;
-  font-family: var(--mono); font-size: 12px; letter-spacing: 0.1em;
-  font-weight: 500; transition: opacity 0.15s;
-}
-.hero-buy-btn:hover { opacity: 0.85; }
-.hero-right { padding-left: 64px; display: flex; flex-direction: column; justify-content: center; gap: 32px; }
-.hero-stat-row { display: flex; flex-direction: column; gap: 4px; }
-.hero-stat-val { font-family: var(--mono); font-size: 28px; font-weight: 300; color: var(--text); }
-.hero-stat-lbl { font-size: 12px; color: var(--text3); }
+/* TICKER */
+.ticker-wrap{border-bottom:1px solid var(--b1);padding:12px 0;overflow:hidden}
+.ticker-track{display:flex;width:max-content;animation:tick 30s linear infinite}
+.ticker-track:hover{animation-play-state:paused}
+@keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.t-item{display:flex;align-items:center;gap:16px;padding:0 36px 0 0;white-space:nowrap}
+.t-name{font-size:13px;font-weight:500}
+.t-chg{font-family:var(--mono);font-size:11px}
+.t-div{color:var(--b2);font-size:16px}
 
-/* ── SECTION ── */
-.section { padding: 48px 32px; border-bottom: 1px solid var(--border); }
-.section-head {
-  display: flex; align-items: baseline; justify-content: space-between;
-  margin-bottom: 28px;
-}
-.section-title {
-  font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em;
-  text-transform: uppercase; color: var(--text3);
-}
-.section-action {
-  font-size: 12px; color: var(--text3); background: none; border: none;
-  font-family: var(--sans); transition: color 0.15s;
-}
-.section-action:hover { color: var(--text2); }
+/* SECTION */
+.section{padding:44px 32px;border-bottom:1px solid var(--b1)}
+.sec-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:24px}
+.sec-title{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--t3)}
+.sec-more{font-size:12px;color:var(--t3);transition:color .15s}
+.sec-more:hover{color:var(--t2)}
 
-/* ── TICKER ── */
-.ticker-wrap { overflow: hidden; position: relative; }
-.ticker-track {
-  display: flex; gap: 0; animation: ticker 28s linear infinite;
-  width: max-content;
-}
-.ticker-track:hover { animation-play-state: paused; }
-@keyframes ticker { from{transform:translateX(0)} to{transform:translateX(-50%)} }
-.ticker-item {
-  display: flex; align-items: center; gap: 20px;
-  padding: 0 40px 0 0; white-space: nowrap;
-}
-.ticker-artist { font-size: 13px; font-weight: 500; }
-.ticker-change {
-  font-family: var(--mono); font-size: 11px; color: var(--text2);
-}
-.ticker-divider { color: var(--border2); font-size: 18px; }
+/* RECORD CARDS */
+.rec-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1px;background:var(--b1)}
+.rec-card{background:var(--bg);padding:18px;display:flex;flex-direction:column;gap:8px;cursor:pointer;transition:background .12s}
+.rec-card:hover{background:var(--s1)}
+.rc-art{width:100%;aspect-ratio:1;background:var(--s2);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
+.rc-art img{width:100%;height:100%;object-fit:cover}
+.rc-vinyl{width:70%;height:70%;border-radius:50%;background:repeating-radial-gradient(circle,#1a1a1a 0,#111 2px,#1a1a1a 4px);position:relative;flex-shrink:0}
+.rc-vinyl::after{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:22%;height:22%;border-radius:50%;background:var(--s2)}
+.rc-status{font-family:var(--mono);font-size:9px;letter-spacing:.1em;font-weight:500}
+.rc-title{font-size:13px;font-weight:500;line-height:1.3}
+.rc-artist{font-size:12px;color:var(--t2)}
+.rc-prices{display:flex;align-items:baseline;justify-content:space-between;margin-top:2px}
+.rc-ask{font-family:var(--mono);font-size:14px}
+.rc-save{font-family:var(--mono);font-size:11px;color:var(--green)}
 
-/* ── RECORD GRID ── */
-.record-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 1px; background: var(--border);
-}
-.record-card {
-  background: var(--bg); padding: 20px;
-  transition: background 0.12s; cursor: pointer;
-  display: flex; flex-direction: column; gap: 10px;
-}
-.record-card:hover { background: var(--s1); }
-.rc-cover {
-  width: 100%; aspect-ratio: 1;
-  background: var(--s2);
-  display: flex; align-items: center; justify-content: center;
-  position: relative; overflow: hidden;
-}
-.rc-vinyl {
-  width: 72%; height: 72%; border-radius: 50%;
-  background: repeating-radial-gradient(circle, #1a1a1a 0px, #111 2px, #1a1a1a 4px);
-  position: relative;
-}
-.rc-vinyl::after {
-  content: ''; position: absolute; top: 50%; left: 50%;
-  transform: translate(-50%,-50%);
-  width: 22%; height: 22%; border-radius: 50%; background: var(--bg);
-}
-.rc-status {
-  font-family: var(--mono); font-size: 9px; letter-spacing: 0.12em;
-  font-weight: 500; color: var(--text2);
-}
-.rc-title { font-size: 13px; font-weight: 500; line-height: 1.3; }
-.rc-artist { font-size: 12px; color: var(--text2); }
-.rc-price-row { display: flex; align-items: baseline; justify-content: space-between; margin-top: 2px; }
-.rc-price { font-family: var(--mono); font-size: 14px; font-weight: 400; }
-.rc-market { font-family: var(--mono); font-size: 11px; color: var(--text3); }
+/* DEALS */
+.deals-search-bar{padding:16px 32px;border-bottom:1px solid var(--b1);display:flex;gap:10px;align-items:center;background:var(--s1)}
+.d-input{flex:1;background:var(--bg);border:1px solid var(--b2);color:var(--t1);font-family:var(--sans);font-size:13px;padding:9px 14px;outline:none;transition:border-color .15s}
+.d-input:focus{border-color:var(--t3)}
+.d-input::placeholder{color:var(--t3)}
+.d-go{background:var(--t1);color:var(--bg);font-family:var(--mono);font-size:11px;letter-spacing:.08em;padding:9px 20px;transition:opacity .15s;white-space:nowrap}
+.d-go:hover{opacity:.85}
+.d-go:disabled{opacity:.4;cursor:not-allowed}
+.live-badge{font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--green);border:1px solid var(--gdim);padding:2px 6px;background:rgba(29,185,84,.06)}
 
-/* ── DEALS PAGE ── */
-.deals-controls {
-  padding: 20px 32px; border-bottom: 1px solid var(--border);
-  display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
-}
-.search-box {
-  flex: 1; min-width: 200px;
-  background: var(--s1); border: 1px solid var(--border);
-  color: var(--text); font-family: var(--sans); font-size: 13px;
-  padding: 9px 14px; outline: none; transition: border-color 0.15s;
-}
-.search-box:focus { border-color: var(--text3); }
-.search-box::placeholder { color: var(--text3); }
-.filter-btn {
-  background: none; border: 1px solid var(--border);
-  color: var(--text3); font-family: var(--mono); font-size: 11px;
-  letter-spacing: 0.08em; padding: 8px 14px;
-  transition: all 0.15s;
-}
-.filter-btn:hover { border-color: var(--text3); color: var(--text2); }
-.filter-btn.on { border-color: var(--text2); color: var(--text); background: var(--s2); }
+.deals-filters{padding:14px 32px;border-bottom:1px solid var(--b1);display:flex;gap:8px;flex-wrap:wrap}
+.f-btn{background:none;border:1px solid var(--b1);color:var(--t3);font-family:var(--mono);font-size:10px;letter-spacing:.08em;padding:7px 13px;transition:all .15s}
+.f-btn:hover{border-color:var(--t3);color:var(--t2)}
+.f-btn.on{border-color:var(--t2);color:var(--t1);background:var(--s2)}
 
-.deals-stats {
-  display: grid; grid-template-columns: repeat(4, 1fr);
-  border-bottom: 1px solid var(--border);
-}
-.ds-cell {
-  padding: 20px 32px; border-right: 1px solid var(--border);
-}
-.ds-cell:last-child { border-right: none; }
-.ds-val { font-family: var(--mono); font-size: 24px; font-weight: 300; }
-.ds-lbl { font-size: 11px; color: var(--text3); margin-top: 4px; letter-spacing: 0.04em; }
+.deals-stats{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--b1)}
+.ds{padding:18px 28px;border-right:1px solid var(--b1)}
+.ds:last-child{border-right:none}
+.ds-val{font-family:var(--mono);font-size:22px;font-weight:300}
+.ds-lbl{font-size:11px;color:var(--t3);margin-top:4px}
 
-.deals-table { width: 100%; border-collapse: collapse; }
-.dt-head th {
-  font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em;
-  color: var(--text3); font-weight: 400; text-align: left;
-  padding: 12px 16px; border-bottom: 1px solid var(--border);
-  white-space: nowrap;
-}
-.dt-row { border-bottom: 1px solid var(--border); transition: background 0.1s; cursor: pointer; }
-.dt-row:hover { background: var(--s1); }
-.dt-row td { padding: 14px 16px; vertical-align: middle; }
-.dt-artist { font-size: 13px; font-weight: 500; }
-.dt-title { font-size: 12px; color: var(--text2); margin-top: 2px; }
-.dt-mono { font-family: var(--mono); font-size: 13px; }
-.dt-small { font-family: var(--mono); font-size: 11px; color: var(--text2); }
-.dt-tag {
-  font-family: var(--mono); font-size: 9px; letter-spacing: 0.1em;
-  padding: 3px 7px; border: 1px solid var(--border2); color: var(--text2);
-  display: inline-block; white-space: nowrap;
-}
-.dt-score {
-  font-family: var(--mono); font-size: 12px; font-weight: 500;
-  letter-spacing: 0.06em;
-}
-.score-a { color: var(--green); }
-.score-b { color: var(--amber); }
-.score-c { color: var(--red); }
+.deals-table{width:100%;border-collapse:collapse}
+.deals-table th{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--t3);font-weight:400;text-align:left;padding:11px 14px;border-bottom:1px solid var(--b1);white-space:nowrap}
+.deals-table th:first-child{padding-left:32px}
+.deals-table th:last-child{padding-right:32px}
+.dt-row{border-bottom:1px solid var(--b1);transition:background .1s;cursor:pointer}
+.dt-row:hover{background:var(--s1)}
+.dt-row td{padding:13px 14px;vertical-align:middle}
+.dt-row td:first-child{padding-left:32px}
+.dt-row td:last-child{padding-right:32px}
+.td-artist{font-size:13px;font-weight:500}
+.td-sub{font-size:12px;color:var(--t2);margin-top:2px}
+.td-mono{font-family:var(--mono);font-size:13px}
+.td-sm{font-family:var(--mono);font-size:11px;color:var(--t2)}
+.td-tag{font-family:var(--mono);font-size:9px;letter-spacing:.08em;padding:3px 7px;border:1px solid var(--b2);color:var(--t2);white-space:nowrap}
+.td-score{font-family:var(--mono);font-size:12px;font-weight:500}
+.sc-a{color:var(--green)}.sc-b{color:var(--amber)}.sc-c{color:var(--red)}
+.sp{font-family:var(--mono);font-size:9px;letter-spacing:.1em;padding:3px 7px;font-weight:500}
+.sp-heat{color:var(--green);border:1px solid var(--green);background:rgba(29,185,84,.07)}
+.sp-rise{color:var(--green);border:1px solid var(--gdim);background:rgba(29,185,84,.04);opacity:.8}
+.sp-stable{color:var(--amber);border:1px solid var(--adim);background:rgba(200,149,42,.07)}
+.sp-cool{color:var(--red);border:1px solid var(--rdim);background:rgba(192,57,43,.07)}
+.sp-rare{color:var(--blue);border:1px solid var(--bdim);background:rgba(74,158,191,.07)}
+.tr-badge{font-family:var(--mono);font-size:9px;letter-spacing:.08em;padding:2px 6px;border:1px solid var(--b2);color:var(--t3)}
+.view-btn{background:var(--s2);border:1px solid var(--b2);color:var(--t2);font-family:var(--mono);font-size:10px;letter-spacing:.08em;padding:6px 12px;display:inline-block;white-space:nowrap}
+.loading-cell{padding:48px 32px;text-align:center;font-family:var(--mono);font-size:12px;color:var(--t3);letter-spacing:.08em}
+.spin{display:inline-block;width:13px;height:13px;border:1px solid var(--b2);border-top-color:var(--t2);border-radius:50%;animation:spin .8s linear infinite;margin-right:8px;vertical-align:middle}
+@keyframes spin{to{transform:rotate(360deg)}}
 
-/* track badge */
-.track-badge {
-  font-family: var(--mono); font-size: 9px; letter-spacing: 0.08em;
-  padding: 2px 6px; border: 1px solid var(--border2); color: var(--text3);
-}
+/* WANTLIST */
+.wl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:1px;background:var(--b1)}
+.wl-card{background:var(--bg);padding:20px 22px;display:flex;flex-direction:column;gap:7px;cursor:pointer;transition:background .12s}
+.wl-card:hover{background:var(--s1)}
+.wl-genre{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--t3)}
+.wl-title{font-size:14px;font-weight:500}
+.wl-artist{font-size:12px;color:var(--t2)}
+.wl-thresh{font-family:var(--mono);font-size:12px;color:var(--t2);margin-top:2px}
+.wl-hit{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--green);border:1px solid var(--gdim);background:rgba(29,185,84,.07);padding:3px 8px;align-self:flex-start;margin-top:2px}
+.wl-no{font-family:var(--mono);font-size:10px;color:var(--t3);margin-top:2px}
+.wl-add{align-items:center;justify-content:center;min-height:110px;gap:6px}
 
-/* ── WANTLIST ── */
-.wantlist-grid {
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 1px; background: var(--border);
-}
-.wl-card {
-  background: var(--bg); padding: 22px 24px;
-  display: flex; flex-direction: column; gap: 8px;
-  transition: background 0.12s; cursor: pointer;
-}
-.wl-card:hover { background: var(--s1); }
-.wl-card.add-card {
-  align-items: center; justify-content: center;
-  min-height: 120px; gap: 6px;
-}
-.wl-genre { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; color: var(--text3); }
-.wl-title { font-size: 14px; font-weight: 500; }
-.wl-artist { font-size: 12px; color: var(--text2); }
-.wl-threshold { font-family: var(--mono); font-size: 12px; color: var(--text2); margin-top: 4px; }
-.wl-alert {
-  font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em;
-  color: var(--green); border: 1px solid var(--green-dim);
-  background: rgba(29,185,84,0.08);
-  padding: 3px 8px; align-self: flex-start; margin-top: 4px;
-}
-.wl-status { font-family: var(--mono); font-size: 10px; color: var(--text3); margin-top: 4px; }
+/* PORTFOLIO */
+.port-header{padding:44px 32px 36px;border-bottom:1px solid var(--b1);display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:24px}
+.port-name{font-size:26px;font-weight:500}
+.port-handle{font-family:var(--mono);font-size:13px;color:var(--t3);margin-top:3px}
+.port-stats{display:flex;gap:40px}
+.ps-val{font-family:var(--mono);font-size:20px;font-weight:300;text-align:right}
+.ps-lbl{font-size:11px;color:var(--t3);text-align:right;margin-top:3px}
+.pnl{display:grid;grid-template-columns:repeat(5,1fr);border-bottom:1px solid var(--b1)}
+.pnl-c{padding:20px 24px;border-right:1px solid var(--b1)}
+.pnl-c:last-child{border-right:none}
+.pnl-v{font-family:var(--mono);font-size:19px;font-weight:300}
+.pnl-l{font-size:11px;color:var(--t3);margin-top:5px}
+.port-tabs{display:flex;border-bottom:1px solid var(--b1);padding:0 32px}
+.ptab{color:var(--t3);font-size:13px;padding:13px 16px;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s}
+.ptab:hover{color:var(--t2)}
+.ptab.on{color:var(--t1);border-bottom-color:var(--t1)}
+.port-table{width:100%;border-collapse:collapse}
+.port-table th{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--t3);font-weight:400;text-align:left;padding:11px 28px;border-bottom:1px solid var(--b1)}
+.port-table td{padding:13px 28px;vertical-align:middle;border-bottom:1px solid var(--b1)}
+.pt-row{transition:background .1s}
+.pt-row:hover{background:var(--s1)}
+.pt-pos{font-family:var(--mono);font-size:12px;color:var(--green)}
+.pt-neu{font-family:var(--mono);font-size:13px}
 
-/* ── PROFILE ── */
-.profile-header {
-  padding: 48px 32px 40px; border-bottom: 1px solid var(--border);
-  display: flex; align-items: flex-end; justify-content: space-between;
-}
-.profile-name { font-size: 28px; font-weight: 500; }
-.profile-handle { font-family: var(--mono); font-size: 13px; color: var(--text3); margin-top: 4px; }
-.profile-stats { display: flex; gap: 48px; }
-.ps-val { font-family: var(--mono); font-size: 22px; font-weight: 300; text-align: right; }
-.ps-lbl { font-size: 11px; color: var(--text3); text-align: right; margin-top: 3px; }
-
-.pnl-grid {
-  display: grid; grid-template-columns: repeat(5, 1fr);
-  border-bottom: 1px solid var(--border);
-}
-.pnl-cell {
-  padding: 24px 28px; border-right: 1px solid var(--border);
-}
-.pnl-cell:last-child { border-right: none; }
-.pnl-val { font-family: var(--mono); font-size: 20px; font-weight: 300; }
-.pnl-lbl { font-size: 11px; color: var(--text3); margin-top: 6px; }
-
-.portfolio-tabs {
-  display: flex; gap: 0; border-bottom: 1px solid var(--border); padding: 0 32px;
-}
-.ptab {
-  background: none; border: none; border-bottom: 1px solid transparent;
-  color: var(--text3); font-family: var(--sans); font-size: 13px;
-  padding: 14px 16px; margin-bottom: -1px; letter-spacing: 0.01em;
-  transition: all 0.15s;
-}
-.ptab:hover { color: var(--text2); }
-.ptab.active { color: var(--text); border-bottom-color: var(--text); }
-
-.portfolio-table { width: 100%; border-collapse: collapse; }
-.pt-head th {
-  font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em;
-  color: var(--text3); font-weight: 400; text-align: left;
-  padding: 12px 28px; border-bottom: 1px solid var(--border);
-}
-.pt-row { border-bottom: 1px solid var(--border); transition: background 0.1s; }
-.pt-row:hover { background: var(--s1); }
-.pt-row td { padding: 14px 28px; vertical-align: middle; }
-.pt-mono { font-family: var(--mono); font-size: 13px; }
-.pt-pos { font-family: var(--mono); font-size: 12px; color: var(--green); }
-.pt-neg { font-family: var(--mono); font-size: 12px; color: var(--red); }
-
-/* ── UTILITIES ── */
-.status-pill {
-  font-family: var(--mono); font-size: 9px; letter-spacing: 0.12em;
-  font-weight: 500; padding: 3px 7px; display: inline-block;
-}
-.sp-heat  { color: var(--green);  border: 1px solid var(--green);     background: rgba(29,185,84,0.08); }
-.sp-rise  { color: var(--green);  border: 1px solid var(--green-dim); background: rgba(29,185,84,0.04); opacity:0.8; }
-.sp-stable{ color: var(--amber);  border: 1px solid var(--amber-dim); background: rgba(200,149,42,0.07); }
-.sp-cool  { color: var(--red);    border: 1px solid var(--red-dim);   background: rgba(192,57,43,0.07); }
-.sp-rare  { color: var(--blue);   border: 1px solid var(--blue-dim);  background: rgba(74,158,191,0.08); }
-
-.divider { height: 1px; background: var(--border); }
-
-/* ── TOKEN GATE ── */
-#token-gate {
-  position: fixed; inset: 0; z-index: 999;
-  background: var(--bg);
-  display: flex; align-items: center; justify-content: center;
-}
-.gate-inner {
-  max-width: 420px; width: 100%; padding: 0 32px;
-  display: flex; flex-direction: column; gap: 24px;
-}
-.gate-logo { font-family: var(--mono); font-size: 22px; font-weight: 500; letter-spacing: 0.2em; }
-.gate-title { font-size: 15px; font-weight: 500; }
-.gate-sub { font-size: 13px; color: var(--text2); line-height: 1.6; }
-.gate-input {
-  background: var(--s1); border: 1px solid var(--border2);
-  color: var(--text); font-family: var(--mono); font-size: 13px;
-  padding: 12px 14px; outline: none; width: 100%;
-  letter-spacing: 0.04em; transition: border-color 0.15s;
-}
-.gate-input:focus { border-color: var(--text3); }
-.gate-input::placeholder { color: var(--text3); letter-spacing: 0.02em; font-family: var(--sans); }
-.gate-btn {
-  background: var(--text); color: var(--bg); border: none; padding: 12px 24px;
-  font-family: var(--mono); font-size: 12px; letter-spacing: 0.1em;
-  font-weight: 500; cursor: pointer; transition: opacity 0.15s; align-self: flex-start;
-}
-.gate-btn:hover { opacity: 0.85; }
-.gate-err { font-family: var(--mono); font-size: 11px; color: var(--red); letter-spacing: 0.04em; min-height: 16px; }
-.gate-note { font-size: 11px; color: var(--text3); line-height: 1.6; }
-
-/* ── API SEARCH ── */
-.api-search-row {
-  padding: 16px 32px; border-bottom: 1px solid var(--border);
-  display: flex; gap: 10px; align-items: center; background: var(--s1);
-}
-.api-search-input {
-  flex: 1; background: var(--bg); border: 1px solid var(--border2);
-  color: var(--text); font-family: var(--sans); font-size: 13px;
-  padding: 9px 14px; outline: none; transition: border-color 0.15s;
-}
-.api-search-input:focus { border-color: var(--text3); }
-.api-search-input::placeholder { color: var(--text3); }
-.api-search-btn {
-  background: var(--text); color: var(--bg); border: none;
-  font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em;
-  padding: 9px 20px; cursor: pointer; transition: opacity 0.15s; white-space: nowrap;
-}
-.api-search-btn:hover { opacity: 0.85; }
-.api-search-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-
-/* ── LOADING ── */
-.loading-row {
-  padding: 48px 32px; text-align: center;
-  font-family: var(--mono); font-size: 12px; color: var(--text3); letter-spacing: 0.08em;
-}
-.spinner {
-  display: inline-block; width: 14px; height: 14px;
-  border: 1px solid var(--border2); border-top-color: var(--text2);
-  border-radius: 50%; animation: spin 0.8s linear infinite;
-  margin-right: 10px; vertical-align: middle;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
-.source-live {
-  font-family: var(--mono); font-size: 9px; letter-spacing: 0.1em;
-  color: var(--green); border: 1px solid var(--green-dim);
-  padding: 2px 6px; background: rgba(29,185,84,0.06);
-}
-
-@media (max-width: 768px) {
-  nav { padding: 0 16px; }
-  .nav-links .nav-link span { display: none; }
-  .home-hero { grid-template-columns: 1fr; }
-  .hero-left { border-right: none; border-bottom: 1px solid var(--border); padding: 0 0 40px; }
-  .hero-right { padding: 32px 0 0; }
-  .deals-stats { grid-template-columns: repeat(2,1fr); }
-  .pnl-grid { grid-template-columns: repeat(2,1fr); }
-  .profile-header { flex-direction: column; gap: 24px; align-items: flex-start; }
-  .section, .deals-controls, .pt-head th, .pt-row td { padding-left: 16px; padding-right: 16px; }
+@media(max-width:768px){
+  nav{padding:0 16px}
+  .hero{grid-template-columns:1fr;padding:48px 16px 36px}
+  .hero-l{border-right:none;border-bottom:1px solid var(--b1);padding:0 0 32px}
+  .hero-r{padding:28px 0 0}
+  .deals-stats{grid-template-columns:repeat(2,1fr)}
+  .pnl{grid-template-columns:repeat(2,1fr)}
+  .section,.deals-search-bar,.deals-filters{padding-left:16px;padding-right:16px}
+  .port-header{padding:32px 16px}
+  .port-table th,.port-table td{padding-left:16px;padding-right:16px}
 }
 </style>
 </head>
 <body>
 
-<!-- TOKEN GATE -->
-<div id="token-gate">
-  <div class="gate-inner">
-    <div class="gate-logo">— —</div>
-    <div>
-      <div class="gate-title">Access required</div>
-      <div class="gate-sub" style="margin-top:8px;">Enter your access key to continue.</div>
-    </div>
-    <input class="gate-input" id="gate-token-input" type="password" placeholder="Access key…" onkeydown="if(event.key==='Enter')connectDiscogs()">
-    <div class="gate-err" id="gate-err"></div>
-    <button class="gate-btn" onclick="connectDiscogs()">ENTER →</button>
+<!-- GATE -->
+<div id="gate">
+  <div class="g-inner">
+    <div class="g-logo">— / —</div>
+    <div class="g-title">Access required</div>
+    <div class="g-sub">Enter your access key to continue.</div>
+    <input class="g-input" id="g-key" type="password" placeholder="Access key…">
+    <div class="g-err" id="g-err"></div>
+    <button class="g-btn" id="g-submit">ENTER →</button>
   </div>
 </div>
 
@@ -432,730 +209,517 @@ nav {
 <nav>
   <div class="nav-logo">WAX</div>
   <div class="nav-links">
-    <button class="nav-link active" data-page="home">Home</button>
-    <button class="nav-link" data-page="deals">Deals</button>
-    <button class="nav-link" data-page="wantlist">Wantlist</button>
-    <button class="nav-link" data-page="profile">Portfolio</button>
+    <button class="nav-btn on" data-p="home">Home</button>
+    <button class="nav-btn" data-p="deals">Deals</button>
+    <button class="nav-btn" data-p="wantlist">Wantlist</button>
+    <button class="nav-btn" data-p="portfolio">Portfolio</button>
   </div>
-  <div class="nav-right">
-    <div class="nav-status"><span class="pulse"></span>LIVE</div>
-  </div>
+  <div class="nav-live"><span class="pulse"></span>LIVE</div>
 </nav>
 
-<!-- ════════════════════════════════
-     HOME
-════════════════════════════════ -->
-<div class="page active" id="page-home">
-
-  <!-- Hero -->
-  <div class="home-hero">
-    <div class="hero-left">
-      <div class="hero-eyebrow">Best deal right now</div>
-      <div class="hero-number">−£52</div>
-      <div class="hero-label">below market value</div>
-      <div class="hero-record-title">John Coltrane — A Love Supreme</div>
-      <div class="hero-record-meta">1965 · Impulse! · US Original · VG+</div>
-      <button class="hero-buy-btn" id="hero-deal-btn">VIEW DEAL →</button>
+<!-- HOME -->
+<div class="page on" id="page-home">
+  <div class="hero">
+    <div class="hero-l">
+      <div class="hero-eye">Best deal right now</div>
+      <div class="hero-num" id="h-saving">—</div>
+      <div class="hero-lbl">below market value</div>
+      <div class="hero-rec" id="h-rec">Search to find live deals</div>
+      <div class="hero-meta" id="h-meta">Go to Deals and run a search</div>
+      <button class="hero-cta" id="h-cta">FIND DEALS →</button>
     </div>
-    <div class="hero-right">
-      <div class="hero-stat-row">
-        <div class="hero-stat-val">23</div>
-        <div class="hero-stat-lbl">deals flagged today</div>
-      </div>
-      <div class="hero-stat-row">
-        <div class="hero-stat-val">£38</div>
-        <div class="hero-stat-lbl">average saving per deal</div>
-      </div>
-      <div class="hero-stat-row">
-        <div class="hero-stat-val">4</div>
-        <div class="hero-stat-lbl">wantlist matches</div>
-      </div>
+    <div class="hero-r">
+      <div><div class="h-stat-val" id="h-count">—</div><div class="h-stat-lbl">deals found today</div></div>
+      <div><div class="h-stat-val" id="h-avg">—</div><div class="h-stat-lbl">average saving</div></div>
+      <div><div class="h-stat-val" id="h-wl">4</div><div class="h-stat-lbl">wantlist matches</div></div>
     </div>
   </div>
-
-  <!-- Trending Ticker -->
-  <div style="border-bottom:1px solid var(--border); padding: 14px 0; overflow:hidden;">
-    <div class="ticker-track" id="ticker"></div>
-  </div>
-
-  <!-- What's Hot -->
+  <div class="ticker-wrap"><div class="ticker-track" id="ticker"></div></div>
   <div class="section">
-    <div class="section-head">
-      <span class="section-title">What's Hot</span>
-      <button class="section-action">See all →</button>
-    </div>
-    <div class="record-grid" id="hot-grid"></div>
+    <div class="sec-head"><span class="sec-title">What's Hot</span><button class="sec-more" id="hot-more">See all →</button></div>
+    <div class="rec-grid" id="hot-grid"></div>
   </div>
-
-  <!-- Records to Watch -->
   <div class="section">
-    <div class="section-head">
-      <span class="section-title">Records to Watch</span>
-      <button class="section-action">See all →</button>
-    </div>
-    <div class="record-grid" id="watch-grid"></div>
+    <div class="sec-head"><span class="sec-title">Records to Watch</span><button class="sec-more" id="watch-more">See all →</button></div>
+    <div class="rec-grid" id="watch-grid"></div>
   </div>
-
 </div>
 
-<!-- ════════════════════════════════
-     DEALS
-════════════════════════════════ -->
+<!-- DEALS -->
 <div class="page" id="page-deals">
-
-  <div class="api-search-row">
-    <input class="api-search-input" id="apiSearchInput" placeholder="Search Discogs live — artist, title, label…">
-    <button class="api-search-btn" id="apiSearchBtn">SEARCH DISCOGS</button>
-    <span class="source-live" id="data-source-badge" style="display:none;">LIVE</span>
+  <div class="deals-search-bar">
+    <input class="d-input" id="d-query" placeholder="Search Discogs — artist, title, label…">
+    <button class="d-go" id="d-go">SEARCH</button>
+    <span class="live-badge" id="live-badge" style="display:none">LIVE</span>
   </div>
-
-  <div class="deals-controls">
-    <input class="search-box" id="dealSearch" placeholder="Filter results…">
-    <button class="filter-btn on" data-f="all">ALL</button>
-    <button class="filter-btn" data-f="fire">TOP DEALS</button>
-    <button class="filter-btn" data-f="rare">RARE</button>
-    <button class="filter-btn" data-f="jazz">JAZZ</button>
-    <button class="filter-btn" data-f="electronic">ELECTRONIC</button>
-    <button class="filter-btn" data-f="soul">SOUL</button>
-    <button class="filter-btn" data-f="rock">ROCK</button>
+  <div class="deals-filters">
+    <input class="d-input" id="d-filter" placeholder="Filter results…" style="max-width:200px;padding:7px 12px;font-size:12px">
+    <button class="f-btn on" data-f="all">ALL</button>
+    <button class="f-btn" data-f="top">TOP DEALS</button>
+    <button class="f-btn" data-f="rare">RARE</button>
+    <button class="f-btn" data-f="jazz">JAZZ</button>
+    <button class="f-btn" data-f="electronic">ELECTRONIC</button>
+    <button class="f-btn" data-f="soul">SOUL</button>
+    <button class="f-btn" data-f="rock">ROCK</button>
   </div>
-
   <div class="deals-stats">
-    <div class="ds-cell"><div class="ds-val" id="ds-count">—</div><div class="ds-lbl">Deals found</div></div>
-    <div class="ds-cell"><div class="ds-val" style="color:var(--green);">38%</div><div class="ds-lbl">Avg below market</div></div>
-    <div class="ds-cell"><div class="ds-val" style="color:var(--green);">−£52</div><div class="ds-lbl">Best saving today</div></div>
-    <div class="ds-cell"><div class="ds-val" style="color:var(--amber);">4</div><div class="ds-lbl">Wantlist hits</div></div>
+    <div class="ds"><div class="ds-val" id="ds-count">—</div><div class="ds-lbl">Deals found</div></div>
+    <div class="ds"><div class="ds-val" id="ds-avg" style="color:var(--green)">—</div><div class="ds-lbl">Avg below market</div></div>
+    <div class="ds"><div class="ds-val" id="ds-best" style="color:var(--green)">—</div><div class="ds-lbl">Best saving</div></div>
+    <div class="ds"><div class="ds-val" style="color:var(--amber)">4</div><div class="ds-lbl">Wantlist hits</div></div>
   </div>
-
-  <div style="padding: 0 0; overflow-x: auto;">
+  <div style="overflow-x:auto">
     <table class="deals-table">
-      <thead class="dt-head">
-        <tr>
-          <th style="padding-left:32px;">Record</th>
-          <th>Pressing</th>
-          <th>Condition</th>
-          <th>Ask</th>
-          <th>Market</th>
-          <th>Saving</th>
-          <th>Liquidity</th>
-          <th>Status</th>
-          <th>Score</th>
-          <th>Track</th>
-          <th style="padding-right:32px;"></th>
-        </tr>
-      </thead>
-      <tbody id="deals-tbody"></tbody>
+      <thead><tr>
+        <th>Record</th><th>Pressing</th><th>Cond.</th><th>Ask</th><th>Market</th>
+        <th>Saving</th><th>Liquidity</th><th>Status</th><th>Score</th><th>Track</th><th></th>
+      </tr></thead>
+      <tbody id="d-tbody"><tr><td colspan="11" class="loading-cell">Search above to load live data from Discogs</td></tr></tbody>
     </table>
   </div>
-
 </div>
 
-<!-- ════════════════════════════════
-     WANTLIST
-════════════════════════════════ -->
+<!-- WANTLIST -->
 <div class="page" id="page-wantlist">
-
-  <div class="section" style="border-bottom:none;">
-    <div class="section-head">
-      <span class="section-title">Your Wantlist</span>
-      <button class="section-action" style="font-family:var(--mono);font-size:11px;letter-spacing:0.08em;border:1px solid var(--border);padding:7px 14px;color:var(--text3);">+ ADD RECORD</button>
+  <div class="section" style="border-bottom:none">
+    <div class="sec-head">
+      <span class="sec-title">Your Wantlist</span>
+      <button style="font-family:var(--mono);font-size:11px;letter-spacing:.08em;border:1px solid var(--b1);padding:7px 14px;color:var(--t3)">+ ADD RECORD</button>
     </div>
-    <div class="wantlist-grid" id="wantlist-grid"></div>
+    <div class="wl-grid" id="wl-grid"></div>
   </div>
-
-  <!-- Alert settings note -->
-  <div style="padding: 32px; border-top: 1px solid var(--border);">
-    <div class="section-title" style="margin-bottom:12px;">How alerts work</div>
-    <p style="font-size:13px;color:var(--text2);max-width:560px;line-height:1.7;">
-      WAX checks every active listing against your threshold price. When a match appears — accounting for condition grade, pressing variant, and market trajectory — you're notified immediately. Alerts fire only when the deal score clears the minimum threshold.
-    </p>
+  <div style="padding:28px 32px;border-top:1px solid var(--b1)">
+    <div style="font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);margin-bottom:10px">How alerts work</div>
+    <p style="font-size:13px;color:var(--t2);max-width:520px;line-height:1.7">WAX monitors every active listing against your threshold. When a match appears — checked against condition grade, pressing variant and market trajectory — you're notified immediately. Alerts only fire when the deal score clears the minimum threshold.</p>
   </div>
-
 </div>
 
-<!-- ════════════════════════════════
-     PROFILE / PORTFOLIO
-════════════════════════════════ -->
-<div class="page" id="page-profile">
-
-  <div class="profile-header">
-    <div>
-      <div class="profile-name">Ryan</div>
-      <div class="profile-handle">@ryanwax · member since 2024</div>
-    </div>
-    <div class="profile-stats">
-      <div>
-        <div class="ps-val">31</div>
-        <div class="ps-lbl">Records traded</div>
-      </div>
-      <div>
-        <div class="ps-val">£1,840</div>
-        <div class="ps-lbl">Total revenue</div>
-      </div>
-      <div>
-        <div class="ps-val" style="color:var(--green);">£612</div>
-        <div class="ps-lbl">Net profit</div>
-      </div>
+<!-- PORTFOLIO -->
+<div class="page" id="page-portfolio">
+  <div class="port-header">
+    <div><div class="port-name">Ryan</div><div class="port-handle">@ryanwax · member since 2024</div></div>
+    <div class="port-stats">
+      <div><div class="ps-val">31</div><div class="ps-lbl">Records traded</div></div>
+      <div><div class="ps-val">£1,840</div><div class="ps-lbl">Total revenue</div></div>
+      <div><div class="ps-val" style="color:var(--green)">£612</div><div class="ps-lbl">Net profit</div></div>
     </div>
   </div>
-
-  <!-- P&L summary -->
-  <div class="pnl-grid">
-    <div class="pnl-cell">
-      <div class="pnl-val" style="color:var(--green);">£612</div>
-      <div class="pnl-lbl">Total profit</div>
-    </div>
-    <div class="pnl-cell">
-      <div class="pnl-val">£1,228</div>
-      <div class="pnl-lbl">Capital deployed</div>
-    </div>
-    <div class="pnl-cell">
-      <div class="pnl-val" style="color:var(--green);">49.8%</div>
-      <div class="pnl-lbl">Avg ROI per record</div>
-    </div>
-    <div class="pnl-cell">
-      <div class="pnl-val" style="color:var(--amber);">9d</div>
-      <div class="pnl-lbl">Avg days to sell</div>
-    </div>
-    <div class="pnl-cell">
-      <div class="pnl-val">£340</div>
-      <div class="pnl-lbl">Current inventory value</div>
-    </div>
+  <div class="pnl">
+    <div class="pnl-c"><div class="pnl-v" style="color:var(--green)">£612</div><div class="pnl-l">Total profit</div></div>
+    <div class="pnl-c"><div class="pnl-v">£1,228</div><div class="pnl-l">Capital deployed</div></div>
+    <div class="pnl-c"><div class="pnl-v" style="color:var(--green)">49.8%</div><div class="pnl-l">Avg ROI per record</div></div>
+    <div class="pnl-c"><div class="pnl-v" style="color:var(--amber)">9d</div><div class="pnl-l">Avg days to sell</div></div>
+    <div class="pnl-c"><div class="pnl-v">£340</div><div class="pnl-l">Inventory value</div></div>
   </div>
-
-  <!-- Tabs -->
-  <div class="portfolio-tabs">
-    <button class="ptab active" data-tab="held">Holding</button>
-    <button class="ptab" data-tab="sold">Sold</button>
-    <button class="ptab" data-tab="watch">Watching</button>
+  <div class="port-tabs">
+    <button class="ptab on" data-t="held">Holding</button>
+    <button class="ptab" data-t="sold">Sold</button>
+    <button class="ptab" data-t="watch">Watching</button>
   </div>
-
-  <div id="portfolio-content"></div>
-
+  <div id="port-content"></div>
 </div>
 
 <script>
-/* ══════════════════════════════════════
-   DISCOGS API LAYER
-══════════════════════════════════════ */
-let DISCOGS_TOKEN = '';
+/* ═══════════════════════════════
+   STATE
+═══════════════════════════════ */
+let TOKEN = '';
+let liveData = [];
+let activeFilter = 'all';
+let activeTab = 'held';
 const BASE = 'https://api.discogs.com';
-const UA   = 'WAXApp/1.0';
 
-function discogsHeaders() {
-  return {
-    'Authorization': `Discogs token=${DISCOGS_TOKEN}`,
-    'User-Agent': UA
-  };
-}
+/* ═══════════════════════════════
+   GATE
+═══════════════════════════════ */
+document.getElementById('g-submit').addEventListener('click', doConnect);
+document.getElementById('g-key').addEventListener('keydown', e => { if(e.key==='Enter') doConnect(); });
 
-async function connectDiscogs() {
-  const input = document.getElementById('gate-token-input');
-  const err   = document.getElementById('gate-err');
-  const token = input.value.trim();
-  if (!token) { err.textContent = 'Token required.'; return; }
+async function doConnect() {
+  const key = document.getElementById('g-key').value.trim();
+  const err = document.getElementById('g-err');
+  if (!key) { err.textContent = 'Key required.'; return; }
   err.textContent = '';
-  input.disabled = true;
-  document.querySelector('.gate-btn').textContent = 'CONNECTING…';
+  document.getElementById('g-submit').textContent = 'CONNECTING…';
+  document.getElementById('g-key').disabled = true;
 
-  // Try a lightweight search call to validate — identity endpoint has CORS issues in some browsers
   try {
-    const res = await fetch(`${BASE}/database/search?q=test&per_page=1`, {
-      headers: { 'Authorization': `Discogs token=${token}`, 'User-Agent': UA }
+    const r = await fetch(`${BASE}/database/search?q=test&per_page=1`, {
+      headers:{ 'Authorization':'Discogs token='+key, 'User-Agent':'WAXApp/1.0' }
     });
-    if (res.status === 401) {
-      throw new Error('Invalid token');
-    }
-    // 200 or any non-401 means token is accepted
-    DISCOGS_TOKEN = token;
-    document.getElementById('token-gate').style.display = 'none';
-    init();
+    if (r.status === 401) throw new Error('auth');
+    TOKEN = key;
+    document.getElementById('gate').style.display = 'none';
+    boot();
   } catch(e) {
-    if (e.message === 'Invalid token') {
-      err.textContent = 'Token rejected by Discogs — double check it and try again.';
+    if (key.length > 10) {
+      // CORS block — token likely fine, let through
+      TOKEN = key;
+      document.getElementById('gate').style.display = 'none';
+      boot();
     } else {
-      // Network/CORS error — token format looks ok, let them through
-      // We'll catch real auth errors when searches run
-      if (token.length > 10) {
-        DISCOGS_TOKEN = token;
-        document.getElementById('token-gate').style.display = 'none';
-        init();
-      } else {
-        err.textContent = 'Connection error — check your internet and try again.';
-      }
+      err.textContent = 'Access denied.';
+      document.getElementById('g-submit').textContent = 'ENTER →';
+      document.getElementById('g-key').disabled = false;
     }
-    input.disabled = false;
-    document.querySelector('.gate-btn').textContent = 'CONNECT →';
   }
 }
 
-/* Search marketplace listings for a query */
-async function searchMarketplace(query) {
-  // Step 1: search releases
-  const url = `${BASE}/database/search?q=${encodeURIComponent(query)}&type=release&per_page=10&format=Vinyl`;
-  const res = await fetch(url, { headers: discogsHeaders() });
-  if (!res.ok) throw new Error('Search failed');
-  const data = await res.json();
-  return data.results || [];
+/* ═══════════════════════════════
+   DISCOGS API
+═══════════════════════════════ */
+const H = () => ({ 'Authorization':'Discogs token='+TOKEN, 'User-Agent':'WAXApp/1.0' });
+
+async function apiSearch(q) {
+  const r = await fetch(`${BASE}/database/search?q=${encodeURIComponent(q)}&type=release&per_page=8&format=Vinyl`, {headers:H()});
+  if (!r.ok) throw new Error('search failed');
+  return (await r.json()).results || [];
 }
 
-/* Get marketplace stats for a release (median price, lowest, num for sale) */
-async function getMarketStats(releaseId) {
+async function apiStats(id) {
   try {
-    const res = await fetch(`${BASE}/marketplace/stats/${releaseId}?curr_abbr=GBP`, { headers: discogsHeaders() });
-    if (!res.ok) return null;
-    return await res.json();
+    const r = await fetch(`${BASE}/marketplace/stats/${id}?curr_abbr=GBP`, {headers:H()});
+    return r.ok ? await r.json() : null;
   } catch { return null; }
 }
 
-/* Get community want/have for a release */
-async function getReleaseStats(releaseId) {
+async function apiRelease(id) {
   try {
-    const res = await fetch(`${BASE}/releases/${releaseId}`, { headers: discogsHeaders() });
-    if (!res.ok) return null;
-    return await res.json();
+    const r = await fetch(`${BASE}/releases/${id}`, {headers:H()});
+    return r.ok ? await r.json() : null;
   } catch { return null; }
 }
 
-/* Get cheapest marketplace listings for a release */
-async function getListings(releaseId) {
-  try {
-    const res = await fetch(`${BASE}/marketplace/listings?release_id=${releaseId}&curr_abbr=GBP&sort=price&sort_order=asc&per_page=5`, { headers: discogsHeaders() });
-    if (!res.ok) return [];
-    const d = await res.json();
-    return d.listings || [];
-  } catch { return []; }
-}
+async function enrich(rel) {
+  const [stats, release] = await Promise.all([apiStats(rel.id), apiRelease(rel.id)]);
+  const comm = release?.community || {};
+  const have = comm.have || 0;
+  const want = comm.want || 0;
+  const wantRatio = have > 0 ? Math.min(want/have, 1) : 0;
+  const numForSale = stats?.num_for_sale || 0;
+  const median = stats?.median?.value || null;
+  const lowest = stats?.lowest_price?.value || null;
+  const wg = wantRatio > 0.6 ? '+15%' : wantRatio > 0.4 ? '+7%' : wantRatio > 0.2 ? '+3%' : '0%';
 
-/* Full enrichment pipeline for a release */
-async function enrichRelease(release) {
-  const [stats, releaseData] = await Promise.all([
-    getMarketStats(release.id),
-    getReleaseStats(release.id)
-  ]);
-
-  const community = releaseData?.community || {};
-  const have  = community.have  || 0;
-  const want  = community.want  || 0;
-  const wantRatio = have > 0 ? Math.min(want / have, 1) : 0;
-
-  const mktStats = stats?.num_for_sale > 0 ? stats : null;
-  const medianGBP = mktStats?.median?.value || null;
-  const lowestGBP = mktStats?.lowest_price?.value || null;
-  const numForSale = mktStats?.num_for_sale || 0;
-
-  // Estimate wantlist growth from community data (proxy: want/have trend)
-  const wantGrowthProxy = wantRatio > 0.6 ? '+15%' : wantRatio > 0.4 ? '+7%' : wantRatio > 0.2 ? '+3%' : '0%';
-
-  // Determine status
   let status = 'stable';
   if (wantRatio > 0.5 && numForSale < 5) status = 'rare';
-  else if (wantRatio > 0.4 && lowestGBP && medianGBP && lowestGBP < medianGBP * 0.75) status = 'heat';
+  else if (wantRatio > 0.4 && lowest && median && lowest < median * 0.75) status = 'heat';
   else if (wantRatio > 0.3) status = 'rise';
   else if (wantRatio < 0.15) status = 'cool';
 
-  // Track A vs B
-  const track = (medianGBP && medianGBP > 80 && numForSale < 8) ? 'B' : 'A';
+  const track = (median && median > 80 && numForSale < 8) ? 'B' : 'A';
 
-  // Genre mapping
-  const genres = release.genre || release.style || ['Unknown'];
-  const genreRaw = (Array.isArray(genres) ? genres[0] : genres).toLowerCase();
+  const gs = (release?.genres||release?.styles||['other'])[0].toLowerCase();
   let genre = 'other';
-  if (genreRaw.includes('jazz')) genre = 'jazz';
-  else if (genreRaw.includes('electronic') || genreRaw.includes('techno') || genreRaw.includes('house') || genreRaw.includes('ambient')) genre = 'electronic';
-  else if (genreRaw.includes('soul') || genreRaw.includes('funk') || genreRaw.includes('r&b')) genre = 'soul';
-  else if (genreRaw.includes('rock') || genreRaw.includes('punk') || genreRaw.includes('metal')) genre = 'rock';
+  if (gs.includes('jazz')) genre='jazz';
+  else if (gs.includes('electronic')||gs.includes('techno')||gs.includes('house')||gs.includes('ambient')) genre='electronic';
+  else if (gs.includes('soul')||gs.includes('funk')||gs.includes('r&b')) genre='soul';
+  else if (gs.includes('rock')||gs.includes('punk')||gs.includes('metal')) genre='rock';
 
-  const formats = release.format || [];
-  const pressing = release.country ? `${release.country} Press` : 'Unknown Press';
-
+  const parts = (rel.title||'').split(' - ');
   return {
-    id: release.id,
-    artist: (release.title || '').split(' - ')[0] || 'Unknown',
-    title:  (release.title || '').split(' - ').slice(1).join(' - ') || release.title || 'Unknown',
-    label:  (release.label || ['Unknown'])[0],
-    year:   release.year || '—',
-    genre,
-    condition: 'VG+',
-    pressing,
-    ask:    lowestGBP ? parseFloat(lowestGBP.toFixed(2)) : null,
-    market: medianGBP ? parseFloat(medianGBP.toFixed(2)) : null,
-    salesPer30: Math.min(numForSale * 3, 50), // proxy from stock level
-    wantRatio,
-    wantlistGrowth: wantGrowthProxy,
-    status,
-    track,
-    wantlist: false,
-    numForSale,
-    have,
-    want,
-    discogsUrl: `https://www.discogs.com/release/${release.id}`,
-    thumb: release.thumb || null,
+    id: rel.id,
+    artist: parts[0]||'Unknown',
+    title: parts.slice(1).join(' - ')||rel.title||'Unknown',
+    label: (rel.label||['Unknown'])[0],
+    year: rel.year||'—',
+    genre, status, track,
+    condition:'VG+',
+    pressing: rel.country ? rel.country+' Press' : '—',
+    ask: lowest ? +lowest.toFixed(2) : null,
+    market: median ? +median.toFixed(2) : null,
+    salesPer30: Math.min(numForSale*3, 50),
+    wantRatio, wg, numForSale, have, want,
+    thumb: rel.cover_image || rel.thumb || null,
+    url: `https://www.discogs.com/release/${rel.id}`,
     live: true
   };
 }
 
-/* ── SEARCH DISCOGS & RENDER ── */
-let liveResults = [];
+/* ═══════════════════════════════
+   SCORING
+═══════════════════════════════ */
+function score(r) {
+  if (!r.ask||!r.market||r.ask>=r.market) return 0;
+  const pd = Math.min((1-r.ask/r.market)*100,100);
+  if (r.track==='B') {
+    const sc = Math.min(r.wantRatio*100,100);
+    const mo = parseFloat(r.wg)>15?90:parseFloat(r.wg)>5?65:30;
+    return Math.round(pd*0.35+sc*0.30+mo*0.25+50*0.10);
+  }
+  const lq = Math.min((r.salesPer30/30)*100,100);
+  const sc = Math.min(r.wantRatio*100,100);
+  const mo = parseFloat(r.wg)>5?80:parseFloat(r.wg)>0?50:20;
+  return Math.round(pd*0.30+lq*0.25+sc*0.20+mo*0.15+10);
+}
 
-async function searchDiscogs() {
-  const q = document.getElementById('apiSearchInput').value.trim();
+function grade(s) {
+  if (s>=72) return {cls:'sc-a',val:s};
+  if (s>=50) return {cls:'sc-b',val:s};
+  return {cls:'sc-c',val:s};
+}
+
+function pill(s) {
+  const m={heat:['sp-heat','HEATING'],rise:['sp-rise','RISING'],stable:['sp-stable','STABLE'],cool:['sp-cool','COOLING'],rare:['sp-rare','◆ RARE']};
+  const [c,l]=m[s]||m.stable;
+  return `<span class="sp ${c}">${l}</span>`;
+}
+
+function liqLabel(r) {
+  if (r.track==='B') return `<span style="font-family:var(--mono);font-size:11px;color:var(--blue)">COLLECTABLE</span>`;
+  if (r.salesPer30>=20) return `<span style="font-family:var(--mono);font-size:11px;color:var(--green)">HIGH</span>`;
+  if (r.salesPer30>=10) return `<span style="font-family:var(--mono);font-size:11px;color:var(--amber)">MED</span>`;
+  return `<span style="font-family:var(--mono);font-size:11px;color:var(--red)">LOW</span>`;
+}
+
+/* ═══════════════════════════════
+   SEARCH
+═══════════════════════════════ */
+async function runSearch() {
+  const q = document.getElementById('d-query').value.trim();
   if (!q) return;
-  const btn = document.getElementById('apiSearchBtn');
-  btn.disabled = true;
-  btn.textContent = 'SEARCHING…';
-
-  const tbody = document.getElementById('deals-tbody');
-  tbody.innerHTML = `<tr><td colspan="11" class="loading-row"><span class="spinner"></span>FETCHING LIVE DATA FROM DISCOGS</td></tr>`;
-  document.getElementById('data-source-badge').style.display = 'inline-block';
+  const btn = document.getElementById('d-go');
+  btn.disabled = true; btn.textContent = 'SEARCHING…';
+  document.getElementById('d-tbody').innerHTML = `<tr><td colspan="11" class="loading-cell"><span class="spin"></span>FETCHING FROM DISCOGS</td></tr>`;
 
   try {
-    const releases = await searchMarketplace(q);
-    // Enrich top results in parallel (limit 6 to stay within rate limit)
-    const toEnrich = releases.slice(0, 6);
-    const enriched = await Promise.all(toEnrich.map(enrichRelease));
+    const results = await apiSearch(q);
+    const enriched = await Promise.all(results.slice(0,6).map(enrich));
+    liveData = enriched.filter(r => r.ask && r.market && r.ask < r.market);
+    liveData.sort((a,b)=>score(b)-score(a));
 
-    // Filter to only those with real pricing
-    liveResults = enriched.filter(r => r.ask !== null && r.market !== null && r.ask < r.market);
-    liveResults.sort((a,b) => score(b) - score(a));
-
-    if (liveResults.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="11" class="loading-row">No priced listings found for that search. Try a different query.</td></tr>`;
-      btn.disabled = false; btn.textContent = 'SEARCH DISCOGS';
-      return;
+    if (liveData.length===0) {
+      document.getElementById('d-tbody').innerHTML=`<tr><td colspan="11" class="loading-cell">No priced listings found — try a different search</td></tr>`;
+      btn.disabled=false; btn.textContent='SEARCH'; return;
     }
 
-    // Update home hero with best live deal
-    updateHeroLive(liveResults[0]);
-    renderLiveDeals(liveResults);
+    document.getElementById('live-badge').style.display='inline-block';
+    updateHomeHero(liveData[0], liveData);
+    renderDeals();
 
-    document.getElementById('ds-count').textContent = liveResults.length;
-    const savings = liveResults.map(r => r.market - r.ask);
-    const avgSaving = Math.round(savings.reduce((a,b)=>a+b,0)/savings.length);
-    const bestSaving = Math.round(Math.max(...savings));
-    document.querySelectorAll('.ds-cell')[1].querySelector('.ds-val').textContent = Math.round((1 - liveResults.reduce((a,r)=>a+r.ask/r.market,0)/liveResults.length)*100) + '%';
-    document.querySelectorAll('.ds-cell')[2].querySelector('.ds-val').textContent = `−£${bestSaving}`;
+    const savings = liveData.map(r=>r.market-r.ask);
+    const best = Math.round(Math.max(...savings));
+    const avgPct = Math.round((1-liveData.reduce((a,r)=>a+r.ask/r.market,0)/liveData.length)*100);
+    document.getElementById('ds-avg').textContent = avgPct+'%';
+    document.getElementById('ds-best').textContent = '−£'+best;
 
   } catch(e) {
-    tbody.innerHTML = `<tr><td colspan="11" class="loading-row" style="color:var(--red);">Error fetching data. Check your token or try again.</td></tr>`;
+    document.getElementById('d-tbody').innerHTML=`<tr><td colspan="11" class="loading-cell" style="color:var(--red)">Error loading data — check connection and try again</td></tr>`;
   }
-
-  btn.disabled = false; btn.textContent = 'SEARCH DISCOGS';
+  btn.disabled=false; btn.textContent='SEARCH';
 }
 
-function updateHeroLive(r) {
-  const saving = (r.market - r.ask).toFixed(0);
-  document.querySelector('.hero-number').textContent = `−£${saving}`;
-  document.querySelector('.hero-record-title').textContent = `${r.artist} — ${r.title}`;
-  document.querySelector('.hero-record-meta').textContent = `${r.year} · ${r.label} · ${r.pressing} · ${r.condition}`;
+function updateHomeHero(best, all) {
+  const saving = (best.market-best.ask).toFixed(0);
+  document.getElementById('h-saving').textContent = '−£'+saving;
+  document.getElementById('h-rec').textContent = best.artist+' — '+best.title;
+  document.getElementById('h-meta').textContent = best.year+' · '+best.label+' · '+best.pressing+' · '+best.condition;
+  document.getElementById('h-count').textContent = all.length;
+  const avgS = Math.round(all.reduce((a,r)=>a+(r.market-r.ask),0)/all.length);
+  document.getElementById('h-avg').textContent = '£'+avgS;
 }
 
-function renderLiveDeals(records) {
-  document.getElementById('deals-tbody').innerHTML = records.map(r => {
-    const s = score(r);
-    const g = scoreGrade(s);
-    const pct = savingPct(r);
-    const abs = savingAbs(r);
-    const wl = r.wantlist ? `<span style="font-family:var(--mono);font-size:9px;color:var(--green);border:1px solid var(--green-dim);background:rgba(29,185,84,0.08);padding:2px 6px;letter-spacing:0.08em;">★ WANTLIST</span>` : '';
-    const liveTag = r.live ? `<span class="source-live" style="margin-left:6px;">LIVE</span>` : '';
-    return `
-    <tr class="dt-row" onclick="window.open('${r.discogsUrl}','_blank')">
-      <td style="padding-left:32px;">
-        <div class="dt-artist">${r.artist} ${wl}${liveTag}</div>
-        <div class="dt-title">${r.title} · ${r.label} · ${r.year}</div>
-      </td>
-      <td><span class="dt-tag">${r.pressing}</span></td>
-      <td><span class="dt-tag">${r.condition}</span></td>
-      <td class="dt-mono">£${r.ask}</td>
-      <td class="dt-small">£${r.market}</td>
-      <td style="font-family:var(--mono);font-size:13px;color:var(--green);">−£${abs} <span style="color:var(--text3);font-size:11px;">(${pct}%)</span></td>
-      <td>${liquidityLabel(r)}</td>
-      <td>${statusPill(r.status)}</td>
-      <td><span class="dt-score ${g.cls}">${g.label}</span></td>
-      <td><span class="track-badge">TRACK ${r.track}</span></td>
-      <td style="padding-right:32px;">
-        <a href="${r.discogsUrl}" target="_blank" style="background:var(--s2);border:1px solid var(--border2);color:var(--text2);font-family:var(--mono);font-size:10px;letter-spacing:0.08em;padding:6px 12px;display:inline-block;">VIEW ↗</a>
-      </td>
-    </tr>`;
-  }).join('');
-}
-
-/* ══════════════════════════════════════
-   MOCK DATA (fallback while no search)
-══════════════════════════════════════ */
-const RECORDS = [
-  { id:1,  artist:"John Coltrane",    title:"A Love Supreme",            label:"Impulse!",   year:1965, genre:"jazz",       condition:"VG+", pressing:"US Original",  ask:28,  market:80,  salesPer30:18, wantRatio:0.72, wantlistGrowth:"+14%", status:"heat",   track:"A", wantlist:true,  live:false, discogsUrl:"#" },
-  { id:2,  artist:"Miles Davis",      title:"Kind of Blue",              label:"Columbia",   year:1959, genre:"jazz",       condition:"VG+", pressing:"UK 1st Press", ask:55,  market:110, salesPer30:22, wantRatio:0.81, wantlistGrowth:"+19%", status:"heat",   track:"A", wantlist:true,  live:false, discogsUrl:"#" },
-  { id:3,  artist:"Aphex Twin",       title:"Selected Ambient Works II", label:"Warp",       year:1994, genre:"electronic", condition:"VG+", pressing:"UK Original",  ask:38,  market:85,  salesPer30:14, wantRatio:0.64, wantlistGrowth:"+11%", status:"heat",   track:"A", wantlist:true,  live:false, discogsUrl:"#" },
-  { id:4,  artist:"Boards of Canada", title:"Music Has the Right…",      label:"Warp/Skam",  year:1998, genre:"electronic", condition:"NM",  pressing:"EU Original",  ask:52,  market:90,  salesPer30:9,  wantRatio:0.58, wantlistGrowth:"+8%",  status:"rise",   track:"A", wantlist:false, live:false, discogsUrl:"#" },
-  { id:5,  artist:"James Brown",      title:"Sex Machine",               label:"King",       year:1970, genre:"soul",       condition:"VG",  pressing:"US Original",  ask:18,  market:42,  salesPer30:28, wantRatio:0.44, wantlistGrowth:"+4%",  status:"rise",   track:"A", wantlist:false, live:false, discogsUrl:"#" },
-  { id:6,  artist:"Massive Attack",   title:"Blue Lines",                label:"Wild Bunch", year:1991, genre:"electronic", condition:"VG+", pressing:"UK 1st Press", ask:34,  market:60,  salesPer30:11, wantRatio:0.50, wantlistGrowth:"+6%",  status:"rise",   track:"A", wantlist:false, live:false, discogsUrl:"#" },
-  { id:7,  artist:"Herbie Hancock",   title:"Head Hunters",              label:"Columbia",   year:1973, genre:"jazz",       condition:"VG+", pressing:"US Original",  ask:22,  market:38,  salesPer30:19, wantRatio:0.41, wantlistGrowth:"+3%",  status:"stable", track:"A", wantlist:false, live:false, discogsUrl:"#" },
-  { id:8,  artist:"The Clash",        title:"London Calling",            label:"CBS",        year:1979, genre:"rock",       condition:"VG+", pressing:"UK Original",  ask:30,  market:52,  salesPer30:14, wantRatio:0.38, wantlistGrowth:"+2%",  status:"stable", track:"A", wantlist:false, live:false, discogsUrl:"#" },
-  { id:9,  artist:"Marvin Gaye",      title:"Let's Get It On",           label:"Tamla",      year:1973, genre:"soul",       condition:"VG",  pressing:"US Original",  ask:14,  market:22,  salesPer30:31, wantRatio:0.30, wantlistGrowth:"0%",   status:"stable", track:"A", wantlist:false, live:false, discogsUrl:"#" },
-  { id:10, artist:"Portishead",       title:"Dummy",                     label:"Go! Discs",  year:1994, genre:"electronic", condition:"VG+", pressing:"UK Original",  ask:19,  market:28,  salesPer30:16, wantRatio:0.35, wantlistGrowth:"+1%",  status:"stable", track:"A", wantlist:false, live:false, discogsUrl:"#" },
-  { id:11, artist:"Eric Dolphy",      title:"Out to Lunch",              label:"Blue Note",  year:1964, genre:"jazz",       condition:"VG",  pressing:"US Original",  ask:120, market:340, salesPer30:2,  wantRatio:0.88, wantlistGrowth:"+22%", status:"rare",   track:"B", wantlist:false, live:false, discogsUrl:"#" },
-  { id:12, artist:"Sun Ra",           title:"The Heliocentric Worlds I", label:"ESP-Disk",   year:1965, genre:"jazz",       condition:"VG+", pressing:"US 1st Press", ask:180, market:420, salesPer30:1,  wantRatio:0.92, wantlistGrowth:"+31%", status:"rare",   track:"B", wantlist:false, live:false, discogsUrl:"#" },
-  { id:13, artist:"Curtis Mayfield",  title:"Superfly",                  label:"Curtom",     year:1972, genre:"soul",       condition:"VG+", pressing:"US Original",  ask:20,  market:30,  salesPer30:24, wantRatio:0.36, wantlistGrowth:"+2%",  status:"cool",   track:"A", wantlist:false, live:false, discogsUrl:"#" },
-  { id:14, artist:"Led Zeppelin",     title:"IV",                        label:"Atlantic",   year:1971, genre:"rock",       condition:"VG",  pressing:"UK 1st Press", ask:25,  market:38,  salesPer30:12, wantRatio:0.28, wantlistGrowth:"-2%",  status:"cool",   track:"A", wantlist:false, live:false, discogsUrl:"#" },
-];
-
-/* ══════════════════════════════════════
-   SCORING ENGINE
-══════════════════════════════════════ */
-function score(r) {
-  if (!r.ask || !r.market || r.ask >= r.market) return 0;
-  const priceDislocation = Math.min((1 - r.ask / r.market) * 100, 100);
-  let liquidity, scarcity, momentum;
-  if (r.track === "A") {
-    liquidity = Math.min((r.salesPer30 / 30) * 100, 100);
-    scarcity  = Math.min(r.wantRatio * 100, 100);
-    momentum  = parseFloat(r.wantlistGrowth) > 5 ? 80 : parseFloat(r.wantlistGrowth) > 0 ? 50 : 20;
-    return Math.round(priceDislocation*0.30 + liquidity*0.25 + scarcity*0.20 + momentum*0.15 + 10);
-  } else {
-    scarcity  = Math.min(r.wantRatio * 100, 100);
-    momentum  = parseFloat(r.wantlistGrowth) > 15 ? 90 : parseFloat(r.wantlistGrowth) > 5 ? 65 : 30;
-    return Math.round(priceDislocation*0.35 + scarcity*0.30 + momentum*0.25 + 50*0.10);
-  }
-}
-
-
-
-/* ══════════════════════════════════════
-   HOME
-══════════════════════════════════════ */
-function buildTicker() {
-  const artists = ["John Coltrane +19%","Miles Davis +14%","Aphex Twin +11%","Boards of Canada +8%","Sun Ra +31%","Eric Dolphy +22%","James Brown +4%","Massive Attack +6%","Portishead +1%","Led Zeppelin −2%","Curtis Mayfield −1%"];
-  const doubled = [...artists,...artists];
-  const el = document.getElementById('ticker');
-  el.innerHTML = doubled.map(a => {
-    const parts = a.split(' ');
-    const chg = parts[parts.length - 1];
-    const name = parts.slice(0, -1).join(' ');
-    const isPos = chg.startsWith('+');
-    const isNeg = chg.startsWith('−') || chg.startsWith('-');
-    const chgColor = isPos ? 'var(--green)' : isNeg ? 'var(--red)' : 'var(--text3)';
-    return `<span class="ticker-item"><span class="ticker-artist">${name}</span><span class="ticker-change" style="color:${chgColor}">${chg}</span><span class="ticker-divider">·</span></span>`;
-  }).join('');
-}
-
-function buildHomeGrids() {
-  const hot   = RECORDS.filter(r => r.status === 'heat').slice(0,4);
-  const watch = RECORDS.filter(r => r.status === 'rise' || r.status === 'rare').slice(0,4);
-  const statusColor = { heat:'var(--green)', rise:'var(--green)', stable:'var(--amber)', cool:'var(--red)', rare:'var(--blue)' };
-  [['hot-grid', hot],['watch-grid', watch]].forEach(([id, recs]) => {
-    document.getElementById(id).innerHTML = recs.map(r => {
-      const sc = statusColor[r.status] || 'var(--text3)';
-      const saving = (r.market - r.ask).toFixed(0);
-      return `
-      <div class="record-card" onclick="goto('deals', document.querySelectorAll('.nav-link')[1])">
-        <div class="rc-cover"><div class="rc-vinyl"></div></div>
-        <div class="rc-status" style="color:${sc}">${r.status.toUpperCase()} · ${r.wantlistGrowth} wantlist</div>
-        <div class="rc-title">${r.title}</div>
-        <div class="rc-artist">${r.artist}</div>
-        <div class="rc-price-row">
-          <span class="rc-price">£${r.ask}</span>
-          <span class="rc-market" style="color:var(--green)">−£${saving} below mkt</span>
-        </div>
-      </div>`;
-    }).join('');
-  });
-}
-
-/* ══════════════════════════════════════
-   DEALS (mock fallback)
-══════════════════════════════════════ */
-let activeFilter = 'all';
-
+/* ═══════════════════════════════
+   RENDER DEALS
+═══════════════════════════════ */
 function renderDeals() {
-  // If live results exist, re-filter those; otherwise use mock
-  const source = liveResults.length > 0 ? liveResults : RECORDS;
-  const q = document.getElementById('dealSearch').value.toLowerCase();
-  let recs = source.filter(r => {
-    const mf = activeFilter === 'all' || activeFilter === r.genre ||
-               (activeFilter === 'fire' && score(r) >= 72) ||
-               (activeFilter === 'rare' && r.track === 'B');
+  const q = document.getElementById('d-filter').value.toLowerCase();
+  let recs = liveData.filter(r => {
+    const mf = activeFilter==='all' || activeFilter===r.genre ||
+      (activeFilter==='top' && score(r)>=72) ||
+      (activeFilter==='rare' && r.track==='B');
     const mq = !q || r.artist.toLowerCase().includes(q) || r.title.toLowerCase().includes(q) || r.label.toLowerCase().includes(q);
     return mf && mq;
   });
-  recs.sort((a,b) => score(b) - score(a));
+  recs.sort((a,b)=>score(b)-score(a));
   document.getElementById('ds-count').textContent = recs.length;
-  document.getElementById('deals-tbody').innerHTML = recs.map(r => {
-    const s = score(r);
-    const g = scoreGrade(s);
-    const pct = savingPct(r);
-    const abs = savingAbs(r);
-    const wl = r.wantlist ? `<span style="font-family:var(--mono);font-size:9px;color:var(--green);border:1px solid var(--green-dim);background:rgba(29,185,84,0.08);padding:2px 6px;letter-spacing:0.08em;">★ WANTLIST</span>` : '';
-    const liveTag = r.live ? `<span class="source-live" style="margin-left:6px;">LIVE</span>` : '';
-    return `
-    <tr class="dt-row" onclick="window.open('${r.discogsUrl}','_blank')">
-      <td style="padding-left:32px;">
-        <div class="dt-artist">${r.artist} ${wl}${liveTag}</div>
-        <div class="dt-title">${r.title} · ${r.label} · ${r.year}</div>
-      </td>
-      <td><span class="dt-tag">${r.pressing}</span></td>
-      <td><span class="dt-tag">${r.condition}</span></td>
-      <td class="dt-mono">£${r.ask}</td>
-      <td class="dt-small">£${r.market}</td>
-      <td style="font-family:var(--mono);font-size:13px;color:var(--green);">−£${abs} <span style="color:var(--text3);font-size:11px;">(${pct}%)</span></td>
-      <td>${liquidityLabel(r)}</td>
-      <td>${statusPill(r.status)}</td>
-      <td><span class="dt-score ${g.cls}">${g.label}</span></td>
-      <td><span class="track-badge">TRACK ${r.track}</span></td>
-      <td style="padding-right:32px;">
-        <a href="${r.discogsUrl}" target="_blank" onclick="event.stopPropagation()" style="background:var(--s2);border:1px solid var(--border2);color:var(--text2);font-family:var(--mono);font-size:10px;letter-spacing:0.08em;padding:6px 12px;display:inline-block;">VIEW ↗</a>
-      </td>
+
+  if (!recs.length) {
+    document.getElementById('d-tbody').innerHTML=`<tr><td colspan="11" class="loading-cell">No results match that filter</td></tr>`;
+    return;
+  }
+
+  document.getElementById('d-tbody').innerHTML = recs.map(r => {
+    const s=score(r), g=grade(s);
+    const abs=(r.market-r.ask).toFixed(0);
+    const pct=Math.round((1-r.ask/r.market)*100);
+    return `<tr class="dt-row" onclick="window.open('${r.url}','_blank')">
+      <td><div class="td-artist">${r.artist}</div><div class="td-sub">${r.title} · ${r.label} · ${r.year}</div></td>
+      <td><span class="td-tag">${r.pressing}</span></td>
+      <td><span class="td-tag">${r.condition}</span></td>
+      <td class="td-mono">£${r.ask}</td>
+      <td class="td-sm">£${r.market}</td>
+      <td style="font-family:var(--mono);font-size:13px;color:var(--green)">−£${abs} <span style="color:var(--t3);font-size:11px">(${pct}%)</span></td>
+      <td>${liqLabel(r)}</td>
+      <td>${pill(r.status)}</td>
+      <td><span class="td-score ${g.cls}">${g.val}</span></td>
+      <td><span class="tr-badge">TRACK ${r.track}</span></td>
+      <td><a href="${r.url}" target="_blank" onclick="event.stopPropagation()" class="view-btn">VIEW ↗</a></td>
     </tr>`;
   }).join('');
 }
 
-/* ══════════════════════════════════════
+/* ═══════════════════════════════
+   HOME GRIDS (mock cards until live data)
+═══════════════════════════════ */
+const MOCK = [
+  {artist:'John Coltrane',title:'A Love Supreme',label:'Impulse!',year:1965,ask:28,market:80,status:'heat',wg:'+14%',genre:'jazz',track:'A',wantRatio:.72,salesPer30:18,condition:'VG+',pressing:'US Original',thumb:null,url:'#',live:false},
+  {artist:'Miles Davis',title:'Kind of Blue',label:'Columbia',year:1959,ask:55,market:110,status:'heat',wg:'+19%',genre:'jazz',track:'A',wantRatio:.81,salesPer30:22,condition:'VG+',pressing:'UK 1st Press',thumb:null,url:'#',live:false},
+  {artist:'Aphex Twin',title:'Selected Ambient Works II',label:'Warp',year:1994,ask:38,market:85,status:'heat',wg:'+11%',genre:'electronic',track:'A',wantRatio:.64,salesPer30:14,condition:'VG+',pressing:'UK Original',thumb:null,url:'#',live:false},
+  {artist:'Boards of Canada',title:'Music Has the Right…',label:'Warp',year:1998,ask:52,market:90,status:'rise',wg:'+8%',genre:'electronic',track:'A',wantRatio:.58,salesPer30:9,condition:'NM',pressing:'EU Original',thumb:null,url:'#',live:false},
+  {artist:'Sun Ra',title:'Heliocentric Worlds',label:'ESP-Disk',year:1965,ask:180,market:420,status:'rare',wg:'+31%',genre:'jazz',track:'B',wantRatio:.92,salesPer30:1,condition:'VG+',pressing:'US 1st Press',thumb:null,url:'#',live:false},
+  {artist:'Eric Dolphy',title:'Out to Lunch',label:'Blue Note',year:1964,ask:120,market:340,status:'rare',wg:'+22%',genre:'jazz',track:'B',wantRatio:.88,salesPer30:2,condition:'VG',pressing:'US Original',thumb:null,url:'#',live:false},
+  {artist:'Massive Attack',title:'Blue Lines',label:'Wild Bunch',year:1991,ask:34,market:60,status:'rise',wg:'+6%',genre:'electronic',track:'A',wantRatio:.50,salesPer30:11,condition:'VG+',pressing:'UK 1st Press',thumb:null,url:'#',live:false},
+  {artist:'James Brown',title:'Sex Machine',label:'King',year:1970,ask:18,market:42,status:'rise',wg:'+4%',genre:'soul',track:'A',wantRatio:.44,salesPer30:28,condition:'VG',pressing:'US Original',thumb:null,url:'#',live:false},
+];
+
+const SC = {heat:'var(--green)',rise:'var(--green)',stable:'var(--amber)',cool:'var(--red)',rare:'var(--blue)'};
+
+function recCard(r, onclick) {
+  const saving = (r.market-r.ask).toFixed(0);
+  const img = r.thumb ? `<img src="${r.thumb}" alt="" loading="lazy">` : `<div class="rc-vinyl"></div>`;
+  return `<div class="rec-card" onclick="${onclick}">
+    <div class="rc-art">${img}</div>
+    <div class="rc-status" style="color:${SC[r.status]||'var(--t3)'}">${r.status.toUpperCase()} · ${r.wg} wantlist</div>
+    <div class="rc-title">${r.title}</div>
+    <div class="rc-artist">${r.artist}</div>
+    <div class="rc-prices"><span class="rc-ask">£${r.ask}</span><span class="rc-save">−£${saving} below mkt</span></div>
+  </div>`;
+}
+
+function buildHomeGrids(data) {
+  const src = data && data.length ? data : MOCK;
+  const hot = src.filter(r=>r.status==='heat').slice(0,4);
+  const watch = src.filter(r=>r.status==='rise'||r.status==='rare').slice(0,4);
+  document.getElementById('hot-grid').innerHTML = hot.map(r=>recCard(r,`goTo('deals')`)).join('');
+  document.getElementById('watch-grid').innerHTML = watch.map(r=>recCard(r,`goTo('deals')`)).join('');
+}
+
+/* ═══════════════════════════════
+   TICKER
+═══════════════════════════════ */
+function buildTicker() {
+  const items = ['John Coltrane +19%','Miles Davis +14%','Aphex Twin +11%','Boards of Canada +8%','Sun Ra +31%','Eric Dolphy +22%','Massive Attack +6%','James Brown +4%','Led Zeppelin −2%','Portishead +1%'];
+  const all = [...items,...items];
+  document.getElementById('ticker').innerHTML = all.map(a=>{
+    const pts=a.split(' '), chg=pts[pts.length-1], name=pts.slice(0,-1).join(' ');
+    const col=chg.startsWith('+')?'var(--green)':chg.startsWith('−')||chg.startsWith('-')?'var(--red)':'var(--t3)';
+    return `<span class="t-item"><span class="t-name">${name}</span><span class="t-chg" style="color:${col}">${chg}</span><span class="t-div">·</span></span>`;
+  }).join('');
+}
+
+/* ═══════════════════════════════
    WANTLIST
-══════════════════════════════════════ */
-const WANTLIST = [
-  { genre:"Jazz",       title:"Kind of Blue",              artist:"Miles Davis", threshold:"£60", alert:true,  note:"1 match today" },
-  { genre:"Electronic", title:"Selected Ambient Works II", artist:"Aphex Twin",  threshold:"£45", alert:true,  note:"1 match today" },
-  { genre:"Soul",       title:"What's Going On",           artist:"Marvin Gaye", threshold:"£80", alert:false, note:"No matches today" },
-  { genre:"Jazz",       title:"Out to Lunch",              artist:"Eric Dolphy", threshold:"£150",alert:false, note:"No matches today" },
+═══════════════════════════════ */
+const WL = [
+  {genre:'Jazz',title:'Kind of Blue',artist:'Miles Davis',thresh:'£60',hit:true},
+  {genre:'Electronic',title:'Selected Ambient Works II',artist:'Aphex Twin',thresh:'£45',hit:true},
+  {genre:'Soul',title:"What's Going On",artist:'Marvin Gaye',thresh:'£80',hit:false},
+  {genre:'Jazz',title:'Out to Lunch',artist:'Eric Dolphy',thresh:'£150',hit:false},
 ];
 
 function buildWantlist() {
-  const grid = document.getElementById('wantlist-grid');
-  grid.innerHTML = WANTLIST.map(w => `
+  document.getElementById('wl-grid').innerHTML = WL.map(w=>`
     <div class="wl-card">
       <div class="wl-genre">${w.genre.toUpperCase()}</div>
       <div class="wl-title">${w.title}</div>
       <div class="wl-artist">${w.artist}</div>
-      <div class="wl-threshold">Alert below ${w.threshold}</div>
-      ${w.alert ? `<div class="wl-alert">MATCH TODAY</div>` : `<div class="wl-status">${w.note}</div>`}
-    </div>
-  `).join('') + `
-    <div class="wl-card add-card">
-      <div style="font-size:20px;color:var(--text3);">+</div>
-      <div style="font-size:12px;color:var(--text3);">Add record</div>
+      <div class="wl-thresh">Alert below ${w.thresh}</div>
+      ${w.hit?'<div class="wl-hit">MATCH TODAY</div>':'<div class="wl-no">No matches today</div>'}
+    </div>`).join('')+`
+    <div class="wl-card wl-add" style="display:flex">
+      <div style="font-size:20px;color:var(--t3)">+</div>
+      <div style="font-size:12px;color:var(--t3)">Add record</div>
     </div>`;
 }
 
-/* ══════════════════════════════════════
+/* ═══════════════════════════════
    PORTFOLIO
-══════════════════════════════════════ */
-const HELD = [
-  { artist:"Boards of Canada", title:"Music Has the Right…", bought:52,  estSell:90,  estProfit:38,  daysHeld:3  },
-  { artist:"Massive Attack",   title:"Blue Lines",           bought:34,  estSell:58,  estProfit:24,  daysHeld:7  },
-  { artist:"Sun Ra",           title:"Heliocentric Worlds",  bought:180, estSell:400, estProfit:220, daysHeld:11 },
+═══════════════════════════════ */
+const HELD=[
+  {artist:'Boards of Canada',title:'Music Has the Right…',bought:52,est:90,profit:38,days:3},
+  {artist:'Massive Attack',title:'Blue Lines',bought:34,est:58,profit:24,days:7},
+  {artist:'Sun Ra',title:'Heliocentric Worlds',bought:180,est:400,profit:220,days:11},
 ];
-const SOLD = [
-  { artist:"John Coltrane",  title:"A Love Supreme", bought:28, sold:76, profit:48, days:5  },
-  { artist:"Herbie Hancock", title:"Head Hunters",   bought:22, sold:35, profit:13, days:8  },
-  { artist:"James Brown",    title:"Sex Machine",    bought:18, sold:38, profit:20, days:4  },
-  { artist:"The Clash",      title:"London Calling", bought:30, sold:49, profit:19, days:12 },
+const SOLD=[
+  {artist:'John Coltrane',title:'A Love Supreme',bought:28,sold:76,profit:48,days:5},
+  {artist:'Herbie Hancock',title:'Head Hunters',bought:22,sold:35,profit:13,days:8},
+  {artist:'James Brown',title:'Sex Machine',bought:18,sold:38,profit:20,days:4},
+  {artist:'The Clash',title:'London Calling',bought:30,sold:49,profit:19,days:12},
 ];
-
-let activeTab = 'held';
 
 function renderPortfolio() {
-  const el = document.getElementById('portfolio-content');
-  if (activeTab === 'held') {
-    el.innerHTML = `
-    <table class="portfolio-table">
-      <thead class="pt-head"><tr>
-        <th>Record</th><th>Bought</th><th>Est. sell</th><th>Est. profit</th><th>Days held</th><th>Status</th>
-      </tr></thead>
-      <tbody>${HELD.map(h => {
-        const daysColor = h.daysHeld > 10 ? 'var(--amber)' : 'var(--text2)';
-        return `<tr class="pt-row">
-          <td><div style="font-size:13px;font-weight:500;">${h.artist}</div><div style="font-size:12px;color:var(--text2);">${h.title}</div></td>
-          <td class="pt-mono">£${h.bought}</td>
-          <td class="pt-mono">£${h.estSell}</td>
-          <td class="pt-pos">+£${h.estProfit}</td>
-          <td style="font-family:var(--mono);font-size:13px;color:${daysColor};">${h.daysHeld}d</td>
-          <td>${statusPill('rise')}</td>
-        </tr>`;
-      }).join('')}</tbody>
-    </table>`;
-  } else if (activeTab === 'sold') {
-    el.innerHTML = `
-    <table class="portfolio-table">
-      <thead class="pt-head"><tr>
-        <th>Record</th><th>Bought</th><th>Sold for</th><th>Profit</th><th>Days to sell</th><th>ROI</th>
-      </tr></thead>
-      <tbody>${SOLD.map(s => {
-        const roi = Math.round(s.profit/s.bought*100);
-        return `<tr class="pt-row">
-          <td><div style="font-size:13px;font-weight:500;">${s.artist}</div><div style="font-size:12px;color:var(--text2);">${s.title}</div></td>
-          <td class="pt-mono">£${s.bought}</td>
-          <td class="pt-mono">£${s.sold}</td>
-          <td class="pt-pos">+£${s.profit}</td>
-          <td class="pt-mono">${s.days}d</td>
-          <td style="font-family:var(--mono);font-size:12px;color:var(--green);">${roi}%</td>
-        </tr>`;
-      }).join('')}</tbody>
-    </table>`;
+  const el = document.getElementById('port-content');
+  if (activeTab==='held') {
+    el.innerHTML=`<table class="port-table"><thead><tr><th>Record</th><th>Bought</th><th>Est. sell</th><th>Est. profit</th><th>Days held</th><th>Status</th></tr></thead><tbody>
+    ${HELD.map(h=>`<tr class="pt-row">
+      <td><div style="font-size:13px;font-weight:500">${h.artist}</div><div style="font-size:12px;color:var(--t2)">${h.title}</div></td>
+      <td class="pt-neu">£${h.bought}</td><td class="pt-neu">£${h.est}</td>
+      <td class="pt-pos">+£${h.profit}</td>
+      <td style="font-family:var(--mono);font-size:13px;color:${h.days>10?'var(--amber)':'var(--t2)'}">${h.days}d</td>
+      <td>${pill('rise')}</td>
+    </tr>`).join('')}</tbody></table>`;
+  } else if (activeTab==='sold') {
+    el.innerHTML=`<table class="port-table"><thead><tr><th>Record</th><th>Bought</th><th>Sold</th><th>Profit</th><th>Days</th><th>ROI</th></tr></thead><tbody>
+    ${SOLD.map(s=>`<tr class="pt-row">
+      <td><div style="font-size:13px;font-weight:500">${s.artist}</div><div style="font-size:12px;color:var(--t2)">${s.title}</div></td>
+      <td class="pt-neu">£${s.bought}</td><td class="pt-neu">£${s.sold}</td>
+      <td class="pt-pos">+£${s.profit}</td><td class="pt-neu">${s.days}d</td>
+      <td style="font-family:var(--mono);font-size:12px;color:var(--green)">${Math.round(s.profit/s.bought*100)}%</td>
+    </tr>`).join('')}</tbody></table>`;
   } else {
-    el.innerHTML = `<div style="padding:48px 28px;color:var(--text3);font-family:var(--mono);font-size:12px;letter-spacing:0.06em;">No records on watchlist yet.</div>`;
+    el.innerHTML=`<div style="padding:48px 28px;color:var(--t3);font-family:var(--mono);font-size:12px;letter-spacing:.06em">Nothing on watchlist yet.</div>`;
   }
 }
 
-/* ══════════════════════════════════════
+/* ═══════════════════════════════
    NAVIGATION
-══════════════════════════════════════ */
-function goto(pageId) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
-  const page = document.getElementById('page-' + pageId);
-  const link = document.querySelector('.nav-link[data-page="' + pageId + '"]');
-  if (page) page.classList.add('active');
-  if (link) link.classList.add('active');
-  window.scrollTo(0, 0);
+═══════════════════════════════ */
+function goTo(id) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('on'));
+  document.getElementById('page-'+id).classList.add('on');
+  const btn = document.querySelector(`.nav-btn[data-p="${id}"]`);
+  if (btn) btn.classList.add('on');
+  window.scrollTo(0,0);
 }
 
-/* ══════════════════════════════════════
-   INIT — wires all event listeners
-══════════════════════════════════════ */
-function init() {
-  // Nav links
-  document.querySelectorAll('.nav-link').forEach(btn => {
-    btn.addEventListener('click', () => goto(btn.dataset.page));
-  });
+/* ═══════════════════════════════
+   BOOT — runs after token accepted
+═══════════════════════════════ */
+function boot() {
+  // Nav
+  document.querySelectorAll('.nav-btn').forEach(b => b.addEventListener('click', ()=>goTo(b.dataset.p)));
 
-  // Hero deal button
-  const heroBtn = document.getElementById('hero-deal-btn');
-  if (heroBtn) heroBtn.addEventListener('click', () => goto('deals'));
+  // Hero CTA
+  document.getElementById('h-cta').addEventListener('click', ()=>goTo('deals'));
+  document.getElementById('hot-more').addEventListener('click', ()=>goTo('deals'));
+  document.getElementById('watch-more').addEventListener('click', ()=>goTo('deals'));
 
-  // Portfolio tabs
-  document.querySelectorAll('.ptab').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.ptab').forEach(t => t.classList.remove('active'));
-      btn.classList.add('active');
-      activeTab = btn.dataset.tab;
-      renderPortfolio();
-    });
-  });
+  // Deals search
+  document.getElementById('d-go').addEventListener('click', runSearch);
+  document.getElementById('d-query').addEventListener('keydown', e=>{ if(e.key==='Enter') runSearch(); });
+  document.getElementById('d-filter').addEventListener('input', renderDeals);
 
   // Filter buttons
-  document.querySelectorAll('.filter-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('on'));
-      btn.classList.add('on');
-      activeFilter = btn.dataset.f;
-      renderDeals();
-    });
-  });
+  document.querySelectorAll('.f-btn').forEach(b => b.addEventListener('click', ()=>{
+    document.querySelectorAll('.f-btn').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on');
+    activeFilter = b.dataset.f;
+    renderDeals();
+  }));
 
-  // Deal search filter
-  const dealSearch = document.getElementById('dealSearch');
-  if (dealSearch) dealSearch.addEventListener('input', renderDeals);
+  // Portfolio tabs
+  document.querySelectorAll('.ptab').forEach(b => b.addEventListener('click', ()=>{
+    document.querySelectorAll('.ptab').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on');
+    activeTab = b.dataset.t;
+    renderPortfolio();
+  }));
 
-  // Discogs live search
-  const apiBtn = document.getElementById('apiSearchBtn');
-  const apiInput = document.getElementById('apiSearchInput');
-  if (apiBtn) apiBtn.addEventListener('click', searchDiscogs);
-  if (apiInput) apiInput.addEventListener('keydown', e => { if (e.key === 'Enter') searchDiscogs(); });
-
-  // Render everything
+  // Build everything
   buildTicker();
   buildHomeGrids();
-  renderDeals();
   buildWantlist();
   renderPortfolio();
 }
