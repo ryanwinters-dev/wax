@@ -9,114 +9,145 @@ h2{color:#888;font-size:11px;letter-spacing:.1em;margin:24px 0 8px}
 .box{background:#111;border:1px solid #222;padding:16px;margin-bottom:8px;white-space:pre-wrap;word-break:break-all;max-height:300px;overflow-y:auto}
 .ok{color:#1db954}.err{color:#c0392b}.warn{color:#c8952a}
 input{background:#111;border:1px solid #333;color:#f0f0f0;padding:8px 12px;font-family:monospace;font-size:13px;width:400px}
-button{background:#f0f0f0;color:#080808;border:none;padding:9px 20px;font-family:monospace;font-size:12px;letter-spacing:.08em;cursor:pointer;margin-left:8px}
+button{background:#f0f0f0;color:#080808;border:none;padding:9px 20px;font-family:monospace;font-size:12px;letter-spacing:.08em;cursor:pointer;margin-left:8px;margin-top:4px}
 </style>
 </head>
 <body>
-<div style="font-size:20px;font-weight:500;letter-spacing:.2em;margin-bottom:24px">WAX · API DIAGNOSTICS</div>
+<div style="font-size:20px;font-weight:500;letter-spacing:.2em;margin-bottom:24px">WAX · API DIAGNOSTICS v2</div>
 
 <div>
   <input id="tok" type="password" placeholder="Paste your Discogs token…">
-  <button onclick="runAll()">RUN TESTS</button>
+  <button onclick="runAll()">RUN ALL TESTS</button>
 </div>
 
-<h2>1 · TOKEN VALIDATION</h2>
+<h2>1 · TOKEN OK?</h2>
 <div class="box" id="r1">—</div>
 
-<h2>2 · DATABASE SEARCH (Miles Davis, Vinyl)</h2>
+<h2>2 · DATABASE SEARCH — returns release IDs?</h2>
 <div class="box" id="r2">—</div>
 
-<h2>3 · MARKETPLACE STATS (release 249504 = Kind of Blue)</h2>
+<h2>3 · RELEASE DETAIL — has lowest_price?</h2>
 <div class="box" id="r3">—</div>
 
-<h2>4 · RELEASE DETAIL (249504)</h2>
+<h2>4 · MARKETPLACE LISTINGS — can we get individual seller prices? (THE KEY TEST)</h2>
 <div class="box" id="r4">—</div>
 
-<h2>5 · USER WANTLIST (rynamo)</h2>
+<h2>5 · YOUR WANTLIST — loads ok?</h2>
 <div class="box" id="r5">—</div>
 
-<h2>6 · FULL PIPELINE — enrich release 249504</h2>
+<h2>6 · SUMMARY — what we can and cannot build</h2>
 <div class="box" id="r6">—</div>
 
 <script>
 const BASE = 'https://api.discogs.com';
 let TOKEN = '';
+const H = () => ({ 'Authorization':'Discogs token='+TOKEN, 'User-Agent':'WAXApp/1.0' });
 
-function H() {
-  return { 'Authorization': 'Discogs token='+TOKEN, 'User-Agent': 'WAXApp/1.0' };
+async function call(url) {
+  const r = await fetch(BASE+url, {headers:H()});
+  const data = await r.json();
+  return {ok: r.ok, status: r.status, data};
 }
 
-function show(id, data, isErr) {
+function show(id, content, type) {
   const el = document.getElementById(id);
-  const txt = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
-  el.textContent = txt;
-  el.className = 'box ' + (isErr ? 'err' : 'ok');
-}
-
-async function test(id, url, label) {
-  document.getElementById(id).textContent = 'Testing…';
-  try {
-    const r = await fetch(BASE + url, { headers: H() });
-    const data = await r.json();
-    if (!r.ok) {
-      show(id, `HTTP ${r.status}\n${JSON.stringify(data, null, 2)}`, true);
-      return null;
-    }
-    show(id, `HTTP ${r.status} ✓\n${JSON.stringify(data, null, 2)}`);
-    return data;
-  } catch(e) {
-    show(id, `NETWORK ERROR: ${e.message}\n\nThis usually means CORS is blocking the request from this origin.`, true);
-    return null;
-  }
+  el.textContent = typeof content === 'string' ? content : JSON.stringify(content, null, 2);
+  el.className = 'box ' + (type||'');
 }
 
 async function runAll() {
   TOKEN = document.getElementById('tok').value.trim();
   if (!TOKEN) { alert('Paste your token first'); return; }
 
-  // Test 1: token
-  await test('r1', '/oauth/identity', 'Token');
+  // Test 1 — token
+  show('r1', 'Testing…');
+  const t1 = await call('/oauth/identity');
+  show('r1', t1.ok ? `✓ Token valid — logged in as: ${t1.data.username}` : `✗ Token failed: ${t1.status}`, t1.ok?'ok':'err');
 
-  // Test 2: database search
-  const search = await test('r2', '/database/search?q=Miles+Davis&type=release&format=Vinyl&per_page=3', 'Search');
-
-  // Test 3: marketplace stats
-  const stats = await test('r3', '/marketplace/stats/249504?curr_abbr=GBP', 'Stats');
-
-  // Test 4: release detail
-  const release = await test('r4', '/releases/249504', 'Release');
-
-  // Test 5: wantlist
-  await test('r5', '/users/rynamo/wants?per_page=3', 'Wantlist');
-
-  // Test 6: full pipeline summary
-  const r6 = document.getElementById('r6');
-  r6.textContent = 'Running pipeline analysis…';
-  try {
-    const median = stats?.median?.value;
-    const lowest = stats?.lowest_price?.value;
-    const have   = release?.community?.have;
-    const want   = release?.community?.want;
-    const numForSale = stats?.num_for_sale;
-
-    const summary = {
-      release_title:   release?.title,
-      median_GBP:      median,
-      lowest_GBP:      lowest,
-      num_for_sale:    numForSale,
-      community_have:  have,
-      community_want:  want,
-      want_have_ratio: have > 0 ? (want/have).toFixed(3) : null,
-      can_score:       !!(median),
-      would_be_deal:   !!(median && lowest && lowest < median * 0.97),
-      score_inputs_ok: !!(median && have !== undefined && want !== undefined),
-    };
-    r6.textContent = JSON.stringify(summary, null, 2);
-    r6.className = 'box ' + (summary.can_score ? 'ok' : 'warn');
-  } catch(e) {
-    r6.textContent = 'Pipeline error: ' + e.message;
-    r6.className = 'box err';
+  // Test 2 — database search, get a house release ID
+  show('r2', 'Testing…');
+  const t2 = await call('/database/search?style=House&format=Vinyl&per_page=3&type=release');
+  if (t2.ok && t2.data.results?.length) {
+    const ids = t2.data.results.map(r => r.id);
+    show('r2', `✓ Search works — got ${t2.data.results.length} results\nRelease IDs: ${ids.join(', ')}\nFirst result: ${t2.data.results[0].title}`, 'ok');
+    window._testReleaseId = ids[0];
+  } else {
+    show('r2', `✗ Search failed: ${t2.status}\n${JSON.stringify(t2.data)}`, 'err');
   }
+
+  // Test 3 — release detail, check lowest_price field
+  show('r3', 'Testing…');
+  const releaseId = window._testReleaseId || 569297;
+  const t3 = await call(`/releases/${releaseId}`);
+  if (t3.ok) {
+    const d = t3.data;
+    show('r3', `✓ Release detail works
+title: ${d.title}
+lowest_price: ${d.lowest_price ?? 'NULL — not available'}
+num_for_sale: ${d.num_for_sale ?? 'NULL'}
+community.want: ${d.community?.want ?? 'NULL'}
+community.have: ${d.community?.have ?? 'NULL'}
+genres: ${JSON.stringify(d.genres)}
+styles: ${JSON.stringify(d.styles)}`, d.lowest_price ? 'ok' : 'warn');
+  } else {
+    show('r3', `✗ Failed: ${t3.status}`, 'err');
+  }
+
+  // Test 4 — THE KEY TEST: marketplace listings for that release
+  show('r4', 'Testing — this is the important one…');
+  const t4 = await call(`/marketplace/listings?release_id=${releaseId}&sort=price&sort_order=asc&per_page=5&currency=GBP`);
+  if (t4.ok && t4.data.listings?.length) {
+    const listings = t4.data.listings;
+    const prices = listings.map(l => `£${l.price?.value} (${l.condition}) — seller: ${l.seller?.username}`);
+    show('r4', `✓ MARKETPLACE LISTINGS WORK — this is the foundation we need!
+Found ${listings.length} listings:
+${prices.join('\n')}
+
+Total for sale: ${t4.data.pagination?.items}`, 'ok');
+    window._listingsWork = true;
+  } else if (t4.ok && t4.data.listings?.length === 0) {
+    show('r4', `⚠ Endpoint works but no listings for this release — try another release ID`, 'warn');
+    window._listingsWork = true;
+  } else {
+    show('r4', `✗ MARKETPLACE LISTINGS BLOCKED: ${t4.status}
+${JSON.stringify(t4.data)}
+
+This means we cannot see individual seller prices.`, 'err');
+    window._listingsWork = false;
+  }
+
+  // Test 5 — wantlist
+  show('r5', 'Testing…');
+  const t5 = await call('/users/rynamo/wants?per_page=5');
+  if (t5.ok) {
+    const items = t5.data.wants?.map(w => `${w.basic_information?.title} (id: ${w.basic_information?.id})`).join('\n');
+    show('r5', `✓ Wantlist loads — ${t5.data.pagination?.items} items total\n\n${items}`, 'ok');
+  } else {
+    show('r5', `✗ Failed: ${t5.status}`, 'err');
+  }
+
+  // Test 6 — summary
+  const canDoListings = window._listingsWork;
+  show('r6', canDoListings
+    ? `✓ FULL BUILD POSSIBLE
+
+What we can build:
+— Real deal finder using actual listing prices vs other copies
+— Genre sweep across all Discogs styles  
+— Wantlist analysis with real market data
+— Portfolio tracker
+
+The pipeline will take 2-3 mins per sweep but data will be 100% real.`
+    : `⚠ MARKETPLACE LISTINGS NOT ACCESSIBLE
+
+What this means:
+— We cannot see individual seller prices
+— We can still use lowest_price from release detail
+— We can still score on want/have/supply signals
+— Deal detection will be less precise but still useful
+
+Recommended approach: score on demand + scarcity signals
+rather than price comparison.`, canDoListings ? 'ok' : 'warn');
 }
 </script>
 </body>
